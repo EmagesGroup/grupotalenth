@@ -1,452 +1,292 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EMAGES GROUP</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/lucide@latest"></script>
-
-<style>
-:root{
---primary:#0F1C2E;
---primary-deep:#0A1422;
---accent:#F39C12;
---accent-soft:#E67E22;
---light:#F5F7FA;
---text-soft:#6B7280;
-}
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-scroll-behavior:smooth;
-}
-
-body{
-background:#ffffff;
-color:#1F2937;
-line-height:1.6;
-overflow-x:hidden;
-}
-
-/* HEADER */
-
-header{
-position:fixed;
-width:100%;
-top:0;
-background:rgba(255,255,255,0.96);
-backdrop-filter:blur(14px);
-padding:18px 8%;
-display:flex;
-justify-content:space-between;
-align-items:center;
-z-index:1000;
-box-shadow:0 4px 30px rgba(0,0,0,0.04);
-}
-
-header h1{
-color:var(--primary);
-font-size:18px;
-font-weight:700;
-letter-spacing:1.5px;
-}
-
-nav a{
-color:#374151;
-text-decoration:none;
-margin-left:28px;
-font-size:14px;
-font-weight:500;
-position:relative;
-transition:0.3s ease;
-}
-
-nav a::after{
-content:"";
-position:absolute;
-bottom:-6px;
-left:0;
-width:0;
-height:2px;
-background:var(--accent);
-transition:0.3s ease;
-}
-
-nav a:hover{
-color:var(--primary);
-}
-
-nav a:hover::after{
-width:100%;
-}
-
-.lang-btn{
-margin-left:25px;
-cursor:pointer;
-font-size:13px;
-color:var(--primary);
-font-weight:600;
-}
-
-/* HERO */
-
-.hero{
-height:100vh;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-text-align:center;
-padding:0 10%;
-color:#fff;
-background:
-linear-gradient(rgba(10,20,34,0.85),rgba(15,28,46,0.85)),
-url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070');
-background-size:cover;
-background-position:center;
-background-attachment:fixed;
-}
-
-.hero h2{
-font-size:52px;
-font-weight:600;
-max-width:900px;
-line-height:1.2;
-}
-
-.hero span{
-display:block;
-font-weight:300;
-font-size:19px;
-margin-top:25px;
-opacity:0.9;
-}
-
-/* BOTONES */
-
-.btn{
-padding:15px 36px;
-border-radius:40px;
-border:none;
-cursor:pointer;
-font-size:14px;
-font-weight:600;
-margin-top:40px;
-transition:all 0.4s ease;
-letter-spacing:0.5px;
-}
-
-.btn-primary{
-background:var(--accent);
-color:#fff;
-box-shadow:0 12px 35px rgba(243,156,18,0.35);
-}
-
-.btn-primary:hover{
-background:var(--accent-soft);
-transform:translateY(-4px);
-}
-
-/* SECTIONS */
-
-section{
-padding:120px 8%;
-}
-
-.section-title{
-text-align:center;
-margin-bottom:80px;
-font-size:34px;
-font-weight:600;
-color:var(--primary);
-}
-
-/* GRID */
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-gap:40px;
-}
-
-/* CARDS */
-
-.card{
-padding:45px;
-border-radius:26px;
-background:#ffffff;
-box-shadow:0 20px 60px rgba(0,0,0,0.05);
-transition:all 0.6s cubic-bezier(.19,1,.22,1);
-opacity:0;
-transform:translateY(40px);
-}
-
-.card.visible{
-opacity:1;
-transform:translateY(0);
-}
-
-.card:hover{
-transform:translateY(-12px);
-box-shadow:0 30px 80px rgba(0,0,0,0.08);
-}
-
-.card h3{
-margin-top:22px;
-font-size:19px;
-color:var(--primary);
-}
-
-.card p{
-font-size:14px;
-margin-top:14px;
-color:var(--text-soft);
-}
-
-.icon{
-width:46px;
-height:46px;
-stroke-width:1.5;
-color:var(--accent);
-}
-
-/* CONTACTO */
-
-.contacto{
-text-align:center;
-background:var(--light);
-}
-
-.contacto h3{
-font-size:36px;
-color:var(--primary);
-margin-bottom:25px;
-}
-
-.contacto p{
-max-width:750px;
-margin:0 auto 35px;
-color:var(--text-soft);
-font-size:15px;
-}
-
-/* WHATSAPP */
-
-.btn-whatsapp{
-display:inline-block;
-background:#25D366;
-color:#fff !important;
-padding:16px 40px;
-border-radius:50px;
-font-size:15px;
-font-weight:600;
-text-decoration:none;
-transition:0.3s ease;
-box-shadow:0 10px 30px rgba(37,211,102,0.35);
-}
-
-.btn-whatsapp:hover{
-background:#1ebe5d;
-transform:translateY(-4px);
-}
-
-/* FOOTER */
-
-footer{
-background:linear-gradient(135deg,var(--primary),var(--primary-deep));
-color:#fff;
-padding:90px 8%;
-}
-
-footer a{
-display:block;
-color:#ffffff;
-text-decoration:none;
-margin-bottom:10px;
-transition:0.3s ease;
-}
-
-footer a:hover{
-color:var(--accent);
-transform:translateX(6px);
-}
-
-footer h4{
-margin-bottom:25px;
-color:var(--accent);
-}
-
-footer h3{
-margin-bottom:20px;
-}
-
-footer p{
-font-size:14px;
-opacity:0.85;
-}
-
-/* ANIMATION */
-
-.card{
-animation:fadeUp 0.8s ease forwards;
-}
-
-@keyframes fadeUp{
-from{opacity:0; transform:translateY(30px);}
-to{opacity:1; transform:translateY(0);}
-}
-</style>
-</head>
-
-<body>
-
-<header>
-<h1>EMAGES GROUP</h1>
-<nav>
-<a href="#divisiones">Divisiones</a>
-<a href="#contacto">Contacto</a>
-<span class="lang-btn" onclick="toggleLang()">ES / EN</span>
-</nav>
-</header>
-
-<section class="hero">
-<h2 id="hero-title">
-Estrategia · Talento · Tecnología<br>
-para Organizaciones en Evolución.
-<span>
-Holding empresarial que integra educación, talento, marketing, comercio y gestión corporativa.
-</span>
-</h2>
-<button class="btn btn-primary" onclick="document.getElementById('divisiones').scrollIntoView({behavior:'smooth'})">
-Explorar Divisiones
-</button>
-</section>
-
-<section id="divisiones">
-<h2 class="section-title">Divisiones Estratégicas</h2>
-<div class="grid">
-
-<div class="card">
-<i data-lucide="graduation-cap" class="icon"></i>
-<h3>EMAGES Academy</h3>
-<p>Educación ejecutiva, capacitación y formación profesional.</p>
-</div>
-
-<div class="card">
-<i data-lucide="sparkles" class="icon"></i>
-<h3>EMAGES Modeling</h3>
-<p>Modelaje, imagen y representación de talento profesional.</p>
-</div>
-
-<div class="card">
-<i data-lucide="palette" class="icon"></i>
-<h3>EMAGES Marketing</h3>
-<p>Estrategia de marca, publicidad y posicionamiento digital.</p>
-</div>
-
-<div class="card">
-<i data-lucide="shopping-cart" class="icon"></i>
-<h3>EMAGES Commerce</h3>
-<p>Comercialización, importaciones y expansión empresarial.</p>
-</div>
-
-<div class="card">
-<i data-lucide="calculator" class="icon"></i>
-<h3>EMAGES Consulting</h3>
-<p>Gestión contable, planillas y administración financiera.</p>
-</div>
-
-<div class="card">
-<i data-lucide="users" class="icon"></i>
-<h3>EMAGES Human Capital</h3>
-<p>Reclutamiento, selección y evaluación de talento humano.</p>
-</div>
-
-</div>
-</section>
-
-<section class="contacto" id="contacto">
-<h3>Construyamos el crecimiento estratégico de tu organización</h3>
-<p>
-Agenda una conversación con nuestro equipo y diseñemos una estrategia sólida, medible y orientada a resultados.
-</p>
-
-<a class="btn-whatsapp"
-href="https://wa.me/51930175586?text=Hola%20EMAGES%20GROUP,%20deseo%20solicitar%20información%20y%20una%20asesoría."
-target="_blank">
-Solicitar Asesoría por WhatsApp
-</a>
-
-</section>
-
-<footer>
-
-<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:50px; max-width:1200px; margin:auto;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grupo Talenth | Transformando el Futuro de Latinoamérica</title>
+    <meta name="description" content="Grupo Talenth: Ecosistema educativo de EMAGES GROUP. Programa de Becas Callao con Futuro y cursos de inglés virtuales a nivel nacional bajo la Metodología ISA.">
     
-<div>
-<h3>EMAGES GROUP</h3>
-<p>
-EMAGES GROUP es un grupo empresarial enfocado en soluciones integrales en educación, talento, marketing, comercio y gestión corporativa.
-</p>
-<p style="margin-top:15px; font-size:14px;">
-✉️ <a href="mailto:hola@emagesgroup.com" style="color:#F39C12; text-decoration:none;">hola@emagesgroup.com</a><br>
-</p>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .smooth-scroll { scroll-behavior: smooth; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-700 smooth-scroll">
 
-</div>
+    <!-- ========================================== -->
+    <!-- BARRA SUPERIOR -->
+    <!-- ========================================== -->
+    <div class="bg-slate-900 text-slate-300 text-xs py-2 hidden md:block">
+        <div class="container mx-auto px-4 md:px-6 flex justify-between items-center">
+            <span>🏢 Una iniciativa de <strong class="text-sky-400">EMAGES GROUP</strong></span>
+            <span>📧 Contacto: <strong class="text-white">hola@grupotalenth.com</strong></span>
+        </div>
+    </div>
 
-<div>
-<h4>Nuestras Áreas</h4>
-<a href="https://academy.emagesgroup.com">EMAGES Academy</a>
-<a href="#">EMAGES Modeling</a>
-<a href="#">EMAGES Marketing</a>
-<a href="#">EMAGES Commerce</a>
-<a href="#">EMAGES Consulting</a>
-</div>
+    <!-- ========================================== -->
+    <!-- HEADER / NAVEGACIÓN -->
+    <!-- ========================================== -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 md:px-6 py-4 flex justify-between items-center">
+            <div class="flex flex-col">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-layer-group text-3xl text-sky-500"></i>
+                    <span class="text-2xl font-extrabold text-slate-800">GRUPO <span class="text-rose-500">TALENTH</span></span>
+                </div>
+                <span class="text-[10px] text-slate-500 uppercase tracking-widest ml-10 -mt-1">Ecosistema Educativo</span>
+            </div>
+            
+            <nav class="hidden md:flex space-x-8 font-semibold text-slate-600">
+                <a href="#inicio" class="hover:text-sky-500 transition">Inicio</a>
+                <a href="#becas" class="hover:text-sky-500 transition">Programa de Becas</a>
+                <a href="#virtual" class="hover:text-sky-500 transition">Cursos Virtuales</a>
+                <a href="#metodologia" class="hover:text-sky-500 transition">Metodología ISA</a>
+            </nav>
 
-<div>
-<h4>Nuestros Valores</h4>
-<a href="#">Excelencia</a>
-<a href="#">Confidencialidad</a>
-<a href="#">Responsabilidad</a>
-<a href="#">Confianza</a>
-</div>
+            <div class="hidden md:block">
+                <a href="https://wa.me/51999999999?text=Hola%20Grupo%20Talenth,%20quiero%20información%20sobre%20los%20programas%20de%20becas%20y%20cursos" target="_blank" class="px-6 py-2.5 bg-rose-500 text-white rounded-full font-bold hover:bg-rose-600 transition shadow-lg shadow-rose-500/30">
+                    Postular Ahora
+                </a>
+            </div>
 
-<div>
-<h4>Síguenos</h4>
-<a href="https://www.facebook.com/emagesgroup.pe">Facebook</a>
-<a href="https://www.linkedin.com/company/emagesgroup">LinkedIn</a>
-<a href="https://www.tiktok.com/@emagesgroup">TikTok</a>
-<a href="https://www.youtube.com/@EmagesGroup">YouTube</a>
-</div>
+            <button class="md:hidden text-2xl text-slate-800">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
 
-</div>
+    <!-- ========================================== -->
+    <!-- HERO SECTION -->
+    <!-- ========================================== -->
+    <section id="inicio" class="relative bg-gradient-to-br from-slate-900 via-sky-900 to-slate-900 py-24 md:py-32 overflow-hidden text-white">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+        <div class="container mx-auto px-4 md:px-6 flex flex-col md:flex-row items-center relative z-10">
+            
+            <div class="md:w-1/2 mb-12 md:mb-0">
+                <span class="inline-block px-4 py-1.5 bg-rose-500/20 text-rose-300 border border-rose-500/30 rounded-full text-sm font-bold mb-6">
+                    🚀 Convocatoria Abierta 2026
+                </span>
+                
+                <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-6">
+                    Impulsamos el talento que <br>
+                    <span class="text-sky-400">Latinoamérica necesita</span>
+                </h1>
+                
+                <p class="text-lg text-slate-300 mb-8 max-w-lg leading-relaxed">
+                    Somos un ecosistema educativo respaldado por <strong>EMAGES GROUP</strong>. Iniciamos con nuestro programa presencial en el Callao y expandimos nuestras habilidades digitales e idiomáticas a todo el país de forma virtual.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="#becas" class="px-8 py-4 bg-rose-500 text-white rounded-xl font-bold text-lg hover:bg-rose-600 transition shadow-xl shadow-rose-500/20 text-center">
+                        Ver Programa de Becas
+                    </a>
+                    <a href="#virtual" class="px-8 py-4 bg-white/10 backdrop-blur-sm text-white border border-white/20 rounded-xl font-bold text-lg hover:bg-white/20 transition text-center">
+                        Cursos Virtuales Nacionales
+                    </a>
+                </div>
+            </div>
 
-<div style="text-align:center; margin-top:60px; font-size:13px; opacity:0.6;">
-EMAGES GROUP | Soluciones Integrales Empresariales © 2026 – Todos los derechos reservados
-</div>
+            <div class="md:w-1/2 flex justify-center">
+                <div class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-sky-500/30 max-w-md w-full">
+                    <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Jóvenes profesionales latinoamericanos" class="w-full h-auto object-cover">
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-900 to-transparent p-6">
+                        <p class="text-white font-bold text-lg">Metodología ISA</p>
+                        <p class="text-sky-300 text-sm">Inmersión • Simulación • Aplicación</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-</footer>
+    <!-- ========================================== -->
+    <!-- PROGRAMA DE BECAS (CALLAO CON FUTURO) -->
+    <!-- ========================================== -->
+    <section id="becas" class="py-20 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center mb-16">
+                <span class="text-rose-500 font-bold tracking-wider text-sm uppercase">Nuestra Iniciativa Estrella</span>
+                <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 mt-2 mb-4">Programa Callao con Futuro</h2>
+                <p class="text-slate-600 max-w-2xl mx-auto text-lg">
+                    Creemos que el talento no tiene código postal. Este programa de becas busca identificar y potenciar a jóvenes con alto potencial, brindándoles herramientas reales para el mercado laboral.
+                </p>
+            </div>
 
-<script>
-lucide.createIcons();
-let currentLang="es";
-function toggleLang(){
-if(currentLang==="es"){
-document.getElementById("hero-title").innerHTML=
-"Strategy · Talent · Technology<br>for Evolving Organizations.<span>Business holding integrating education, talent, marketing, trade and corporate management.</span>";
-currentLang="en";
-}else{
-document.getElementById("hero-title").innerHTML=
-"Estrategia · Talento · Tecnología<br>para Organizaciones en Evolución.<span>Holding empresarial que integra educación, talento, marketing, comercio y gestión corporativa.</span>";
-currentLang="es";
-}
-}
-</script>
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Beneficio 1 -->
+                <div class="bg-slate-50 rounded-2xl p-8 shadow-lg border-t-4 border-sky-500 hover:-translate-y-2 transition duration-300">
+                    <div class="w-14 h-14 bg-sky-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-language text-2xl text-sky-600"></i>
+                    </div>
+                    <h3 class="font-bold text-xl text-slate-900 mb-3">Inglés con Metodología ISA</h3>
+                    <p class="text-slate-600">Formación intensiva y práctica, con certificación progresiva por módulos y portafolio de evidencias.</p>
+                </div>
+
+                <!-- Beneficio 2 -->
+                <div class="bg-slate-50 rounded-2xl p-8 shadow-lg border-t-4 border-rose-500 hover:-translate-y-2 transition duration-300">
+                    <div class="w-14 h-14 bg-rose-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-briefcase text-2xl text-rose-600"></i>
+                    </div>
+                    <h3 class="font-bold text-xl text-slate-900 mb-3">Habilidades Técnicas</h3>
+                    <p class="text-slate-600">Introducción a carreras de alta demanda: Asistencia Administrativa, Negocios Internacionales y Artes Escénicas.</p>
+                </div>
+
+                <!-- Beneficio 3 -->
+                <div class="bg-slate-50 rounded-2xl p-8 shadow-lg border-t-4 border-slate-700 hover:-translate-y-2 transition duration-300">
+                    <div class="w-14 h-14 bg-slate-200 rounded-full flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-users-gear text-2xl text-slate-700"></i>
+                    </div>
+                    <h3 class="font-bold text-xl text-slate-900 mb-3">Mentoria y Networking</h3>
+                    <p class="text-slate-600">Acompañamiento vocacional, test de habilidades y conexión con aliados estratégicos del sector empresarial.</p>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <a href="https://wa.me/51999999999?text=Hola,%20quiero%20postular%20al%20Programa%20Callao%20con%20Futuro" target="_blank" class="inline-flex items-center px-8 py-4 bg-slate-900 text-white rounded-xl font-bold text-lg hover:bg-slate-800 transition shadow-xl">
+                    <i class="fa-solid fa-file-signature mr-2"></i> Solicitar Bases de Postulación
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- EXPANSIÓN VIRTUAL NACIONAL -->
+    <!-- ========================================== -->
+    <section id="virtual" class="py-20 bg-sky-50">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <div class="md:w-1/2">
+                    <img src="https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Clases virtuales de inglés" class="rounded-3xl shadow-2xl border-4 border-white">
+                </div>
+                <div class="md:w-1/2">
+                    <span class="text-sky-600 font-bold tracking-wider text-sm uppercase">Sin Fronteras</span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mt-2 mb-6">Llevamos el Inglés a Todo el Perú</h2>
+                    <p class="text-slate-600 mb-6 leading-relaxed text-lg">
+                        No importa si estás en Piura, Arequipa, Lima o cualquier ciudad. Nuestros programas de inglés virtual mantienen la misma exigencia y calidad de la <strong>Metodología ISA</strong>.
+                    </p>
+                    
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-circle-check text-rose-500 mt-1 mr-3"></i>
+                            <span class="text-slate-700"><strong>Clases en vivo</strong> a través de Microsoft Teams con docentes especializados.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-circle-check text-rose-500 mt-1 mr-3"></i>
+                            <span class="text-slate-700"><strong>Horarios flexibles:</strong> Mañanas, tardes y fines de semana para que estudies a tu ritmo.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-circle-check text-rose-500 mt-1 mr-3"></i>
+                            <span class="text-slate-700"><strong>Certificación digital</strong> con código QR verificable al completar cada nivel.</span>
+                        </li>
+                    </ul>
+
+                    <a href="https://wa.me/51999999999?text=Hola,%20me%20interesan%20los%20cursos%20de%20inglés%20virtuales%20a%20nivel%20nacional" target="_blank" class="inline-flex items-center px-8 py-3 bg-rose-500 text-white rounded-xl font-bold hover:bg-rose-600 transition shadow-lg shadow-rose-500/30 gap-2">
+                        <i class="fa-brands fa-whatsapp"></i> Consultar Programas Virtuales
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- METODOLOGÍA ISA (Resumen) -->
+    <!-- ========================================== -->
+    <section id="metodologia" class="py-20 bg-slate-900 text-white">
+        <div class="container mx-auto px-4 md:px-6 text-center">
+            <h2 class="text-3xl md:text-4xl font-extrabold mb-4">Nuestro Sello: La <span class="text-sky-400">Metodología ISA</span></h2>
+            <p class="text-slate-400 max-w-2xl mx-auto mb-12">No enseñamos teoría vacía. Preparamos a nuestros estudiantes para la realidad laboral a través de tres pilares innegociables.</p>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="bg-slate-800 p-8 rounded-2xl border border-slate-700">
+                    <div class="text-5xl font-extrabold text-sky-400 mb-4">I</div>
+                    <h3 class="text-xl font-bold mb-2">Inmersión</h3>
+                    <p class="text-slate-400 text-sm">Escenarios reales desde el primer día. El idioma y las habilidades se viven, no solo se memorizan.</p>
+                </div>
+                <div class="bg-slate-800 p-8 rounded-2xl border border-slate-700">
+                    <div class="text-5xl font-extrabold text-sky-400 mb-4">S</div>
+                    <h3 class="text-xl font-bold mb-2">Simulación</h3>
+                    <p class="text-slate-400 text-sm">Role-play, software real y casos de estudio para que el alumno viva el entorno profesional antes de entrar a él.</p>
+                </div>
+                <div class="bg-slate-800 p-8 rounded-2xl border border-slate-700">
+                    <div class="text-5xl font-extrabold text-sky-400 mb-4">A</div>
+                    <h3 class="text-xl font-bold mb-2">Aplicación</h3>
+                    <p class="text-slate-400 text-sm">Proyectos finales tangibles y portafolios de evidencias que demuestran competencias reales a empleadores.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- FOOTER -->
+    <!-- ========================================== -->
+    <footer class="bg-slate-950 text-slate-400 py-16 border-t border-slate-800">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="grid md:grid-cols-4 gap-10 mb-12">
+                <div class="md:col-span-2">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fa-solid fa-layer-group text-2xl text-sky-500"></i>
+                        <span class="text-xl font-extrabold text-white">GRUPO <span class="text-rose-500">TALENTH</span></span>
+                    </div>
+                    <p class="text-sm leading-relaxed mb-6 max-w-md">
+                        Ecosistema educativo de EMAGES GROUP dedicado a la formación práctica empresarial, tecnológica y artística. Construyendo el futuro de Latinoamérica, un talento a la vez.
+                    </p>
+                    <div class="flex space-x-3">
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-sky-500 hover:text-white transition"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-rose-500 hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-slate-700 hover:text-white transition"><i class="fa-brands fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-bold mb-4 text-lg">Programas</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="#becas" class="hover:text-sky-400 transition">Callao con Futuro (Becas)</a></li>
+                        <li><a href="#virtual" class="hover:text-sky-400 transition">Inglés Virtual Nacional</a></li>
+                        <li><a href="#" class="hover:text-sky-400 transition">Próximamente: Piura y Arequipa</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-4 text-lg">Contacto</h4>
+                    <ul class="space-y-4 text-sm">
+                        <li class="flex items-center gap-3">
+                            <i class="fa-solid fa-envelope text-rose-500"></i> 
+                            <a href="mailto:hola@grupotalenth.com" class="hover:text-white transition">hola@grupotalenth.com</a>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fa-brands fa-whatsapp text-rose-500"></i> 
+                            <span>+51 999 999 999</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-location-dot mt-1 text-rose-500"></i> 
+                            <span>Callao, Perú<br>(Sede Piloto)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- DISCLAIMER LEGAL -->
+            <div class="border-t border-slate-800 pt-8 text-center text-xs text-slate-500">
+                <p class="mb-2">&copy; 2026 Grupo Talenth (EMAGES GROUP). Todos los derechos reservados.</p>
+                <p class="max-w-4xl mx-auto leading-relaxed">
+                    Los programas educativos y becas ofrecidos son iniciativas privadas de responsabilidad social y desarrollo de talento, gestionadas íntegramente por EMAGES GROUP. No guardan relación, vínculo ni patrocinio con el Estado Peruano o el Ministerio de Educación (MINEDU).
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========================================== -->
+    <!-- BOTÓN FLOTANTE DE WHATSAPP -->
+    <!-- ========================================== -->
+    <a href="https://wa.me/51999999999?text=Hola%20Grupo%20Talenth,%20quiero%20información%20sobre%20sus%20programas" target="_blank" class="fixed bottom-6 right-6 bg-green-500 text-white w-16 h-16 rounded-full shadow-2xl hover:bg-green-600 transition z-50 flex items-center justify-center hover:scale-110 duration-300 border-4 border-white">
+        <i class="fa-brands fa-whatsapp text-3xl"></i>
+    </a>
 
 </body>
 </html>
