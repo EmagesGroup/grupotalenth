@@ -1,0 +1,452 @@
+<!DOCTYPE html> 
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EMAGES GROUP</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+:root{
+--primary:#0F1C2E;
+--primary-deep:#0A1422;
+--accent:#F39C12;
+--accent-soft:#E67E22;
+--light:#F5F7FA;
+--text-soft:#6B7280;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+scroll-behavior:smooth;
+}
+
+body{
+background:#ffffff;
+color:#1F2937;
+line-height:1.6;
+overflow-x:hidden;
+}
+
+/* HEADER */
+
+header{
+position:fixed;
+width:100%;
+top:0;
+background:rgba(255,255,255,0.96);
+backdrop-filter:blur(14px);
+padding:18px 8%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+z-index:1000;
+box-shadow:0 4px 30px rgba(0,0,0,0.04);
+}
+
+header h1{
+color:var(--primary);
+font-size:18px;
+font-weight:700;
+letter-spacing:1.5px;
+}
+
+nav a{
+color:#374151;
+text-decoration:none;
+margin-left:28px;
+font-size:14px;
+font-weight:500;
+position:relative;
+transition:0.3s ease;
+}
+
+nav a::after{
+content:"";
+position:absolute;
+bottom:-6px;
+left:0;
+width:0;
+height:2px;
+background:var(--accent);
+transition:0.3s ease;
+}
+
+nav a:hover{
+color:var(--primary);
+}
+
+nav a:hover::after{
+width:100%;
+}
+
+.lang-btn{
+margin-left:25px;
+cursor:pointer;
+font-size:13px;
+color:var(--primary);
+font-weight:600;
+}
+
+/* HERO */
+
+.hero{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+padding:0 10%;
+color:#fff;
+background:
+linear-gradient(rgba(10,20,34,0.85),rgba(15,28,46,0.85)),
+url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070');
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
+}
+
+.hero h2{
+font-size:52px;
+font-weight:600;
+max-width:900px;
+line-height:1.2;
+}
+
+.hero span{
+display:block;
+font-weight:300;
+font-size:19px;
+margin-top:25px;
+opacity:0.9;
+}
+
+/* BOTONES */
+
+.btn{
+padding:15px 36px;
+border-radius:40px;
+border:none;
+cursor:pointer;
+font-size:14px;
+font-weight:600;
+margin-top:40px;
+transition:all 0.4s ease;
+letter-spacing:0.5px;
+}
+
+.btn-primary{
+background:var(--accent);
+color:#fff;
+box-shadow:0 12px 35px rgba(243,156,18,0.35);
+}
+
+.btn-primary:hover{
+background:var(--accent-soft);
+transform:translateY(-4px);
+}
+
+/* SECTIONS */
+
+section{
+padding:120px 8%;
+}
+
+.section-title{
+text-align:center;
+margin-bottom:80px;
+font-size:34px;
+font-weight:600;
+color:var(--primary);
+}
+
+/* GRID */
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:40px;
+}
+
+/* CARDS */
+
+.card{
+padding:45px;
+border-radius:26px;
+background:#ffffff;
+box-shadow:0 20px 60px rgba(0,0,0,0.05);
+transition:all 0.6s cubic-bezier(.19,1,.22,1);
+opacity:0;
+transform:translateY(40px);
+}
+
+.card.visible{
+opacity:1;
+transform:translateY(0);
+}
+
+.card:hover{
+transform:translateY(-12px);
+box-shadow:0 30px 80px rgba(0,0,0,0.08);
+}
+
+.card h3{
+margin-top:22px;
+font-size:19px;
+color:var(--primary);
+}
+
+.card p{
+font-size:14px;
+margin-top:14px;
+color:var(--text-soft);
+}
+
+.icon{
+width:46px;
+height:46px;
+stroke-width:1.5;
+color:var(--accent);
+}
+
+/* CONTACTO */
+
+.contacto{
+text-align:center;
+background:var(--light);
+}
+
+.contacto h3{
+font-size:36px;
+color:var(--primary);
+margin-bottom:25px;
+}
+
+.contacto p{
+max-width:750px;
+margin:0 auto 35px;
+color:var(--text-soft);
+font-size:15px;
+}
+
+/* WHATSAPP */
+
+.btn-whatsapp{
+display:inline-block;
+background:#25D366;
+color:#fff !important;
+padding:16px 40px;
+border-radius:50px;
+font-size:15px;
+font-weight:600;
+text-decoration:none;
+transition:0.3s ease;
+box-shadow:0 10px 30px rgba(37,211,102,0.35);
+}
+
+.btn-whatsapp:hover{
+background:#1ebe5d;
+transform:translateY(-4px);
+}
+
+/* FOOTER */
+
+footer{
+background:linear-gradient(135deg,var(--primary),var(--primary-deep));
+color:#fff;
+padding:90px 8%;
+}
+
+footer a{
+display:block;
+color:#ffffff;
+text-decoration:none;
+margin-bottom:10px;
+transition:0.3s ease;
+}
+
+footer a:hover{
+color:var(--accent);
+transform:translateX(6px);
+}
+
+footer h4{
+margin-bottom:25px;
+color:var(--accent);
+}
+
+footer h3{
+margin-bottom:20px;
+}
+
+footer p{
+font-size:14px;
+opacity:0.85;
+}
+
+/* ANIMATION */
+
+.card{
+animation:fadeUp 0.8s ease forwards;
+}
+
+@keyframes fadeUp{
+from{opacity:0; transform:translateY(30px);}
+to{opacity:1; transform:translateY(0);}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>EMAGES GROUP</h1>
+<nav>
+<a href="#divisiones">Divisiones</a>
+<a href="#contacto">Contacto</a>
+<span class="lang-btn" onclick="toggleLang()">ES / EN</span>
+</nav>
+</header>
+
+<section class="hero">
+<h2 id="hero-title">
+Estrategia · Talento · Tecnología<br>
+para Organizaciones en Evolución.
+<span>
+Holding empresarial que integra educación, talento, marketing, comercio y gestión corporativa.
+</span>
+</h2>
+<button class="btn btn-primary" onclick="document.getElementById('divisiones').scrollIntoView({behavior:'smooth'})">
+Explorar Divisiones
+</button>
+</section>
+
+<section id="divisiones">
+<h2 class="section-title">Divisiones Estratégicas</h2>
+<div class="grid">
+
+<div class="card">
+<i data-lucide="graduation-cap" class="icon"></i>
+<h3>EMAGES Academy</h3>
+<p>Educación ejecutiva, capacitación y formación profesional.</p>
+</div>
+
+<div class="card">
+<i data-lucide="sparkles" class="icon"></i>
+<h3>EMAGES Modeling</h3>
+<p>Modelaje, imagen y representación de talento profesional.</p>
+</div>
+
+<div class="card">
+<i data-lucide="palette" class="icon"></i>
+<h3>EMAGES Marketing</h3>
+<p>Estrategia de marca, publicidad y posicionamiento digital.</p>
+</div>
+
+<div class="card">
+<i data-lucide="shopping-cart" class="icon"></i>
+<h3>EMAGES Commerce</h3>
+<p>Comercialización, importaciones y expansión empresarial.</p>
+</div>
+
+<div class="card">
+<i data-lucide="calculator" class="icon"></i>
+<h3>EMAGES Consulting</h3>
+<p>Gestión contable, planillas y administración financiera.</p>
+</div>
+
+<div class="card">
+<i data-lucide="users" class="icon"></i>
+<h3>EMAGES Human Capital</h3>
+<p>Reclutamiento, selección y evaluación de talento humano.</p>
+</div>
+
+</div>
+</section>
+
+<section class="contacto" id="contacto">
+<h3>Construyamos el crecimiento estratégico de tu organización</h3>
+<p>
+Agenda una conversación con nuestro equipo y diseñemos una estrategia sólida, medible y orientada a resultados.
+</p>
+
+<a class="btn-whatsapp"
+href="https://wa.me/51930175586?text=Hola%20EMAGES%20GROUP,%20deseo%20solicitar%20información%20y%20una%20asesoría."
+target="_blank">
+Solicitar Asesoría por WhatsApp
+</a>
+
+</section>
+
+<footer>
+
+<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:50px; max-width:1200px; margin:auto;">
+    
+<div>
+<h3>EMAGES GROUP</h3>
+<p>
+EMAGES GROUP es un grupo empresarial enfocado en soluciones integrales en educación, talento, marketing, comercio y gestión corporativa.
+</p>
+<p style="margin-top:15px; font-size:14px;">
+✉️ <a href="mailto:hola@emagesgroup.com" style="color:#F39C12; text-decoration:none;">hola@emagesgroup.com</a><br>
+</p>
+
+</div>
+
+<div>
+<h4>Nuestras Áreas</h4>
+<a href="https://academy.emagesgroup.com">EMAGES Academy</a>
+<a href="#">EMAGES Modeling</a>
+<a href="#">EMAGES Marketing</a>
+<a href="#">EMAGES Commerce</a>
+<a href="#">EMAGES Consulting</a>
+</div>
+
+<div>
+<h4>Nuestros Valores</h4>
+<a href="#">Excelencia</a>
+<a href="#">Confidencialidad</a>
+<a href="#">Responsabilidad</a>
+<a href="#">Confianza</a>
+</div>
+
+<div>
+<h4>Síguenos</h4>
+<a href="https://www.facebook.com/emagesgroup.pe">Facebook</a>
+<a href="https://www.linkedin.com/company/emagesgroup">LinkedIn</a>
+<a href="https://www.tiktok.com/@emagesgroup">TikTok</a>
+<a href="https://www.youtube.com/@EmagesGroup">YouTube</a>
+</div>
+
+</div>
+
+<div style="text-align:center; margin-top:60px; font-size:13px; opacity:0.6;">
+EMAGES GROUP | Soluciones Integrales Empresariales © 2026 – Todos los derechos reservados
+</div>
+
+</footer>
+
+<script>
+lucide.createIcons();
+let currentLang="es";
+function toggleLang(){
+if(currentLang==="es"){
+document.getElementById("hero-title").innerHTML=
+"Strategy · Talent · Technology<br>for Evolving Organizations.<span>Business holding integrating education, talent, marketing, trade and corporate management.</span>";
+currentLang="en";
+}else{
+document.getElementById("hero-title").innerHTML=
+"Estrategia · Talento · Tecnología<br>para Organizaciones en Evolución.<span>Holding empresarial que integra educación, talento, marketing, comercio y gestión corporativa.</span>";
+currentLang="es";
+}
+}
+</script>
+
+</body>
+</html>
