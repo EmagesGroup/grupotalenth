@@ -1,0 +1,12 @@
+{
+  "name": "Campus Grupo Talenth",
+  "short_name": "Talenth",
+  "description": "Gestión académica: facultades, ciclos, asistencia, FUT, pagos, captación e indicadores.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#eef4f9",
+  "theme_color": "#071a2c",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
