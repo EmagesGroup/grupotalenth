@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Campus Grupo Talenth · Plataforma Académica v1.3</title>
+<meta name="description" content="Plataforma de gestión académica de Grupo Talenth: administración, docentes y estudiantes. Asistencia, notas, FUT, becas y aula invertida.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<style>
+:root{
+  --ink:#0a1b2e; --deep:#0e2a44; --ocean:#0e3a5c; --primary:#0a84ff; --sky:#38bdf8;
+  --accent:#f43f5e; --accent-2:#e11d48; --amber:#ffb020; --green:#16a34a; --red:#e5484d;
+  --violet:#8b5cf6; --teal:#14b8a6; --sand:#fff7ea; --paper:#eef2f6; --surface:#ffffff;
+  --line:#dbe4ee; --muted:#5b7186; --text:#12283c;
+  --grad-hero:linear-gradient(135deg,#0a1b2e 0%,#0e3a5c 45%,#0a84ff 120%);
+  --grad-accent:linear-gradient(120deg,#f43f5e,#ff7a45);
+  --grad-cool:linear-gradient(120deg,#0a84ff,#14b8a6);
+  --shadow:0 10px 30px rgba(10,27,46,.10); --shadow-lg:0 24px 60px rgba(10,27,46,.18);
+  --r:16px; --r-sm:10px; --nav-h:64px; --side-w:248px;
+  --font-d:"Space Grotesk",system-ui,sans-serif; --font-b:"Inter",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-b);background:var(--paper);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(700px 340px at 90% -60px,rgba(10,132,255,.10),transparent 60%),
+             radial-gradient(560px 300px at -80px 40%,rgba(244,63,94,.07),transparent 60%),
+             radial-gradient(420px 260px at 60% 110%,rgba(20,184,166,.07),transparent 60%);}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--paper)}
+::-webkit-scrollbar-thumb{background:linear-gradient(var(--ocean),var(--primary));border-radius:8px;border:2px solid var(--paper)}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+h1,h2,h3,h4,.display{font-family:var(--font-d);letter-spacing:-.01em}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:14px;color:var(--text)}
+a{color:var(--primary);text-decoration:none}
+.ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic.lg{width:24px;height:24px}.ic.xl{width:32px;height:32px}
+/* ---------- shell ---------- */
+#app{position:relative;z-index:1;min-height:100vh}
+.topbar{position:fixed;top:0;left:0;right:0;height:var(--nav-h);z-index:60;display:flex;align-items:center;gap:14px;padding:0 18px;
+  background:rgba(10,27,46,.92);backdrop-filter:blur(12px);color:#fff;border-bottom:1px solid rgba(56,189,248,.25)}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--font-d);font-weight:700;font-size:17px;white-space:nowrap}
+.brand .mark{width:36px;height:36px;border-radius:10px;background:var(--grad-accent);display:grid;place-items:center;box-shadow:0 6px 18px rgba(244,63,94,.4)}
+.brand small{display:block;font-size:10px;font-weight:500;color:var(--sky);letter-spacing:.14em;text-transform:uppercase}
+.role-switch{margin-left:auto;display:flex;gap:4px;background:rgba(255,255,255,.08);padding:4px;border-radius:12px}
+.role-switch button{border:0;background:transparent;color:#bcd3e8;padding:7px 12px;border-radius:9px;font-weight:600;font-size:12px;display:flex;gap:6px;align-items:center}
+.role-switch button.on{background:var(--grad-cool);color:#fff;box-shadow:0 4px 14px rgba(10,132,255,.4)}
+.persona{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:9px;padding:6px 8px;font-size:12px;max-width:170px}
+.persona option{color:var(--text)}
+.bell{position:relative;border:0;background:rgba(255,255,255,.1);color:#fff;width:38px;height:38px;border-radius:10px;display:grid;place-items:center}
+.bell .dot{position:absolute;top:6px;right:6px;width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px rgba(244,63,94,.3)}
+.layout{display:flex;padding-top:var(--nav-h)}
+.sidebar{position:fixed;top:var(--nav-h);bottom:0;left:0;width:var(--side-w);background:var(--grad-hero);color:#cfe1f4;padding:18px 12px;overflow-y:auto;z-index:50}
+.sidebar::-webkit-scrollbar-track{background:transparent}
+.sidebar::-webkit-scrollbar-thumb{border-color:transparent;background:rgba(56,189,248,.4)}
+.side-label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#7fa6c8;padding:10px 12px 6px}
+.side-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:11px;color:#cfe1f4;font-weight:600;font-size:13px;margin-bottom:2px;border:1px solid transparent}
+.side-link:hover{background:rgba(255,255,255,.07);color:#fff}
+.side-link.on{background:rgba(10,132,255,.25);border-color:rgba(56,189,248,.4);color:#fff;box-shadow:inset 3px 0 0 var(--sky)}
+.side-link .count{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;font-weight:800;border-radius:20px;padding:2px 7px}
+.side-card{margin:14px 10px;padding:14px;border-radius:14px;background:rgba(255,255,255,.07);border:1px solid rgba(56,189,248,.25);font-size:12px}
+.side-card b{color:#fff}
+.main{margin-left:var(--side-w);flex:1;min-width:0;padding:24px 26px 90px}
+.view-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.view-head h1{font-size:26px;color:var(--ink)}
+.view-head .sub{color:var(--muted);font-size:13px;margin-top:2px}
+.head-actions{display:flex;gap:8px;flex-wrap:wrap}
+/* ---------- components ---------- */
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:11px;padding:10px 16px;font-weight:700;font-size:13px;transition:.18s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn-p{background:var(--grad-accent);color:#fff;box-shadow:0 8px 20px rgba(244,63,94,.3)}
+.btn-p:hover{filter:brightness(1.08)}
+.btn-b{background:var(--grad-cool);color:#fff;box-shadow:0 8px 20px rgba(10,132,255,.28)}
+.btn-b:hover{filter:brightness(1.08)}
+.btn-g{background:var(--surface);color:var(--text);border:1px solid var(--line)}
+.btn-g:hover{border-color:var(--primary);color:var(--primary)}
+.btn-d{background:rgba(229,72,77,.1);color:var(--red);border:1px solid rgba(229,72,77,.3)}
+.btn-ok{background:rgba(22,163,74,.12);color:var(--green);border:1px solid rgba(22,163,74,.35)}
+.btn-sm{padding:7px 11px;font-size:12px;border-radius:9px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:18px;position:relative;overflow:hidden}
+.card.hover{transition:.2s}.card.hover:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.card .stripe{position:absolute;top:0;left:0;right:0;height:4px}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.kpi{display:flex;gap:14px;align-items:center}
+.kpi .ico{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;color:#fff;flex:none}
+.kpi .num{font-family:var(--font-d);font-size:26px;font-weight:700;color:var(--ink);line-height:1.1}
+.kpi .lbl{font-size:12px;color:var(--muted);font-weight:600}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;border-radius:20px;padding:3px 10px;letter-spacing:.02em}
+.b-P{background:rgba(22,163,74,.13);color:var(--green)} .b-T{background:rgba(255,176,32,.16);color:#b26a00}
+.b-F{background:rgba(229,72,77,.13);color:var(--red)} .b-J{background:rgba(139,92,246,.14);color:var(--violet)}
+.b-C{background:rgba(20,184,166,.14);color:#0f766e}
+.b-blue{background:rgba(10,132,255,.12);color:var(--primary)} .b-rose{background:rgba(244,63,94,.12);color:var(--accent-2)}
+.b-gray{background:#e8eef5;color:var(--muted)} .b-amber{background:rgba(255,176,32,.16);color:#b26a00}
+.b-green{background:rgba(22,163,74,.13);color:var(--green)} .b-red{background:rgba(229,72,77,.13);color:var(--red)}
+.b-violet{background:rgba(139,92,246,.14);color:var(--violet)} .b-teal{background:rgba(20,184,166,.14);color:#0f766e}
+.table-wrap{overflow:auto;border-radius:var(--r);border:1px solid var(--line);background:var(--surface);box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;min-width:640px}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;padding:12px 14px;background:#f6f9fc;border-bottom:1px solid var(--line);cursor:pointer;user-select:none;white-space:nowrap}
+th:hover{color:var(--primary)}
+td{padding:12px 14px;border-bottom:1px solid #edf2f8;font-size:13px;vertical-align:middle}
+tr:last-child td{border-bottom:0}
+tbody tr{transition:.15s}tbody tr:hover{background:#f4f9ff}
+.avatar{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:13px;flex:none}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.search{position:relative;flex:1;min-width:200px}
+.search .ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.search input{width:100%;padding:10px 12px 10px 38px;border-radius:11px;border:1px solid var(--line);background:var(--surface)}
+.search input:focus,.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid rgba(10,132,255,.35);border-color:var(--primary)}
+select.ctl,input.ctl{padding:9px 12px;border-radius:11px;border:1px solid var(--line);background:var(--surface);font-weight:600}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#fbfdff}
+.field textarea{min-height:74px;resize:vertical}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.check{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;color:var(--text);background:var(--sand);border:1px solid #f0e2c8;border-radius:11px;padding:11px}
+.check input{margin-top:2px;accent-color:var(--accent)}
+.ring{position:relative;width:96px;height:96px;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .val{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--font-d);font-weight:700;font-size:20px;color:var(--ink)}
+.chips{display:grid;grid-template-columns:repeat(8,1fr);gap:7px}
+.chip-s{aspect-ratio:1;border-radius:9px;display:grid;place-items:center;font-weight:800;font-size:12px;color:#fff;cursor:default;transition:.15s}
+.chip-s:hover{transform:scale(1.08)}
+.chip-s.P{background:var(--green)}.chip-s.T{background:var(--amber)}.chip-s.F{background:var(--red)}
+.chip-s.J{background:var(--violet)}.chip-s.C{background:var(--teal)}.chip-s.x{background:#e3eaf2;color:var(--muted)}
+.timeline{display:flex;flex-direction:column;gap:10px}
+.tl-item{display:flex;gap:14px;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:var(--shadow);transition:.2s}
+.tl-item:hover{transform:translateX(3px)}
+.tl-item.live{background:var(--grad-hero);color:#fff;border-color:transparent}
+.tl-item.live .tl-sub{color:#bcd3e8}
+.tl-time{font-family:var(--font-d);font-weight:700;font-size:15px;width:64px;flex:none;display:flex;flex-direction:column;justify-content:center}
+.tl-time small{font-size:11px;color:var(--muted);font-weight:600}
+.tl-item.live .tl-time small{color:#9fc3e4}
+.tl-body{flex:1;min-width:0}
+.tl-title{font-weight:700;font-size:14.5px}
+.tl-sub{font-size:12px;color:var(--muted)}
+.tabs{display:flex;gap:4px;background:#e6edf5;padding:4px;border-radius:12px;width:max-content;max-width:100%;overflow:auto}
+.tabs button{border:0;background:transparent;padding:8px 16px;border-radius:9px;font-weight:700;font-size:13px;color:var(--muted)}
+.tabs button.on{background:var(--surface);color:var(--ink);box-shadow:0 3px 10px rgba(10,27,46,.12)}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:16px 12px;text-align:center;cursor:pointer;transition:.2s;box-shadow:var(--shadow)}
+.tile:hover{transform:translateY(-3px);border-color:var(--primary)}
+.tile.drag{opacity:.4}
+.tile .t-ico{width:46px;height:46px;margin:0 auto 9px;border-radius:13px;display:grid;place-items:center;color:#fff}
+.tile b{font-size:12.5px;display:block}
+.tile small{color:var(--muted);font-size:10.5px}
+.hero{background:var(--grad-hero);border-radius:20px;color:#fff;padding:24px;position:relative;overflow:hidden;margin-bottom:18px}
+.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(56,189,248,.35),transparent 70%)}
+.hero h2{font-size:22px;margin-bottom:4px}
+.hero p{color:#bcd3e8;font-size:13px;max-width:560px}
+.hero .pay-banner{margin-top:16px;display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:13px;padding:12px 14px;backdrop-filter:blur(6px)}
+.msg-item{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:12px;padding:13px;margin-bottom:10px}
+.msg-item.sent{border-left-color:var(--green);opacity:.75}
+.msg-item .m-txt{font-size:12.5px;white-space:pre-wrap}
+.msg-item .m-meta{font-size:11px;color:var(--muted);margin-top:4px}
+.player{background:var(--ink);border-radius:15px;overflow:hidden;color:#fff}
+.player .screen{aspect-ratio:16/9;display:grid;place-items:center;background:
+  radial-gradient(400px 200px at 30% 20%,rgba(10,132,255,.35),transparent),
+  radial-gradient(300px 180px at 80% 80%,rgba(244,63,94,.3),transparent),var(--ink);position:relative}
+.player .playbtn{width:64px;height:64px;border-radius:50%;border:0;background:var(--grad-accent);color:#fff;display:grid;place-items:center;box-shadow:0 10px 30px rgba(244,63,94,.5);transition:.2s}
+.player .playbtn:hover{transform:scale(1.08)}
+.player .bar{height:6px;background:rgba(255,255,255,.15)}
+.player .bar i{display:block;height:100%;background:var(--grad-cool);width:0;transition:width .3s linear}
+.player .p-meta{display:flex;justify-content:space-between;padding:10px 14px;font-size:12px;color:#bcd3e8}
+.quiz-q{background:#f6f9fc;border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.quiz-q b{display:block;margin-bottom:9px;font-size:13.5px}
+.opt{display:flex;gap:9px;align-items:center;padding:9px 11px;border-radius:9px;border:1px solid var(--line);background:#fff;margin-bottom:6px;cursor:pointer;font-size:13px;transition:.15s}
+.opt:hover{border-color:var(--primary)}
+.opt.sel{border-color:var(--primary);background:rgba(10,132,255,.08);font-weight:600}
+.opt.good{border-color:var(--green);background:rgba(22,163,74,.1)}
+.opt.bad{border-color:var(--red);background:rgba(229,72,77,.08)}
+/* ---------- modal / drawer / toast ---------- */
+.scrim{position:fixed;inset:0;background:rgba(10,27,46,.55);backdrop-filter:blur(4px);z-index:90;display:none;align-items:flex-start;justify-content:center;padding:5vh 16px;overflow:auto}
+.scrim.on{display:flex}
+.modal{background:var(--surface);border-radius:18px;max-width:640px;width:100%;box-shadow:var(--shadow-lg);animation:pop .22s ease}
+.modal.wide{max-width:860px}
+@keyframes pop{from{transform:translateY(14px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+.modal header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);background:var(--grad-hero);color:#fff;border-radius:18px 18px 0 0}
+.modal header h3{font-size:16px}
+.modal .m-body{padding:20px;max-height:66vh;overflow:auto}
+.modal footer{padding:14px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;background:#f8fafc;border-radius:0 0 18px 18px}
+.x-btn{border:0;background:rgba(255,255,255,.15);color:#fff;width:30px;height:30px;border-radius:9px;display:grid;place-items:center}
+.drawer-scrim{position:fixed;inset:0;background:rgba(10,27,46,.4);z-index:85;display:none}
+.drawer-scrim.on{display:block}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(480px,100%);background:var(--surface);z-index:86;box-shadow:var(--shadow-lg);transform:translateX(100%);transition:.28s ease;overflow-y:auto;padding:20px}
+.drawer.on{transform:none}
+.drawer h3{font-size:18px;color:var(--ink)}
+#toasts{position:fixed;right:18px;bottom:calc(var(--nav-h) + 14px);z-index:120;display:flex;flex-direction:column;gap:8px;max-width:360px}
+.toast{background:var(--ink);color:#fff;border-radius:12px;padding:12px 14px;font-size:13px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow-lg);border-left:4px solid var(--sky);animation:pop .25s ease}
+.toast.ok{border-left-color:var(--green)}.toast.err{border-left-color:var(--red)}.toast.warn{border-left-color:var(--amber)}
+.toast button{margin-left:auto;border:0;background:var(--grad-accent);color:#fff;border-radius:8px;padding:5px 10px;font-weight:700;font-size:12px}
+.bottomnav{display:none}
+.empty{padding:34px;text-align:center;color:var(--muted)}
+.empty .ic{width:40px;height:40px;margin-bottom:8px;color:#b6c6d8}
+.note{font-size:12px;color:var(--muted);background:#f4f8fc;border:1px dashed var(--line);border-radius:10px;padding:10px 12px}
+.cert{background:linear-gradient(160deg,#fffdf7,#fff);border:2px solid var(--amber);border-radius:18px;padding:26px;text-align:center;position:relative}
+.cert::before{content:"";position:absolute;inset:8px;border:1px solid rgba(255,176,32,.4);border-radius:12px;pointer-events:none}
+.cert h2{font-size:22px;color:var(--ink)}
+.cert .code{font-family:var(--font-d);letter-spacing:.12em;color:var(--accent-2);font-weight:700}
+.qr-box{display:inline-grid;place-items:center;background:#fff;padding:10px;border-radius:12px;border:1px solid var(--line)}
+.qr-box svg,.qr-box img{display:block;width:132px;height:132px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);font-weight:600}
+.legend i{width:11px;height:11px;border-radius:4px;display:inline-block;margin-right:5px;vertical-align:-1px}
+@media(max-width:1080px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:860px){
+  .sidebar{display:none}
+  .main{margin-left:0;padding:16px 14px 110px}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .frow{grid-template-columns:1fr}
+  .role-switch button span{display:none}
+  .persona{max-width:110px}
+  .brand small{display:none}
+  .bottomnav{display:flex;position:fixed;left:0;right:0;bottom:0;height:var(--nav-h);background:rgba(10,27,46,.96);backdrop-filter:blur(12px);z-index:70;justify-content:space-around;align-items:center;padding-bottom:env(safe-area-inset-bottom)}
+  .bottomnav a{display:flex;flex-direction:column;align-items:center;gap:3px;color:#8fb2d2;font-size:10px;font-weight:700;padding:6px 10px;border-radius:10px}
+  .bottomnav a.on{color:#fff;background:rgba(10,132,255,.3)}
+  #toasts{bottom:calc(var(--nav-h) + 10px);left:14px;right:14px;max-width:none}
+  .chips{grid-template-columns:repeat(4,1fr)}
+  .tiles{grid-template-columns:repeat(3,1fr)}
+  .view-head h1{font-size:21px}
+}
+@media print{.topbar,.sidebar,.bottomnav,.head-actions,#toasts{display:none!important}.main{margin:0;padding:0}body{background:#fff}}
+</style>
+</head>
+<body>
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+<symbol id="i-logo" viewBox="0 0 24 24"><path d="M12 3l7 8h-4v10H9V11H5l7-8z"/></symbol>
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v10a1 1 0 01-1 1h-5v-7h-6v7H4a1 1 0 01-1-1V11z"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.7-3.5 3.4-5.5 6.5-5.5s5.8 2 6.5 5.5M16 4.6a3.5 3.5 0 010 6.8M17.5 14.7c2.2.6 3.6 2.4 4 5.3"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 012-2h14v18H6a2 2 0 00-2 2V5z"/><path d="M4 19a2 2 0 012-2h14"/></symbol>
+<symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+<symbol id="i-cash" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 12h.01M18 12h.01"/></symbol>
+<symbol id="i-cert" viewBox="0 0 24 24"><circle cx="12" cy="9" r="5"/><path d="M9 13.5L7.5 21l4.5-2.5L16.5 21 15 13.5"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V4M4 20h16M8 16v-5M12 16V8M16 16v-3M20 16V6"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-8 8H4l2-3a8 8 0 1115-5z"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 9a6 6 0 1112 0c0 5 2 6 2 6H4s2-1 2-6M10 19a2 2 0 004 0"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></symbol>
+<symbol id="i-qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM20 14h1M14 20h1M20 20h1"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8V4z"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20l4-1L20 7l-3-3L5 16l-1 4z"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6M14 11v6"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+<symbol id="i-down" viewBox="0 0 24 24"><path d="M12 3v12M6 11l6 6 6-6M4 21h16"/></symbol>
+<symbol id="i-up" viewBox="0 0 24 24"><path d="M12 21V9M6 13l6-6 6 6M4 3h16"/></symbol>
+<symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a5 5 0 007 0l3-3a5 5 0 00-7-7l-1.5 1.5M14 10a5 5 0 00-7 0l-3 3a5 5 0 007 7L12.5 19"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3l10 18H2L12 3zM12 10v4M12 17.5v.5"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+<symbol id="i-video" viewBox="0 0 24 24"><rect x="2" y="6" width="13" height="12" rx="2"/><path d="M15 10l7-4v12l-7-4"/></symbol>
+<symbol id="i-quiz" viewBox="0 0 24 24"><path d="M9 9a3 3 0 115 2.2c-.8.7-1.5 1.3-1.5 2.3M12.5 17v.5"/><circle cx="12" cy="12" r="9"/></symbol>
+<symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5l8-3z"/><path d="M9 12l2 2 4-4"/></symbol>
+<symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 7l10 7L22 7"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 3h4l2 5-2.5 1.5a12 12 0 006 6L16 13l5 2v4a2 2 0 01-2 2A17 17 0 013 5a2 2 0 012-2z"/></symbol>
+<symbol id="i-undo" viewBox="0 0 24 24"><path d="M8 5L3 10l5 5M3 10h11a7 7 0 010 14h-3"/></symbol>
+<symbol id="i-drag" viewBox="0 0 24 24"><path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-print" viewBox="0 0 24 24"><path d="M7 8V3h10v5M7 17H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-3"/><rect x="7" y="14" width="10" height="7"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></symbol>
+<symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h14l-3 4 3 4H5"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></symbol>
+<symbol id="i-fut" viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6V2z"/><path d="M15 2v5h5M9 12h6M9 16h6"/></symbol>
+</svg>
+
+<div id="app"></div>
+<div class="scrim" id="scrim"><div class="modal" id="modal"></div></div>
+<div class="drawer-scrim" id="dscrim"></div>
+<div class="drawer" id="drawer"></div>
+<div id="toasts"></div>
+
+<script>
+"use strict";
+/* ============================== HELPERS ============================== */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=p=>p+"-"+Math.random().toString(36).slice(2,8).toUpperCase();
+const pad=n=>String(n).padStart(2,"0");
+const dstr=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const today=()=>dstr(new Date());
+const addDays=(s,n)=>{const d=new Date(s+"T12:00:00");d.setDate(d.getDate()+n);return dstr(d)};
+const dow=s=>new Date(s+"T12:00:00").getDay();
+const DIAS=["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+const MESES=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+const fdate=s=>{const d=new Date(s+"T12:00:00");return DIAS[d.getDay()]+" "+d.getDate()+" "+MESES[d.getMonth()]};
+const fdateLong=s=>{const d=new Date(s+"T12:00:00");return d.getDate()+" de "+["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"][d.getMonth()]+" de "+d.getFullYear()};
+const money=n=>"S/ "+Number(n).toFixed(2);
+const nowMin=()=>{const d=new Date();return d.getHours()*60+d.getMinutes()};
+const toMin=t=>{const[a,b]=t.split(":").map(Number);return a*60+b};
+const ftime=t=>{let[h,m]=t.split(":").map(Number);const ap=h>=12?"pm":"am";h=h%12||12;return h+":"+pad(m)+" "+ap};
+const icon=(n,c="")=>`<svg class="ic ${c}"><use href="#i-${n}"/></svg>`;
+const initials=n=>n.split(" ").map(w=>w[0]).slice(0,2).join("").toUpperCase();
+const AVCOLORS=["#0a84ff","#f43f5e","#14b8a6","#8b5cf6","#ffb020","#16a34a","#e11d48","#0e3a5c"];
+const avcolor=s=>AVCOLORS[[...s].reduce((a,c)=>a+c.charCodeAt(0),0)%AVCOLORS.length];
+const avatar=(n,sz="")=>`<span class="avatar" style="background:${avcolor(n)};${sz}">${esc(initials(n))}</span>`;
+
+/* ============================== STORE ============================== */
+const KEY="gt-campus-v13";
+let S=null, ui={role:"admin",persona:"u-admin",student:"st-1",estQ:"",estFilter:"todos",estSort:"nombre",estDir:1,estView:null,tab:{},savedViews:[],tileOrder:null};
+let undoStack=null;
+
+function seed(){
+  const t=today(), dw=dow(t);
+  const lastSat=addDays(t,-((dw+1)%7));
+  const now=new Date(); const hiNow=pad(now.getHours())+":"+pad(Math.max(0,now.getMinutes()-5));
+  const hfNow=pad(Math.min(23,now.getHours()+2))+":"+pad(now.getMinutes());
+  const students=[
+    {id:"st-1",codigo:"GT-2026-001",nombres:"Valeria",apellidos:"Rojas Carmen",dni:"76543210",edad:15,canal1:"51911111111",canal2:"51922222222",tutor:{nombre:"Carmen Rojas",dni:"41234567",relacion:"Madre",telefono:"51922222222",email:"carmen.rojas@gmail.com"},consent:{version:"v1.3",ts:Date.now()-86400000*20,ip:"190.236.14.22",aceptado:true},beca:{tipo:"total",pct:100,ciclo:"2026-II"},estado:"activo"},
+    {id:"st-2",codigo:"GT-2026-002",nombres:"Diego",apellidos:"Ramos Silva",dni:"76543211",edad:17,canal1:"51911111112",canal2:"51922222223",tutor:{nombre:"Luis Ramos",dni:"41234568",relacion:"Padre",telefono:"51922222223",email:"luis.ramos@gmail.com"},consent:{version:"v1.3",ts:Date.now()-86400000*18,ip:"190.236.14.23",aceptado:true},beca:null,estado:"activo"},
+    {id:"st-3",codigo:"GT-2026-003",nombres:"Lucía",apellidos:"Fernández Prado",dni:"76543212",edad:16,canal1:"51911111113",canal2:"51922222224",tutor:{nombre:"María Prado",dni:"41234569",relacion:"Madre",telefono:"51922222224",email:"maria.prado@gmail.com"},consent:{version:"v1.3",ts:Date.now()-86400000*15,ip:"190.236.14.24",aceptado:true},beca:{tipo:"parcial",pct:50,ciclo:"2026-II"},estado:"activo"},
+    {id:"st-4",codigo:"GT-2026-004",nombres:"Marco",apellidos:"Pérez Giron",dni:"76543213",edad:24,canal1:"51911111114",canal2:"51911111114",tutor:null,consent:{version:"v1.3",ts:Date.now()-86400000*12,ip:"190.236.14.25",aceptado:true},beca:null,estado:"activo"},
+    {id:"st-5",codigo:"GT-2026-005",nombres:"Ana",apellidos:"Torres Vega",dni:"76543214",edad:19,canal1:"51911111115",canal2:"51922222226",tutor:null,consent:{version:"v1.3",ts:Date.now()-86400000*10,ip:"190.236.14.26",aceptado:true},beca:null,estado:"activo"},
+    {id:"st-6",codigo:"GT-2026-006",nombres:"José",apellidos:"Chávez Rojas",dni:"76543215",edad:14,canal1:"51911111116",canal2:"51922222227",tutor:{nombre:"Rosa Rojas",dni:"41234570",relacion:"Madre",telefono:"51922222227",email:"rosa.rojas@gmail.com"},consent:{version:"v1.3",ts:Date.now()-86400000*9,ip:"190.236.14.27",aceptado:true},beca:null,estado:"activo"},
+    {id:"st-7",codigo:"GT-2026-007",nombres:"Camila",apellidos:"Vega León",dni:"76543216",edad:18,canal1:"51911111117",canal2:"51911111117",tutor:null,consent:{version:"v1.3",ts:Date.now()-86400000*7,ip:"190.236.14.28",aceptado:true},beca:null,estado:"activo"},
+    {id:"st-8",codigo:"GT-2026-008",nombres:"Luis",apellidos:"Quispe Mamani",dni:"76543217",edad:16,canal1:"51911111118",canal2:"51922222229",tutor:{nombre:"Pedro Quispe",dni:"41234571",relacion:"Padre",telefono:"51922222229",email:"pedro.quispe@gmail.com"},consent:{version:"v1.3",ts:Date.now()-86400000*5,ip:"190.236.14.29",aceptado:true},beca:null,estado:"activo"}
+  ];
+  const courses=[
+    {id:"c-1",nombre:"Inglés Teens · Módulo A2",siglas:"TEENS-A2",modalidad:"Híbrido",color:"#0a84ff",libro:"Interchange 2 · Units 1–4"},
+    {id:"c-2",nombre:"Business English · Workplace",siglas:"BIZ-ENG",modalidad:"Virtual",color:"#8b5cf6",libro:"Market Leader · Pre-Intermediate"},
+    {id:"c-3",nombre:"Inglés Kids · Starters",siglas:"KIDS-ST",modalidad:"Presencial",color:"#ffb020",libro:"Super Minds 1"}
+  ];
+  const groups=[
+    {id:"g-1",courseId:"c-1",nombre:"Teens · Sábados A",docenteId:"u-doc1",sede:"Callao",dias:[6],hi:"08:00",hf:"10:00",fechaInicio:addDays(lastSat,-14),numSesiones:4,aula:"A-201"},
+    {id:"g-2",courseId:"c-1",nombre:"Teens · Mar-Jue B",docenteId:"u-doc1",sede:"Virtual",dias:[2,4],hi:hiNow,hf:hfNow,fechaInicio:addDays(t,-21),numSesiones:8,aula:"Teams"},
+    {id:"g-3",courseId:"c-2",nombre:"Business · Lun-Mie",docenteId:"u-doc2",sede:"Virtual",dias:[1,3],hi:"19:00",hf:"21:00",fechaInicio:addDays(t,-24),numSesiones:8,aula:"Teams"},
+    {id:"g-4",courseId:"c-3",nombre:"Kids · Sábados",docenteId:"u-doc1",sede:"Callao",dias:[6],hi:"10:00",hf:"12:00",fechaInicio:addDays(lastSat,-7),numSesiones:4,aula:"A-105"}
+  ];
+  const sessions=[];
+  groups.forEach(g=>{
+    let d=g.fechaInicio,n=0;
+    while(n<g.numSesiones){ if(g.dias.includes(dow(d))){ n++;
+      sessions.push({id:"se-"+g.id+"-"+n,groupId:g.id,n,fecha:d,hi:g.hi,hf:g.hf,estado:"programada",motivoC:null,cerradaEn:null,
+        video:{titulo:"News Clip · Unit "+n+" (noticiero en inglés)",duracion:240},
+        preQuiz:[{q:"What is the main topic of the news clip?",o:["Sports","Weather","Technology","Cooking"],a:2},{q:"Choose the correct past form: 'The reporter ___ live.'",o:["go","went","gone","going"],a:1},{q:"The word 'headline' means…",o:["titular","anuncio","resumen","entrevista"],a:0}],
+        postQuiz:[{q:"Which connector shows contrast?",o:["and","because","however","so"],a:2},{q:"'She has worked here ___ 2020.'",o:["since","for","from","at"],a:0},{q:"A polite request is…",o:["Give me that.","Could you help me?","You must.","Do it now."],a:1}],
+        resumen:"Vocabulary: headline, reporter, live, source. Grammar: past simple vs present perfect."});
+    } d=addDays(d,1);}
+  });
+  const enrollments=[
+    {id:"en-1",studentId:"st-1",groupId:"g-1",estado:"activa"},{id:"en-2",studentId:"st-1",groupId:"g-2",estado:"activa"},
+    {id:"en-3",studentId:"st-2",groupId:"g-2",estado:"activa"},{id:"en-4",studentId:"st-3",groupId:"g-1",estado:"activa"},
+    {id:"en-5",studentId:"st-4",groupId:"g-3",estado:"activa"},{id:"en-6",studentId:"st-5",groupId:"g-3",estado:"activa"},
+    {id:"en-7",studentId:"st-6",groupId:"g-4",estado:"activa"},{id:"en-8",studentId:"st-7",groupId:"g-3",estado:"activa"},
+    {id:"en-9",studentId:"st-8",groupId:"g-1",estado:"activa"},{id:"en-10",studentId:"st-8",groupId:"g-4",estado:"activa"}
+  ];
+  const attendance=[],activities=[];
+  sessions.forEach(se=>{
+    const g=groups.find(x=>x.id===se.groupId);
+    const past=se.fecha<t, isToday=se.fecha===t;
+    const enrolled=enrollments.filter(e=>e.groupId===g.id).map(e=>e.studentId);
+    if(past){
+      const holiday=(se.id==="se-g-1-2");
+      se.estado=holiday?"no_dictada":"cerrada"; se.motivoC=holiday?"Feriado nacional":null; se.cerradaEn=holiday?null:Date.now()-86400000*3;
+      enrolled.forEach((sid,i)=>{
+        if(holiday){attendance.push({id:uid("at"),sessionId:se.id,studentId:sid,estado:"C",nota:null,notaOrigen:null,checkin:null,history:[]});return;}
+        let est="P",nota=12+((i*3+se.n*2)%7),orig="clase";
+        if(sid==="st-2"&&se.n===2){est="F";nota=0;orig="ausencia";}
+        else if(sid==="st-1"&&se.n===1&&g.id==="g-1"){est="J";nota=0;orig="ausencia";}
+        else if((i+se.n)%5===0){est="T";}
+        attendance.push({id:uid("at"),sessionId:se.id,studentId:sid,estado:est,nota,notaOrigen:orig,checkin:est==="F"?null:{ts:Date.now()-86400000*3,metodo:g.sede==="Virtual"?"link":"qr"},history:[]});
+        activities.push({id:uid("ac"),sessionId:se.id,studentId:sid,pre:{visto:true,quizScore:17,completadoEn:Date.now()-86400000*4,tardio:false},post:{score:14+((i+se.n)%6),completadoEn:Date.now()-86400000*2}});
+      });
+    } else if(isToday){
+      enrolled.forEach(sid=>activities.push({id:uid("ac"),sessionId:se.id,studentId:sid,pre:{visto:sid!=="st-2",quizScore:sid!=="st-2"?16:null,completadoEn:sid!=="st-2"?Date.now()-3600000:null,tardio:false},post:{score:null,completadoEn:null}}));
+    } else {
+      enrolled.forEach(sid=>activities.push({id:uid("ac"),sessionId:se.id,studentId:sid,pre:{visto:false,quizScore:null,completadoEn:null,tardio:false},post:{score:null,completadoEn:null}}));
+    }
+  });
+  const futs=[
+    {id:"f-1",codigo:"GT-FUT-2026-000101",studentId:"st-2",tipo:"revision",sessionId:"se-g-2-2",detalle:"Solicito revisión de nota por inasistencia registrada erróneamente.",sustento:"Constancia de atención médica adjunta.",arancel:12,estado:"conforme",creadoEn:Date.now()-86400000*2,conformeEn:Date.now()-86400000,usadoEn:null},
+    {id:"f-2",codigo:"GT-FUT-2026-000102",studentId:"st-1",tipo:"justificacion",sessionId:"se-g-1-1",detalle:"Justificación de falta por motivo de salud.",sustento:"Certificado médico.",arancel:0,estado:"ejecutado",creadoEn:Date.now()-86400000*6,conformeEn:Date.now()-86400000*5,usadoEn:Date.now()-86400000*4},
+    {id:"f-3",codigo:"GT-FUT-2026-000103",studentId:"st-5",tipo:"cambio",sessionId:null,detalle:"Cambio de grupo por cruce laboral.",sustento:"",arancel:10,estado:"recibido",creadoEn:Date.now()-3600000*5,conformeEn:null,usadoEn:null}
+  ];
+  const payments=[];
+  enrollments.forEach((e,i)=>{
+    const st=students.find(s=>s.id===e.studentId);
+    const base=180; let monto=base,estado="pendiente",voucher=null;
+    if(st.beca){monto=st.beca.tipo==="total"?0:base*(1-st.beca.pct/100);estado="beca";}
+    else if(i%4===0){estado="vencido";}
+    else if(i%4===1){estado="pagado";voucher={nombre:"yape-"+i+".jpg",ts:Date.now()-86400000*2};}
+    else if(i%4===2){estado="por_vencer";}
+    payments.push({id:uid("py"),studentId:e.studentId,concepto:"mensualidad",refId:e.groupId,monto,vencimiento:addDays(t,estado==="vencido"?-4:6),estado,voucher,pagadoEn:estado==="pagado"?Date.now()-86400000*2:null});
+  });
+  payments.push({id:uid("py"),studentId:"st-2",concepto:"fut",refId:"f-1",monto:12,vencimiento:addDays(t,3),estado:"pagado",voucher:{nombre:"plin-fut.jpg",ts:Date.now()-86400000},pagadoEn:Date.now()-86400000});
+  payments.push({id:uid("py"),studentId:"st-5",concepto:"fut",refId:"f-3",monto:10,vencimiento:addDays(t,5),estado:"pendiente",voucher:null,pagadoEn:null});
+  const messages=[
+    {id:uid("ms"),evento:"cierre",studentId:"st-2",canal:"1",texto:"Hola Diego. Registramos FALTA y nota 0 en Inglés Teens (sesión del "+fdate(addDays(t,-5))+"). Regulariza vía FUT en administración.",estado:"enviado",generadoEn:Date.now()-86400000*5,enviadoEn:Date.now()-86400000*5+3600000,enviadoPor:"Isabel M."},
+    {id:uid("ms"),evento:"cierre",studentId:"st-2",canal:"2",texto:"Estimado tutor de Diego Ramos: se registró falta y nota 0 el "+fdate(addDays(t,-5))+". Código de regularización disponible en administración.",estado:"enviado",generadoEn:Date.now()-86400000*5,enviadoEn:Date.now()-86400000*5+3600000,enviadoPor:"Isabel M."}
+  ];
+  return {
+    config:{notifyNumber:"51999888777",aranceles:{justificacion:8,revision:12,rezagado:18,cambio:10,constancia:5},mora:0,cutoffHour:15,correction:"nextday",consentVersion:"v1.3"},
+    users:[{id:"u-admin",name:"Isabel Mendoza",role:"admin"},{id:"u-doc1",name:"Marco Rivera",role:"docente"},{id:"u-doc2",name:"Rocío Paredes",role:"docente"}],
+    students,courses,groups,sessions,enrollments,attendance,activities,futs,payments,messages,certificates:[],
+    audit:[{id:uid("au"),ts:Date.now()-86400000*4,user:"Isabel M.",accion:"FUT conforme",detalle:"GT-FUT-2026-000102 · justificación st-1"},{id:uid("au"),ts:Date.now()-86400000*3,user:"Marco R.",accion:"Cierre de sesión",detalle:"se-g-1-3 · 4 registros"}],
+    cutoffs:{},ui:{tileOrder:null}
+  };
+}
+function load(){try{const raw=localStorage.getItem(KEY);if(raw){S=JSON.parse(raw);return}}catch(e){} S=seed();save();}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function audit(accion,detalle){S.audit.unshift({id:uid("au"),ts:Date.now(),user:personaName(),accion,detalle});save();}
+function personaName(){if(ui.role==="admin")return "Isabel M.";if(ui.role==="docente")return (S.users.find(u=>u.id===ui.persona)||{}).name||"Docente";const st=S.students.find(s=>s.id===ui.student);return st?st.nombres+" "+st.apellidos:"Estudiante";}
+
+/* ============================== DOMAIN LOGIC ============================== */
+const student=id=>S.students.find(s=>s.id===id);
+const group=id=>S.groups.find(g=>g.id===id);
+const course=id=>S.courses.find(c=>c.id===id);
+const session=id=>S.sessions.find(s=>s.id===id);
+const futByCode=c=>S.futs.find(f=>f.codigo===String(c).trim().toUpperCase());
+const enrolledIn=(sid,gid)=>S.enrollments.some(e=>e.studentId===sid&&e.groupId===gid&&e.estado==="activa");
+const groupSessions=gid=>S.sessions.filter(s=>s.groupId===gid).sort((a,b)=>a.n-b.n);
+const attFor=(seid,sid)=>S.attendance.find(a=>a.sessionId===seid&&a.studentId===sid);
+const actFor=(seid,sid)=>S.activities.find(a=>a.sessionId===seid&&a.studentId===sid);
+function maxFaltas(g){return Math.floor(g.numSesiones*0.25)}
+function record(sid,gid){
+  const g=group(gid), ses=groupSessions(gid);
+  const rows=ses.map(se=>({se,at:attFor(se.id,sid)}));
+  const cerradas=rows.filter(r=>r.at&&r.se.estado!=="programada");
+  const faltas=cerradas.filter(r=>r.at.estado==="F").length;
+  const asist=cerradas.filter(r=>["P","T","J","C"].includes(r.at.estado)).length;
+  const pct=cerradas.length?Math.round(asist/cerradas.length*100):100;
+  const notas=cerradas.filter(r=>r.at.nota!=null).map(r=>r.at.nota);
+  const prom=notas.length?Math.round(notas.reduce((a,b)=>a+b,0)/notas.length*10)/10:null;
+  const deuda=S.payments.some(p=>p.studentId===sid&&["pendiente","por_vencer","vencido"].includes(p.estado));
+  const okF=faltas<=maxFaltas(g), okN=prom==null||prom>=11, okD=!deuda;
+  return {faltas,asist,pct,prom,deuda,okF,okN,okD,habilitado:okF&&okN&&okD,max:maxFaltas(g),total:g.numSesiones,cerradas:cerradas.length};
+}
+function conflict(sid,gid){
+  const g=group(gid);
+  for(const e of S.enrollments.filter(e=>e.studentId===sid&&e.estado==="activa"&&e.groupId!==gid)){
+    const o=group(e.groupId);
+    const sameDay=g.dias.some(d=>o.dias.includes(d));
+    const overlap=toMin(g.hi)<toMin(o.hf)&&toMin(o.hi)<toMin(g.hf);
+    const gEnd=addDays(g.fechaInicio,g.numSesiones*7), oEnd=addDays(o.fechaInicio,o.numSesiones*7);
+    const dateOverlap=g.fechaInicio<=oEnd&&o.fechaInicio<=gEnd;
+    if(sameDay&&overlap&&dateOverlap)return o;
+  }
+  return null;
+}
+function correctionOpen(se){const lim=addDays(se.fecha,1)+"T23:59:59";return new Date()<=new Date(lim);}
+function queueMsg(evento,sid,canal,texto){S.messages.unshift({id:uid("ms"),evento,studentId:sid,canal,texto,estado:"pendiente",generadoEn:Date.now(),enviadoEn:null,enviadoPor:null});}
+function waLink(m){const num=m.canal==="admin"?S.config.notifyNumber:(m.canal==="1"?student(m.studentId).canal1:student(m.studentId).canal2);return "https://wa.me/"+num+"?text="+encodeURIComponent(m.texto);}
+function runCutoff(force){
+  const t=today(), h=new Date().getHours();
+  if(!force&&(h<S.config.cutoffHour||S.cutoffs[t]))return 0;
+  let n=0;
+  S.sessions.filter(se=>se.fecha===addDays(t,1)&&se.estado==="programada").forEach(se=>{
+    S.enrollments.filter(e=>e.groupId===se.groupId).forEach(e=>{
+      const ac=actFor(se.id,e.studentId);
+      if(ac&&!ac.pre.completadoEn){const st=student(e.studentId);
+        queueMsg("corte",st.id,"1","Hola "+st.nombres+". Mañana "+ftime(se.hi)+" tienes clase y aún NO completas la actividad previa (video + pre-quiz). Complétala hoy para llegar preparado/a.");
+        if(st.tutor)queueMsg("corte",st.id,"2","Estimado tutor de "+st.nombres+": el/la estudiante no completó la actividad previa de mañana "+ftime(se.hi)+". Recordatorio de acompañamiento.");
+        n++;}
+    });
+    const doc=S.users.find(u=>u.id===group(se.groupId).docenteId);
+    const pend=S.enrollments.filter(e=>e.groupId===se.groupId).filter(e=>{const a=actFor(se.id,e.studentId);return a&&!a.pre.completadoEn}).map(e=>student(e.studentId).nombres);
+    if(pend.length)queueMsg("corte-doc",null,"admin","Resumen pre-clase "+group(se.groupId).nombre+" ("+fdate(se.fecha)+"): sin actividad → "+pend.join(", ")+".");
+  });
+  S.cutoffs[t]=true;save();return n;
+}
+function closeSession(seid){
+  const se=session(seid), g=group(seid?se.groupId:"");
+  se.estado="cerrada";se.cerradaEn=Date.now();
+  const enrolled=S.enrollments.filter(e=>e.groupId===se.groupId);
+  const resumen=[];
+  enrolled.forEach(e=>{
+    let at=attFor(seid,e.studentId);
+    if(!at){at={id:uid("at"),sessionId:seid,studentId:e.studentId,estado:"F",nota:0,notaOrigen:"ausencia",checkin:null,history:[]};S.attendance.push(at);}
+    if(at.estado==="F"){at.nota=0;at.notaOrigen="ausencia";
+      const st=student(e.studentId);
+      queueMsg("cierre",st.id,"1","Hola "+st.nombres+". Se registró FALTA y nota 0 en "+course(g.courseId).nombre+" (sesión "+fdate(se.fecha)+"). Puedes regularizar con un FUT en administración.");
+      if(st.tutor)queueMsg("cierre",st.id,"2","Estimado tutor de "+st.nombres+" "+st.apellidos+": falta y nota 0 registradas el "+fdate(se.fecha)+" en "+course(g.courseId).nombre+". Trámite FUT disponible.");
+      resumen.push(st.nombres+" "+st.apellidos+" (F / 0)");
+    }
+  });
+  if(resumen.length)queueMsg("cierre-admin",null,"admin","REPORTE DE FALTAS · "+g.nombre+" · "+fdate(se.fecha)+" → "+resumen.join("; ")+". Contactar para seguimiento FUT.");
+  audit("Cierre de sesión",se.id+" · "+resumen.length+" faltas notificadas");
+  save();
+}
+function validateFut(code,sid,seid,tipo){
+  const f=futByCode(code);
+  if(!f)return{ok:false,err:"El código FUT no existe en el sistema."};
+  if(f.studentId!==sid)return{ok:false,err:"El FUT pertenece a otro estudiante."};
+  if(seid&&f.sessionId&&f.sessionId!==seid)return{ok:false,err:"El FUT no corresponde a esta sesión."};
+  if(tipo&&f.tipo!==tipo)return{ok:false,err:"Tipo de trámite incompatible ("+f.tipo+")."};
+  if(f.estado!=="conforme")return{ok:false,err:"El FUT no está CONFORME (estado: "+f.estado+"). Administración debe validar el pago."};
+  if(f.usadoEn)return{ok:false,err:"El FUT ya fue ejecutado; un código = un cambio."};
+  if(f.conformeEn&&Date.now()-f.conformeEn>7*86400000)return{ok:false,err:"FUT vencido (vigencia 7 días desde conformidad)."};
+  return{ok:true,f};
+}
+
+/* ============================== UI PRIMITIVES ============================== */
+function toast(msg,type="ok",undoFn){
+  const t=document.createElement("div");t.className="toast "+type;
+  t.innerHTML=icon(type==="err"?"alert":type==="warn"?"clock":"check")+`<span>${esc(msg)}</span>`+(undoFn?`<button data-undo>DESHACER</button>`:"");
+  if(undoFn)t.querySelector("[data-undo]").onclick=()=>{undoFn();t.remove();render();};
+  $("#toasts").appendChild(t);setTimeout(()=>t.remove(),undoFn?7000:3800);
+}
+function openModal(title,body,footer,wide){$("#modal").className="modal"+(wide?" wide":"");$("#modal").innerHTML=`<header><h3>${title}</h3><button class="x-btn" data-action="close-modal">${icon("x")}</button></header><div class="m-body">${body}</div><footer>${footer||`<button class="btn btn-g" data-action="close-modal">Cerrar</button>`}</footer>`;$("#scrim").classList.add("on");}
+function closeModal(){$("#scrim").classList.remove("on");}
+function openDrawer(html){$("#drawer").innerHTML=html;$("#drawer").classList.add("on");$("#dscrim").classList.add("on");}
+function closeDrawer(){$("#drawer").classList.remove("on");$("#dscrim").classList.remove("on");}
+const badge=(txt,cls)=>`<span class="badge b-${cls}">${txt}</span>`;
+const attBadge=e=>({P:badge("Presente","P"),T:badge("Tardanza","T"),F:badge("Falta","F"),J:badge("Justificada","J"),C:badge("Cubierta","C")}[e]||badge("—","gray"));
+const payBadge=e=>({pendiente:badge("Pendiente","gray"),por_vencer:badge("Por vencer","amber"),vencido:badge("Vencido","red"),pagado:badge("Pagado","green"),beca:badge("Cubierto por beca","violet"),validacion:badge("En validación","blue")}[e]||badge(e,"gray"));
+const futBadge=e=>({recibido:badge("Recibido","gray"),evaluacion:badge("En evaluación","blue"),pago_pendiente:badge("Pago pendiente","amber"),conforme:badge("CONFORME","green"),ejecutado:badge("Ejecutado","violet"),rechazado:badge("Rechazado","red"),vencido:badge("Vencido","red")}[e]||badge(e,"gray"));
+function ring(pct,color,size=96){const r=(size/2)-8,c=2*Math.PI*r;return `<div class="ring" style="width:${size}px;height:${size}px"><svg width="${size}" height="${size}"><circle cx="${size/2}" cy="${size/2}" r="${r}" stroke="#e3eaf2" stroke-width="9" fill="none"/><circle cx="${size/2}" cy="${size/2}" r="${r}" stroke="${color}" stroke-width="9" fill="none" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-pct/100)}"/></svg><span class="val">${pct}%</span></div>`;}
+function qrSVG(text){
+  try{if(window.qrcode){const q=qrcode(0,"M");q.addData(text);q.make();const n=q.getModuleCount();let cells="";for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(q.isDark(r,c))cells+=`<rect x="${c}" y="${r}" width="1" height="1"/>`;return `<svg viewBox="0 0 ${n} ${n}" shape-rendering="crispEdges"><rect width="${n}" height="${n}" fill="#fff"/><g fill="#0a1b2e">${cells}</g></svg>`;}}catch(e){}
+  return `<div style="width:132px;height:132px;display:grid;place-items:center;background:#f4f8fc;border-radius:8px;font-size:10px;color:var(--muted);text-align:center;padding:8px">QR no disponible sin conexión.<br>Usa el código manual.</div>`;
+}
+const verifyURL=code=>location.origin+location.pathname+"#/verificar/"+code;
+
+/* ============================== SHELL ============================== */
+const NAV={
+ admin:[["home","Inicio","#/admin"],["users","Estudiantes","#/admin/estudiantes"],["book","Cursos y grupos","#/admin/cursos"],["cal","Sesiones","#/admin/sesiones"],["fut","Trámites FUT","#/admin/fut"],["cash","Pagos","#/admin/pagos"],["cert","Certificados","#/admin/certificados"],["chart","Reportes","#/admin/reportes"],["chat","Central de mensajes","#/admin/mensajes"],["gear","Configuración","#/admin/config"]],
+ docente:[["home","Hoy","#/docente"],["book","Mis grupos","#/docente/grupos"],["video","Actividades","#/docente/actividades"],["chat","Avisos","#/docente/avisos"]],
+ estudiante:[["home","Inicio","#/est"],["book","Mis cursos","#/est/cursos"],["cash","Pagos","#/est/pagos"],["bell","Alertas","#/est/alertas"],["card","Carnet","#/est/perfil"]]
+};
+function shell(content,route){
+  const pend=S.messages.filter(m=>m.estado==="pendiente").length;
+  const nav=NAV[ui.role];
+  const personaSel=ui.role==="docente"?`<select class="persona" data-action="persona">${S.users.filter(u=>u.role==="docente").map(u=>`<option value="${u.id}" ${u.id===ui.persona?"selected":""}>${esc(u.name)}</option>`).join("")}</select>`
+    :ui.role==="estudiante"?`<select class="persona" data-action="student-sel">${S.students.map(s=>`<option value="${s.id}" ${s.id===ui.student?"selected":""}>${esc(s.nombres)} ${esc(s.apellidos)}</option>`).join("")}</select>`:"";
+  const side=`<aside class="sidebar"><div class="side-label">${ui.role==="admin"?"Administración":ui.role==="docente"?"Docente":"Estudiante"}</div>
+    ${nav.map(n=>`<a class="side-link ${route.startsWith(n[2])?"on":""}" href="${n[2]}">${icon(n[0])}${n[1]}${n[0]==="chat"&&pend?`<span class="count">${pend}</span>`:""}</a>`).join("")}
+    <div class="side-card"><b>Programa Callao con Futuro</b><br>Una iniciativa de EMAGES GROUP · Metodología ISA.<br><span style="color:#7fa6c8">Notificaciones: +${esc(S.config.notifyNumber)}</span></div></aside>`;
+  const bottom=`<nav class="bottomnav">${nav.slice(0,5).map(n=>`<a href="${n[2]}" class="${route.startsWith(n[2])?"on":""}">${icon(n[0])}<span>${n[1].split(" ")[0]}</span></a>`).join("")}</nav>`;
+  $("#app").innerHTML=`<div class="topbar"><div class="brand"><span class="mark">${icon("logo")}</span><span>GRUPO TALENTH<small>Campus · v1.3</small></span></div>
+    <div class="role-switch">${[["admin","shield","Admin"],["docente","book","Docente"],["estudiante","users","Estudiante"]].map(r=>`<button data-action="role" data-role="${r[0]}" class="${ui.role===r[0]?"on":""}">${icon(r[1])}<span>${r[2]}</span></button>`).join("")}</div>
+    ${personaSel}<button class="bell" data-action="go-alerts">${icon("bell")}${pend?'<span class="dot"></span>':""}</button></div>
+    <div class="layout">${side}<main class="main" id="view">${content}</main></div>${bottom}`;
+}
+const head=(title,sub,actions="")=>`<div class="view-head"><div><h1>${title}</h1><div class="sub">${sub}</div></div><div class="head-actions">${actions}</div></div>`;
+
+/* ============================== ADMIN VIEWS ============================== */
+function vAdminDash(){
+  const pend=S.messages.filter(m=>m.estado==="pendiente").length;
+  const futPend=S.futs.filter(f=>["recibido","evaluacion","pago_pendiente"].includes(f.estado)).length;
+  const vouchers=S.payments.filter(p=>p.estado==="validacion").length;
+  const todaySes=S.sessions.filter(s=>s.fecha===today());
+  return head("Hola, Isabel 👋","Panel de control · "+fdateLong(today()),`<button class="btn btn-b" data-action="run-cutoff">${icon("clock")} Ejecutar corte 15:00</button><button class="btn btn-p" data-action="new-student">${icon("plus")} Nuevo estudiante</button>`)+
+  `<div class="grid g4" style="margin-bottom:16px">
+    <div class="card"><div class="kpi"><span class="ico" style="background:var(--grad-cool)">${icon("users","lg")}</span><div><div class="num">${S.students.length}</div><div class="lbl">Estudiantes activos</div></div></div></div>
+    <div class="card"><div class="kpi"><span class="ico" style="background:var(--grad-accent)">${icon("chat","lg")}</span><div><div class="num">${pend}</div><div class="lbl">Mensajes por enviar</div></div></div></div>
+    <div class="card"><div class="kpi"><span class="ico" style="background:linear-gradient(120deg,#8b5cf6,#f43f5e)">${icon("fut","lg")}</span><div><div class="num">${futPend}</div><div class="lbl">FUT en trámite</div></div></div></div>
+    <div class="card"><div class="kpi"><span class="ico" style="background:linear-gradient(120deg,#ffb020,#ff7a45)">${icon("cash","lg")}</span><div><div class="num">${vouchers}</div><div class="lbl">Vouchers por validar</div></div></div></div>
+  </div>
+  <div class="grid g2">
+    <div class="card"><div class="stripe" style="background:var(--grad-cool)"></div><h3 style="margin-bottom:12px">Sesiones de hoy</h3>
+      ${todaySes.length?`<div class="timeline">${todaySes.map(se=>{const g=group(se.groupId);return `<div class="tl-item ${se.estado==="en_curso"?"live":""}"><div class="tl-time">${ftime(se.hi)}<small>${ftime(se.hf)}</small></div><div class="tl-body"><div class="tl-title">${esc(course(g.courseId).nombre)}</div><div class="tl-sub">${esc(g.nombre)} · ${esc(g.aula)} · ${esc((S.users.find(u=>u.id===g.docenteId)||{}).name||"")}</div></div>${se.estado==="programada"?badge("Programada","gray"):se.estado==="en_curso"?badge("En curso","blue"):badge("Cerrada","green")}</div>`}).join("")}</div>`:`<div class="empty">${icon("cal")}<br>No hay sesiones programadas para hoy.</div>`}
+    </div>
+    <div class="card"><div class="stripe" style="background:var(--grad-accent)"></div><h3 style="margin-bottom:12px">Cola de mensajes reciente</h3>
+      ${S.messages.slice(0,4).map(m=>`<div class="msg-item ${m.estado==="enviado"?"sent":""}"><div style="flex:1"><div class="m-txt">${esc(m.texto.slice(0,110))}…</div><div class="m-meta">${m.canal==="admin"?"Interno":("Canal "+m.canal+" · "+esc(student(m.studentId)?.nombres||""))} · ${m.estado}</div></div>${m.estado==="pendiente"?`<a class="btn btn-ok btn-sm" target="_blank" href="${waLink(m)}">${icon("phone")} WhatsApp</a>`:""}</div>`).join("")||`<div class="empty">Sin mensajes.</div>`}
+      <a class="btn btn-g btn-sm" href="#/admin/mensajes">Abrir Central de Mensajes ${icon("arrow")}</a>
+    </div>
+  </div>`;
+}
+function estRows(){
+  let list=[...S.students];
+  if(ui.estQ){const q=ui.estQ.toLowerCase();list=list.filter(s=>(s.nombres+" "+s.apellidos+" "+s.codigo+" "+s.dni).toLowerCase().includes(q));}
+  if(ui.estFilter==="beca")list=list.filter(s=>s.beca);
+  if(ui.estFilter==="menor")list=list.filter(s=>s.edad<18);
+  if(ui.estFilter==="adulto")list=list.filter(s=>s.edad>=18);
+  list.sort((a,b)=>{const k=ui.estSort;const va=k==="nombre"?a.apellidos:a[k],vb=k==="nombre"?b.apellidos:b[k];return (va>vb?1:-1)*ui.estDir;});
+  return list;
+}
+function vAdminEst(){
+  const list=estRows();
+  return head("Estudiantes","Registro, consentimiento y canales de notificación",`<button class="btn btn-g" data-action="save-view">${icon("eye")} Guardar vista</button><button class="btn btn-p" data-action="new-student">${icon("plus")} Nuevo estudiante</button>`)+
+  `<div class="toolbar"><div class="search">${icon("search")}<input id="est-q" placeholder="Buscar por nombre, código o DNI…" value="${esc(ui.estQ)}"></div>
+   <select class="ctl" id="est-filter"><option value="todos" ${ui.estFilter==="todos"?"selected":""}>Todos</option><option value="beca" ${ui.estFilter==="beca"?"selected":""}>Becados</option><option value="menor" ${ui.estFilter==="menor"?"selected":""}>Menores (con tutor)</option><option value="adulto" ${ui.estFilter==="adulto"?"selected":""}>Adultos</option></select>
+   ${ui.savedViews.map((v,i)=>`<button class="btn btn-g btn-sm" data-action="apply-view" data-i="${i}">${esc(v.name)}</button>`).join("")}
+   <span style="margin-left:auto;color:var(--muted);font-size:12px;font-weight:700" id="est-count">${list.length} registros</span></div>
+  <div class="table-wrap"><table><thead><tr><th data-action="sort" data-k="codigo">Código ⇅</th><th data-action="sort" data-k="nombre">Estudiante ⇅</th><th>Edad</th><th>Tutor / Canal 2</th><th>Beca</th><th>Cursos</th><th></th></tr></thead><tbody id="est-tbody">${estBody(list)}</tbody></table></div>`;
+}
+function estBody(list){
+  return list.map(s=>{const n=S.enrollments.filter(e=>e.studentId===s.id&&e.estado==="activa").length;
+   return `<tr data-action="drawer-student" data-id="${s.id}" style="cursor:pointer"><td><b style="color:var(--primary)">${esc(s.codigo)}</b></td><td><div style="display:flex;gap:10px;align-items:center">${avatar(s.nombres+" "+s.apellidos)}<div><b>${esc(s.nombres)} ${esc(s.apellidos)}</b><div style="font-size:11px;color:var(--muted)">DNI ${esc(s.dni)}</div></div></div></td><td>${s.edad} ${s.edad<18?badge("Menor","amber"):badge("Adulto","blue")}</td><td style="font-size:12px">${s.tutor?esc(s.tutor.nombre):"—"}<div style="color:var(--muted)">+${esc(s.canal2)}</div></td><td>${s.beca?badge(s.beca.tipo==="total"?"Beca 100%":"Beca "+s.beca.pct+"%","violet"):badge("Regular","gray")}</td><td>${n}</td><td><button class="btn btn-g btn-sm" data-action="edit-student" data-id="${s.id}">${icon("edit")}</button> <button class="btn btn-d btn-sm" data-action="del-student" data-id="${s.id}">${icon("trash")}</button></td></tr>`}).join("")||`<tr><td colspan="7"><div class="empty">${icon("search")}<br>Sin resultados.</div></td></tr>`;
+}
+function studentForm(s){
+  const e=s||{nombres:"",apellidos:"",dni:"",edad:"",canal1:"",canal2:"",tutor:{nombre:"",dni:"",relacion:"Madre",telefono:"",email:""},beca:null};
+  return `<form id="frm-student" data-id="${s?s.id:""}">
+   <div class="frow"><div class="field"><label>Nombres *</label><input name="nombres" required value="${esc(e.nombres)}"></div><div class="field"><label>Apellidos *</label><input name="apellidos" required value="${esc(e.apellidos)}"></div></div>
+   <div class="frow"><div class="field"><label>DNI *</label><input name="dni" required value="${esc(e.dni)}"></div><div class="field"><label>Edad *</label><input name="edad" type="number" min="5" max="99" required value="${e.edad}"></div></div>
+   <div class="frow"><div class="field"><label>Canal 1 · WhatsApp estudiante *</label><input name="canal1" required placeholder="519XXXXXXXX" value="${esc(e.canal1)}"></div><div class="field"><label>Canal 2 · WhatsApp pagador/tutor *</label><input name="canal2" required placeholder="519XXXXXXXX" value="${esc(e.canal2)}"></div></div>
+   <div id="tutor-block" style="${e.edad>=18?"display:none":""}"><div class="frow"><div class="field"><label>Nombre del tutor legal</label><input name="tutorNombre" value="${esc(e.tutor?.nombre||"")}"></div><div class="field"><label>DNI del tutor</label><input name="tutorDni" value="${esc(e.tutor?.dni||"")}"></div></div>
+   <div class="frow"><div class="field"><label>Relación</label><select name="tutorRel"><option>Madre</option><option>Padre</option><option>Apoderado</option></select></div><div class="field"><label>Email del tutor</label><input name="tutorEmail" type="email" value="${esc(e.tutor?.email||"")}"></div></div></div>
+   <div class="frow"><div class="field"><label>Beca (solo mensualidad)</label><select name="beca"><option value="">Sin beca</option><option value="total" ${e.beca?.tipo==="total"?"selected":""}>Total 100%</option><option value="parcial" ${e.beca?.tipo==="parcial"?"selected":""}>Parcial 50%</option></select></div><div class="field"><label>Ciclo</label><input name="ciclo" value="2026-II"></div></div>
+   <label class="check"><input type="checkbox" name="consent" required ${s?"checked":""}><span><b>Consentimiento ${esc(S.config.consentVersion)}:</b> declaro ser tutor legal (o el estudiante mayor de edad) y autorizo el tratamiento de datos conforme a la Ley 29733; designo los dos canales WhatsApp para reportes académicos. Evidencia: timestamp + IP + versión.</span></label>
+  </form>`;
+}
+function vAdminCursos(){
+  return head("Cursos y grupos","Patrones de días → calendario con fechas reales",`<button class="btn btn-g" data-action="new-course">${icon("plus")} Curso</button><button class="btn btn-p" data-action="new-group">${icon("plus")} Grupo</button>`)+
+  `<div class="grid g3" style="margin-bottom:16px">${S.courses.map(c=>`<div class="card hover"><div class="stripe" style="background:${c.color}"></div><h3>${esc(c.nombre)}</h3><div style="margin:6px 0">${badge(c.modalidad,c.modalidad==="Virtual"?"violet":c.modalidad==="Presencial"?"amber":"blue")} ${badge(c.siglas,"gray")}</div><div style="font-size:12px;color:var(--muted)">${icon("book")} ${esc(c.libro)}</div><div style="margin-top:10px;font-size:12px;font-weight:700">${S.groups.filter(g=>g.courseId===c.id).length} grupos</div></div>`).join("")}</div>
+  <div class="table-wrap"><table><thead><tr><th>Grupo</th><th>Curso</th><th>Días / horario</th><th>Sesiones</th><th>Docente</th><th>Matriculados</th><th></th></tr></thead><tbody>
+  ${S.groups.map(g=>`<tr><td><b>${esc(g.nombre)}</b><div style="font-size:11px;color:var(--muted)">${esc(g.sede)} · ${esc(g.aula)}</div></td><td>${esc(course(g.courseId).siglas)}</td><td>${g.dias.map(d=>DIAS[d]).join(" + ")} · ${ftime(g.hi)}–${ftime(g.hf)}</td><td>${g.numSesiones} <span style="color:var(--muted)">(máx ${maxFaltas(g)} faltas)</span></td><td>${esc((S.users.find(u=>u.id===g.docenteId)||{}).name||"")}</td><td>${S.enrollments.filter(e=>e.groupId===g.id&&e.estado==="activa").length}</td><td><button class="btn btn-b btn-sm" data-action="enroll" data-id="${g.id}">${icon("plus")} Matricular</button> <button class="btn btn-d btn-sm" data-action="del-group" data-id="${g.id}">${icon("trash")}</button></td></tr>`).join("")}
+  </tbody></table></div>`;
+}
+function vAdminSesiones(){
+  const ses=[...S.sessions].sort((a,b)=>a.fecha<b.fecha?1:-1);
+  return head("Sesiones","Cobertura institucional (C), reprogramación y estado",`<span class="note">C = cubierta por feriado/evento (institucional, sin nota, sin FUT). J = justificada del estudiante (vía FUT).</span>`)+
+  `<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Grupo</th><th>Horario</th><th>Estado</th><th>Asistencia</th><th></th></tr></thead><tbody>
+  ${ses.map(se=>{const g=group(se.groupId);const ats=S.attendance.filter(a=>a.sessionId===se.id);const c=ats.filter(a=>a.estado==="C").length;
+   return `<tr><td><b>${fdate(se.fecha)}</b><div style="font-size:11px;color:var(--muted)">Sesión ${se.n}</div></td><td>${esc(g.nombre)}</td><td>${ftime(se.hi)}–${ftime(se.hf)}</td><td>${se.estado==="no_dictada"?badge("Cubierta · "+esc(se.motivoC||""),"C"):se.estado==="cerrada"?badge("Cerrada","green"):se.estado==="en_curso"?badge("En curso","blue"):badge("Programada","gray")}</td><td style="font-size:12px">${ats.length?ats.map(a=>a.estado).join(" "):"—"}</td><td>${se.estado!=="cerrada"&&se.estado!=="no_dictada"?`<button class="btn btn-g btn-sm" data-action="mark-c" data-id="${se.id}">${icon("flag")} Marcar C</button> <button class="btn btn-g btn-sm" data-action="reprog" data-id="${se.id}">${icon("cal")} Reprogramar</button>`:se.estado==="no_dictada"?`<button class="btn btn-g btn-sm" data-action="undo-c" data-id="${se.id}">${icon("undo")} Revertir C</button>`:""}</td></tr>`}).join("")}
+  </tbody></table></div>`;
+}
+function vAdminFut(){
+  return head("Trámites FUT","Formulario Único de Trámite · llave de control e ingreso",`<button class="btn btn-p" data-action="new-fut">${icon("plus")} Nuevo FUT</button>`)+
+  `<div class="table-wrap"><table><thead><tr><th>Código</th><th>Estudiante</th><th>Tipo</th><th>Arancel</th><th>Estado</th><th></th></tr></thead><tbody>
+  ${S.futs.map(f=>`<tr><td><b style="color:var(--accent-2)">${esc(f.codigo)}</b><div style="font-size:11px;color:var(--muted)">${fdate(dstr(new Date(f.creadoEn)))}</div></td><td>${esc(student(f.studentId)?.nombres||"")} ${esc(student(f.studentId)?.apellidos||"")}</td><td>${badge({justificacion:"Justificación",revision:"Revisión nota",rezagado:"Rezagado",cambio:"Cambio grupo",constancia:"Constancia"}[f.tipo]||f.tipo,"blue")}</td><td>${f.arancel?money(f.arancel):badge("Gratis","green")}</td><td>${futBadge(f.estado)}</td><td>${["recibido","evaluacion","pago_pendiente"].includes(f.estado)?`<button class="btn btn-ok btn-sm" data-action="fut-conform" data-id="${f.id}">${icon("check")} Conforme</button> <button class="btn btn-d btn-sm" data-action="fut-reject" data-id="${f.id}">${icon("x")}</button>`:f.estado==="conforme"?`<span style="font-size:11px;color:var(--muted)">Listo para uso docente</span>`:""}</td></tr>`).join("")}
+  </tbody></table></div>`;
+}
+function vAdminPagos(){
+  return head("Pagos y mensualidades","Vouchers Yape/Plin · beca cubre solo mensualidad",`<button class="btn btn-p" data-action="gen-month">${icon("cash")} Generar mensualidades</button>`)+
+  `<div class="table-wrap"><table><thead><tr><th>Estudiante</th><th>Concepto</th><th>Monto</th><th>Vence</th><th>Estado</th><th>Voucher</th><th></th></tr></thead><tbody>
+  ${S.payments.map(p=>`<tr><td>${esc(student(p.studentId)?.nombres||"")} ${esc(student(p.studentId)?.apellidos||"")}</td><td>${badge(p.concepto==="mensualidad"?"Mensualidad":p.concepto==="fut"?"FUT":"Material",p.concepto==="mensualidad"?"blue":"violet")}</td><td><b>${money(p.monto)}</b></td><td>${fdate(p.vencimiento)}</td><td>${payBadge(p.estado)}</td><td>${p.voucher?`<span style="font-size:12px">${icon("up")} ${esc(p.voucher.nombre)}</span>`:"—"}</td><td>${p.estado==="validacion"?`<button class="btn btn-ok btn-sm" data-action="pay-ok" data-id="${p.id}">${icon("check")} Validar</button>`:["pendiente","por_vencer","vencido"].includes(p.estado)?`<button class="btn btn-g btn-sm" data-action="pay-mark" data-id="${p.id}">${icon("check")} Marcar pagado</button>`:""}</td></tr>`).join("")}
+  </tbody></table></div>`;
+}
+function vAdminCert(){
+  return head("Certificados","Emisión con triple candado: asistencia 75% + promedio ≥ 11 + deuda cero",``)+
+  `<div class="grid g2" style="margin-bottom:16px">${S.enrollments.filter(e=>e.estado==="activa").map(e=>{const r=record(e.studentId,e.groupId);const st=student(e.studentId);const g=group(e.groupId);const done=S.certificates.find(c=>c.studentId===e.studentId&&c.groupId===e.groupId);
+   return `<div class="card"><div style="display:flex;gap:12px;align-items:center;margin-bottom:10px">${avatar(st.nombres+" "+st.apellidos)}<div><b>${esc(st.nombres)} ${esc(st.apellidos)}</b><div style="font-size:12px;color:var(--muted)">${esc(g.nombre)}</div></div><span style="margin-left:auto">${r.habilitado?badge("Habilitado","green"):badge("No habilitado","red")}</span></div>
+   <div style="display:flex;gap:14px;font-size:12px;color:var(--muted);margin-bottom:12px"><span>${icon("check")} Faltas ${r.faltas}/${r.max}</span><span>${icon("chart")} Prom ${r.prom??"—"}</span><span>${icon("cash")} ${r.deuda?"Con deuda":"Deuda 0"}</span></div>
+   ${done?`<button class="btn btn-g btn-sm" data-action="view-cert" data-id="${done.id}">${icon("cert")} ${esc(done.codigo)}</button>`:`<button class="btn ${r.habilitado?"btn-p":"btn-g"} btn-sm" data-action="emit-cert" data-en="${e.id}" ${r.habilitado?"":"disabled"}>${icon("cert")} Emitir certificado</button>`}</div>`}).join("")}</div>`;
+}
+function vAdminReportes(){
+  const sid=ui.reportStudent||S.students[0].id;
+  const ens=S.enrollments.filter(e=>e.studentId===sid&&e.estado==="activa");
+  return head("Reportes","Récord de asistencia y notas por estudiante",`<select class="ctl" id="rep-student">${S.students.map(s=>`<option value="${s.id}" ${s.id===sid?"selected":""}>${esc(s.nombres)} ${esc(s.apellidos)}</option>`).join("")}</select><button class="btn btn-g" data-action="export-csv">${icon("down")} CSV</button><button class="btn btn-b" data-action="print">${icon("print")} Imprimir</button>`)+
+  ens.map(e=>{const g=group(e.groupId),r=record(sid,e.groupId);
+   return `<div class="card" style="margin-bottom:16px"><div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-bottom:14px">${ring(r.pct,r.okF?"var(--green)":"var(--red)")}<div><h3>${esc(course(g.courseId).nombre)}</h3><div style="font-size:12px;color:var(--muted)">${esc(g.nombre)} · ${r.asist} de ${r.cerradas} sesiones evaluadas · ${r.faltas} faltas (máx ${r.max})</div><div style="margin-top:6px">${r.habilitado?badge("Habilitado para certificado","green"):badge("No habilitado","red")} ${badge("Promedio "+(r.prom??"—"),"blue")}</div></div></div>
+   <div class="table-wrap"><table><thead><tr><th>#</th><th>Fecha</th><th>Asistencia</th><th>Nota</th><th>Origen</th></tr></thead><tbody>${groupSessions(g.id).map(se=>{const a=attFor(se.id,sid);return `<tr><td>${se.n}</td><td>${fdate(se.fecha)}</td><td>${a?attBadge(a.estado):badge("Pendiente","gray")}</td><td><b>${a&&a.nota!=null?a.nota:"—"}</b></td><td style="font-size:12px;color:var(--muted)">${a?.notaOrigen==="ausencia"?"Por ausencia":a?.notaOrigen==="rezagado"?"Rezagado (FUT)":a?.notaOrigen||""}</td></tr>`}).join("")}</tbody></table></div></div>`}).join("")||`<div class="empty">Sin matrículas activas.</div>`;
+}
+function vAdminMensajes(){
+  const pend=S.messages.filter(m=>m.estado==="pendiente");
+  return head("Central de Mensajes","El sistema redacta; administración envía desde el número dedicado +"+esc(S.config.notifyNumber),`<button class="btn btn-b" data-action="run-cutoff">${icon("clock")} Corte 15:00</button><button class="btn btn-g" data-action="mark-all-sent">${icon("check")} Marcar todo enviado</button>`)+
+  `<div class="note" style="margin-bottom:14px">${icon("shield")} Envío humano vía app WhatsApp Business (gratis). Si el número se pierde, se cambia en Configuración y la cola usa el nuevo. El historial vive en la plataforma, no en el teléfono.</div>
+  ${S.messages.map(m=>`<div class="msg-item ${m.estado==="enviado"?"sent":""}"><div style="flex:1"><div style="margin-bottom:4px">${badge(m.evento,"blue")} ${m.canal==="admin"?badge("Interno","gray"):badge("Canal "+m.canal+" · "+esc(student(m.studentId)?.nombres||""),m.canal==="1"?"teal":"violet")} ${m.estado==="pendiente"?badge("Pendiente","amber"):badge("Enviado","green")}</div><div class="m-txt">${esc(m.texto)}</div><div class="m-meta">Generado ${new Date(m.generadoEn).toLocaleString("es-PE")}${m.enviadoEn?" · Enviado "+new Date(m.enviadoEn).toLocaleString("es-PE")+" por "+esc(m.enviadoPor):""}</div></div>
+   ${m.estado==="pendiente"?`<div style="display:flex;flex-direction:column;gap:6px"><a class="btn btn-ok btn-sm" target="_blank" href="${waLink(m)}">${icon("phone")} Abrir WhatsApp</a><button class="btn btn-g btn-sm" data-action="msg-sent" data-id="${m.id}">${icon("check")} Enviado</button><button class="btn btn-g btn-sm" data-action="msg-skip" data-id="${m.id}">${icon("x")} Omitir</button></div>`:""}</div>`).join("")||`<div class="empty">${icon("chat")}<br>Cola vacía.</div>`}`;
+}
+function vAdminConfig(){
+  return head("Configuración","Parámetros operativos v1.3",``)+
+  `<div class="grid g2"><div class="card"><h3 style="margin-bottom:12px">Notificaciones</h3>
+   <div class="field"><label>Número dedicado de notificaciones (WhatsApp)</label><input class="ctl" id="cfg-number" value="${esc(S.config.notifyNumber)}" style="width:100%"></div>
+   <div class="field"><label>Hora de corte pre-clase</label><input class="ctl" id="cfg-cutoff" type="number" min="0" max="23" value="${S.config.cutoffHour}" style="width:100%"></div>
+   <button class="btn btn-b" data-action="save-config">${icon("check")} Guardar</button></div>
+   <div class="card"><h3 style="margin-bottom:12px">Aranceles FUT (ingreso)</h3>
+   ${Object.entries(S.config.aranceles).map(([k,v])=>`<div class="field"><label>${k}</label><input class="ctl fut-arancel" data-k="${k}" type="number" value="${v}" style="width:100%"></div>`).join("")}
+   <button class="btn btn-b" data-action="save-aranceles">${icon("check")} Guardar aranceles</button></div>
+   <div class="card"><h3 style="margin-bottom:12px">Auditoría reciente</h3>${S.audit.slice(0,8).map(a=>`<div style="font-size:12px;padding:7px 0;border-bottom:1px solid #edf2f8"><b>${esc(a.accion)}</b> · ${esc(a.user)}<div style="color:var(--muted)">${esc(a.detalle)} · ${new Date(a.ts).toLocaleString("es-PE")}</div></div>`).join("")}</div>
+   <div class="card"><h3 style="margin-bottom:12px">Demo</h3><p style="font-size:12px;color:var(--muted);margin-bottom:12px">Datos sembrados persisten en este navegador (localStorage). Restablecer vuelve al estado inicial.</p><button class="btn btn-d" data-action="reset-demo">${icon("undo")} Restablecer demo</button></div></div>`;
+}
+
+/* ============================== DOCENTE VIEWS ============================== */
+function vDocHoy(){
+  const doc=ui.persona;
+  const mine=S.sessions.filter(se=>group(se.groupId).docenteId===doc&&se.fecha===today());
+  return head("Hoy, "+fdate(today()),"Tus sesiones · check-in automático, tú solo resuelves excepciones",``)+
+  (mine.length?`<div class="timeline">${mine.map(se=>{const g=group(se.groupId);const en=S.enrollments.filter(e=>e.groupId===g.id);const checked=en.filter(e=>attFor(se.id,e.studentId)).length;
+   return `<div class="tl-item ${se.estado==="en_curso"?"live":""}"><div class="tl-time">${ftime(se.hi)}<small>${ftime(se.hf)}</small></div><div class="tl-body"><div class="tl-title">${esc(course(g.courseId).nombre)} · ${esc(g.nombre)}</div><div class="tl-sub">${esc(g.aula)} · ${checked}/${en.length} check-in · ${se.estado}</div></div><div style="display:flex;gap:8px;align-items:center">${se.estado==="programada"?`<button class="btn btn-b btn-sm" data-action="open-session" data-id="${se.id}">${icon("play")} Abrir sesión</button>`:se.estado==="en_curso"?`<a class="btn btn-p btn-sm" href="#/docente/sesion/${se.id}">${icon("book")} Ir al aula</a>`:badge("Cerrada","green")}</div></div>`}).join("")}</div>`:`<div class="card"><div class="empty">${icon("sun")}<br>No tienes sesiones hoy. Revisa tus grupos o actividades.</div></div>`)+
+  `<div class="grid g3" style="margin-top:16px"><div class="card"><div class="kpi"><span class="ico" style="background:var(--grad-cool)">${icon("book","lg")}</span><div><div class="num">${S.groups.filter(g=>g.docenteId===doc).length}</div><div class="lbl">Grupos asignados</div></div></div></div><div class="card"><div class="kpi"><span class="ico" style="background:var(--grad-accent)">${icon("video","lg")}</span><div><div class="num">${S.activities.filter(a=>{const se=session(a.sessionId);return se&&se.fecha>=today()&&group(se.groupId).docenteId===doc&&a.pre.completadoEn}).length}</div><div class="lbl">Actividades previas completas</div></div></div></div><div class="card"><div class="kpi"><span class="ico" style="background:linear-gradient(120deg,#ffb020,#ff7a45)">${icon("alert","lg")}</span><div><div class="num">${S.messages.filter(m=>m.evento==="corte-doc"&&m.estado==="pendiente").length}</div><div class="lbl">Avisos de corte pendientes</div></div></div></div></div>`;
+}
+function vDocSesion(seid){
+  const se=session(seid);if(!se)return `<div class="empty">Sesión no encontrada.</div>`;
+  const g=group(se.groupId), en=S.enrollments.filter(e=>e.groupId===g.id);
+  const open=correctionOpen(se);
+  return head("Aula · "+esc(g.nombre),fdate(se.fecha)+" · "+ftime(se.hi)+"–"+ftime(se.hf)+" · "+(se.estado==="cerrada"?(open?"Ventana de corrección ABIERTA (hasta 23:59 del día siguiente)":"Ventana cerrada · cambios requieren FUT conforme"):se.estado),`<a class="btn btn-g" href="#/docente">${icon("arrow")} Volver</a>`)+
+  `<div class="note" style="margin-bottom:14px">${icon("link")} Enlace de check-in para el chat de Teams: <b>${esc(verifyURL("checkin-"+se.id))}</b> <button class="btn btn-g btn-sm" data-action="copy" data-text="${esc("https://app.grupotalenth.com/#/checkin/"+se.id)}">${icon("copy")} Copiar</button></div>
+  <div class="table-wrap" style="margin-bottom:14px"><table><thead><tr><th>Estudiante</th><th>Check-in</th><th>Asistencia</th><th>Nota (0–20)</th><th>Actividad previa</th></tr></thead><tbody>
+  ${en.map(e=>{const st=student(e.studentId);let a=attFor(seid,st.id);const ac=actFor(seid,st.id);
+   return `<tr><td><div style="display:flex;gap:10px;align-items:center">${avatar(st.nombres+" "+st.apellidos)}<b>${esc(st.nombres)} ${esc(st.apellidos)}</b></div></td><td style="font-size:12px">${a?.checkin?badge(a.checkin.metodo==="qr"?"QR carnet":"Link Teams","teal"):"—"}</td><td><select class="ctl att-sel" data-se="${seid}" data-st="${st.id}" ${se.estado==="cerrada"&&!open?"disabled":""}>${["P","T","F","J","C"].map(x=>`<option ${a?.estado===x?"selected":""}>${x}</option>`).join("")}</select></td><td><input class="ctl nota-in" type="number" min="0" max="20" step="1" data-se="${seid}" data-st="${st.id}" value="${a?.nota??""}" style="width:80px" ${se.estado==="cerrada"&&!open?"disabled":""}></td><td>${ac?.pre.completadoEn?badge("Completa"+(ac.pre.tardio?" (tardía)":""),"green"):badge("Pendiente","amber")}</td></tr>`}).join("")}
+  </tbody></table></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+   ${se.estado!=="cerrada"?`<button class="btn btn-g" data-action="save-draft" data-id="${seid}">${icon("down")} Guardar borrador</button><button class="btn btn-p" data-action="close-session" data-id="${seid}">${icon("check")} Cerrar sesión y notificar</button>`:`<button class="btn btn-b" data-action="save-corrections" data-id="${seid}">${icon("edit")} Guardar correcciones</button>${!open?`<button class="btn btn-g" data-action="fut-change" data-id="${seid}">${icon("fut")} Cambio con FUT</button>`:""}`}
+  </div>`;
+}
+function vDocGrupos(){
+  const doc=ui.persona;
+  return head("Mis grupos","Cumplimiento y progreso por grupo",``)+
+  `<div class="grid g2">${S.groups.filter(g=>g.docenteId===doc).map(g=>{const en=S.enrollments.filter(e=>e.groupId===g.id);const next=groupSessions(g.id).find(s=>s.fecha>=today());
+   return `<div class="card hover"><div class="stripe" style="background:${course(g.courseId).color}"></div><h3>${esc(g.nombre)}</h3><div style="font-size:12px;color:var(--muted);margin:6px 0">${esc(course(g.courseId).nombre)} · ${g.dias.map(d=>DIAS[d]).join("+")} · ${ftime(g.hi)}</div><div style="display:flex;gap:10px;align-items:center;margin:10px 0">${ring(next?Math.round(en.filter(e=>actFor(next.id,e.studentId)?.pre.completadoEn).length/Math.max(1,en.length)*100):0,"var(--primary)",72)}<div style="font-size:12px;color:var(--muted)">Actividad previa completa para la próxima sesión<br><b style="color:var(--ink)">${next?fdate(next.fecha):"Módulo completo"}</b></div></div><a class="btn btn-b btn-sm" href="#/docente/actividades">${icon("eye")} Ver cumplimiento</a></div>`}).join("")}</div>`;
+}
+function vDocActividades(){
+  const doc=ui.persona;
+  const ses=S.sessions.filter(se=>group(se.groupId).docenteId===doc&&se.fecha>=today()).sort((a,b)=>a.fecha<b.fecha?-1:1);
+  return head("Actividades · aula invertida","Video + pre-quiz antes de clase · post-quiz después",``)+
+  ses.map(se=>{const g=group(se.groupId);const en=S.enrollments.filter(e=>e.groupId===g.id);
+   return `<div class="card" style="margin-bottom:14px"><h3 style="margin-bottom:10px">${esc(g.nombre)} · ${fdate(se.fecha)}</h3><div class="chips" style="grid-template-columns:repeat(auto-fill,minmax(120px,1fr))">${en.map(e=>{const st=student(e.studentId);const ac=actFor(se.id,st.id);return `<div style="background:${ac?.pre.completadoEn?"rgba(22,163,74,.1)":"rgba(255,176,32,.12)"};border:1px solid ${ac?.pre.completadoEn?"rgba(22,163,74,.3)":"rgba(255,176,32,.4)"};border-radius:11px;padding:10px;font-size:12px"><b>${esc(st.nombres)}</b><div style="color:var(--muted)">${ac?.pre.completadoEn?"Pre ✓ "+ac.pre.quizScore+"/20":"Pre pendiente"}</div></div>`}).join("")}</div></div>`}).join("")||`<div class="empty">Sin sesiones próximas.</div>`;
+}
+function vDocAvisos(){
+  const ms=S.messages.filter(m=>m.evento==="corte-doc");
+  return head("Avisos del sistema","Resúmenes de corte pre-clase",``)+ (ms.map(m=>`<div class="msg-item"><div style="flex:1"><div class="m-txt">${esc(m.texto)}</div><div class="m-meta">${new Date(m.generadoEn).toLocaleString("es-PE")}</div></div></div>`).join("")||`<div class="empty">${icon("bell")}<br>Sin avisos. Ejecuta el corte desde administración.</div>`);
+}
+
+/* ============================== ESTUDIANTE VIEWS ============================== */
+function vEstInicio(){
+  const sid=ui.student, st=student(sid);
+  const my=S.enrollments.filter(e=>e.studentId===sid&&e.estado==="activa");
+  const todaySes=S.sessions.filter(se=>se.fecha===today()&&my.some(e=>e.groupId===se.groupId));
+  const pay=S.payments.find(p=>p.studentId===sid&&["pendiente","por_vencer","vencido"].includes(p.estado));
+  const tiles=[["video","Aula virtual","var(--grad-cool)","#/est/cursos"],["fut","Trámites FUT","linear-gradient(120deg,#8b5cf6,#f43f5e)","#/est/fut"],["cert","Certificados","linear-gradient(120deg,#ffb020,#ff7a45)","#/est/perfil"],["cash","Pagos","linear-gradient(120deg,#16a34a,#14b8a6)","#/est/pagos"],["bell","Alertas","linear-gradient(120deg,#0a84ff,#38bdf8)","#/est/alertas"],["card","Carnet QR","linear-gradient(120deg,#0e3a5c,#0a84ff)","#/est/perfil"]];
+  const order=S.ui.tileOrder||tiles.map(t=>t[1]);
+  const sorted=[...tiles].sort((a,b)=>order.indexOf(a[1])-order.indexOf(b[1]));
+  return `<div class="hero"><h2>Hola, ${esc(st.nombres)} </h2><p>${fdateLong(today())} · Programa Callao con Futuro · Metodología ISA</p>
+   ${pay?`<div class="pay-banner">${icon("cash","lg")}<div style="flex:1"><b>${pay.concepto==="mensualidad"?"Mensualidad":"Trámite"}</b> · ${money(pay.monto)}<div style="font-size:11px;color:#bcd3e8">Vence ${fdate(p.vencimiento)} ${S.config.mora?"+ mora "+money(S.config.mora):""}</div></div><a class="btn btn-p btn-sm" href="#/est/pagos">Subir voucher</a></div>`:`<div class="pay-banner">${icon("check","lg")}<div>Estás al día en tus pagos. ¡Sigue así!</div></div>`}</div>
+  <h3 style="margin:0 0 10px">Hoy · ${fdate(today())}</h3>
+  ${todaySes.length?`<div class="timeline" style="margin-bottom:18px">${todaySes.map(se=>{const g=group(se.groupId);const a=attFor(se.id,sid);const canCheck=se.estado==="en_curso"&&!a;
+   return `<div class="tl-item ${se.estado==="en_curso"?"live":""}"><div class="tl-time">${ftime(se.hi)}<small>${ftime(se.hf)}</small></div><div class="tl-body"><div class="tl-title">${esc(course(g.courseId).nombre)}</div><div class="tl-sub">${esc(g.nombre)} · ${esc(g.aula)}</div></div><div style="display:flex;align-items:center;gap:8px">${a?attBadge(a.estado):canCheck?`<button class="btn btn-p btn-sm" data-action="checkin" data-id="${se.id}">${icon("qr")} Check-in</button>`:badge("Programada","gray")}</div></div>`}).join("")}</div>`:`<div class="card" style="margin-bottom:18px"><div class="empty">${icon("sun")}<br>Sin clases hoy. Aprovecha de adelantar tu actividad previa.</div></div>`}
+  <h3 style="margin:0 0 10px">Mis servicios <span style="font-size:11px;color:var(--muted);font-weight:500">(arrastra para reordenar)</span></h3>
+  <div class="tiles" id="tiles">${sorted.map(t=>`<a class="tile" draggable="true" data-tile="${t[1]}" href="${t[3]}"><span class="t-ico" style="background:${t[2]}">${icon(t[0],"lg")}</span><b>${t[1]}</b><small>${icon("drag")} mover</small></a>`).join("")}</div>`;
+}
+function vEstCursos(){
+  const sid=ui.student;
+  const my=S.enrollments.filter(e=>e.studentId===sid&&e.estado==="activa");
+  return head("Mis cursos","Progreso, notas y asistencia por módulo",``)+
+  `<div class="grid g2">${my.map(e=>{const g=group(e.groupId),c=course(g.courseId),r=record(sid,g.id);const next=groupSessions(g.id).find(s=>s.fecha>=today());
+   return `<div class="card hover"><div class="stripe" style="background:${c.color}"></div><div style="display:flex;justify-content:space-between;gap:10px"><h3>${esc(c.nombre)}</h3>${badge(g.sede==="Virtual"?"Remoto":"Presencial",g.sede==="Virtual"?"violet":"amber")}</div><div style="font-size:12px;color:var(--muted);margin:6px 0">${esc(g.nombre)} · ${g.dias.map(d=>DIAS[d]).join("+")} · ${ftime(g.hi)}</div><div style="display:flex;gap:16px;align-items:center;margin:12px 0">${ring(r.pct,r.okF?"var(--green)":"var(--red)",80)}<div style="font-size:12.5px"><div>Promedio: <b>${r.prom??"En progreso"}</b></div><div>Faltas: <b>${r.faltas}/${r.max}</b></div><div style="margin-top:6px">${r.habilitado?badge("Habilitado","green"):badge("En riesgo","amber")}</div></div></div><div style="font-size:12px;color:var(--muted);margin-bottom:10px">${icon("cal")} Próxima sesión: <b>${next?fdate(next.fecha):"—"}</b></div><a class="btn btn-b btn-sm" href="#/est/curso/${g.id}">${icon("eye")} Ver detalle</a></div>`}).join("")}</div>`;
+}
+function vEstCurso(gid){
+  const sid=ui.student,g=group(gid),c=course(g.courseId),r=record(sid,gid);
+  const tab=ui.tab["curso-"+gid]||"resumen";
+  const ses=groupSessions(gid);
+  let body="";
+  if(tab==="resumen"){
+    body=`<div class="grid g2" style="margin-bottom:14px"><div class="card"><div style="font-size:11px;color:var(--muted);font-weight:700">DOCENTE</div><div style="display:flex;gap:10px;align-items:center;margin-top:8px">${avatar((S.users.find(u=>u.id===g.docenteId)||{}).name||"D")}<b>${esc((S.users.find(u=>u.id===g.docenteId)||{}).name||"")}</b></div></div><div class="card"><div style="font-size:11px;color:var(--muted);font-weight:700">PRÓXIMA SESIÓN</div><div style="margin-top:8px;font-family:var(--font-d);font-weight:700;font-size:16px">${(()=>{const n=ses.find(s=>s.fecha>=today());return n?fdate(n.fecha)+" · "+ftime(n.hi):"Módulo completo"})()}</div></div></div>
+    <div class="card"><h3 style="margin-bottom:8px">Material de clase · aula invertida</h3>${ses.map(se=>{const ac=actFor(se.id,sid);return `<div style="display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid #edf2f8"><span class="avatar" style="background:${se.estado==="cerrada"?"var(--green)":se.fecha===today()?"var(--primary)":"#b6c6d8"}">${se.n}</span><div style="flex:1"><b>Sesión ${se.n} · ${fdate(se.fecha)}</b><div style="font-size:12px;color:var(--muted)">${esc(se.video.titulo)}</div></div>${ac?.pre.completadoEn?badge("Pre ✓","green"):badge("Pre pendiente","amber")}<a class="btn btn-b btn-sm" href="#/est/aula/${se.id}">${icon("play")} Abrir</a></div>`}).join("")}</div>`;
+  } else if(tab==="notas"){
+    body=`<div class="table-wrap"><table><thead><tr><th>Sesión</th><th>Fecha</th><th>Nota</th><th>Peso</th><th>Origen</th></tr></thead><tbody>${ses.map(se=>{const a=attFor(se.id,sid);return `<tr><td>Sesión ${se.n}</td><td>${fdate(se.fecha)}</td><td><b style="font-size:15px;color:${a&&a.nota!=null?(a.nota>=11?"var(--green)":"var(--red)"):"var(--muted)"}">${a&&a.nota!=null?a.nota:"—"}</b></td><td>${Math.round(100/ses.length)}%</td><td style="font-size:12px;color:var(--muted)">${a?.notaOrigen==="ausencia"?"Por ausencia":a?.notaOrigen||"Clase"}</td></tr>`}).join("")}<tr><td colspan="2"><b>Promedio final</b></td><td colspan="3"><b style="font-size:17px;color:var(--primary)">${r.prom??"En progreso"}</b></td></tr></tbody></table></div>`;
+  } else {
+    body=`<div class="card" style="margin-bottom:14px"><div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">${ring(r.pct,r.okF?"var(--green)":"var(--red)")}<div><b style="font-size:16px">${r.asist} de ${r.cerradas} sesiones</b><div style="font-size:12px;color:var(--muted)">${r.faltas} faltas · máx ${r.max} · ${r.total} programadas</div><div style="margin-top:6px">${r.habilitado?badge("Habilitado","green"):badge("No habilitado","red")}</div></div></div><div class="chips" style="margin-top:14px">${ses.map(se=>{const a=attFor(se.id,sid);return `<span class="chip-s ${a?a.estado:"x"}" title="${fdate(se.fecha)}">${se.n}</span>`}).join("")}</div><div class="legend" style="margin-top:10px"><span><i style="background:var(--green)"></i>P</span><span><i style="background:var(--amber)"></i>T</span><span><i style="background:var(--red)"></i>F</span><span><i style="background:var(--violet)"></i>J (FUT)</span><span><i style="background:var(--teal)"></i>C (institucional)</span></div></div>
+    <div class="table-wrap"><table><thead><tr><th>#</th><th>Fecha</th><th>Hora</th><th>Estado</th></tr></thead><tbody>${ses.map(se=>{const a=attFor(se.id,sid);return `<tr><td>${pad(se.n)}</td><td><b>${fdate(se.fecha)}</b></td><td>${ftime(se.hi)}</td><td>${a?attBadge(a.estado):badge("Pendiente","gray")}</td></tr>`}).join("")}</tbody></table></div>`;
+  }
+  return head(esc(c.nombre),esc(g.nombre)+" · "+esc(c.libro),`<a class="btn btn-g" href="#/est/cursos">${icon("arrow")} Volver</a>`)+
+  `<div class="tabs" style="margin-bottom:16px">${["resumen","notas","asistencia"].map(t=>`<button data-action="tab" data-key="curso-${gid}" data-tab="${t}" class="${tab===t?"on":""}">${t[0].toUpperCase()+t.slice(1)}</button>`).join("")}</div>`+body;
+}
+function vEstAula(seid){
+  const sid=ui.student,se=session(seid);if(!se)return `<div class="empty">Sesión no encontrada.</div>`;
+  const g=group(se.groupId),ac=actFor(seid,sid)||{pre:{visto:false,quizScore:null,completadoEn:null},post:{score:null,completadoEn:null}};
+  const postOpen=se.estado==="cerrada";
+  return head("Aula · Sesión "+se.n,fdate(se.fecha)+" · "+esc(course(g.courseId).nombre),`<a class="btn btn-g" href="#/est/curso/${g.id}">${icon("arrow")} Volver</a>`)+
+  `<div class="grid g2"><div><div class="player"><div class="screen"><button class="playbtn" data-action="play-video" data-id="${seid}">${icon("play","xl")}</button></div><div class="bar"><i id="vbar"></i></div><div class="p-meta"><span>${esc(se.video.titulo)}</span><span id="vtime">0:00 / 4:00</span></div></div>
+   <div class="card" style="margin-top:14px"><h3 style="margin-bottom:6px">Resumen del docente</h3><p style="font-size:13px;color:var(--muted)">${esc(se.resumen)}</p></div></div>
+   <div><div class="card" style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h3>Pre-quiz (antes de clase)</h3>${ac.pre.completadoEn?badge("Completo · "+ac.pre.quizScore+"/20","green"):badge("Pendiente","amber")}</div>
+    ${ac.pre.completadoEn?`<p style="font-size:13px;color:var(--muted)">Completado ${new Date(ac.pre.completadoEn).toLocaleString("es-PE")}${ac.pre.tardio?" (tardío)":""}. ¡Buen trabajo!</p>`:quizForm(se.preQuiz,"pre",seid)}</div>
+   <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h3>Post-quiz (después de clase)</h3>${ac.post.completadoEn?badge("Completo · "+ac.post.score+"/20","green"):postOpen?badge("Disponible","blue"):badge("Se habilita al cerrar clase","gray")}</div>
+    ${ac.post.completadoEn?`<p style="font-size:13px;color:var(--muted)">Nota registrada: ${ac.post.score}/20.</p>`:postOpen?quizForm(se.postQuiz,"post",seid):`<p style="font-size:13px;color:var(--muted)">Tu docente habilitará este quiz al terminar la sesión en vivo.</p>`}</div></div></div>`;
+}
+function quizForm(qs,kind,seid){
+  return `<form class="quiz-form" data-kind="${kind}" data-se="${seid}">${qs.map((q,i)=>`<div class="quiz-q"><b>${i+1}. ${esc(q.q)}</b>${q.o.map((o,j)=>`<label class="opt"><input type="radio" name="q${i}" value="${j}" required style="accent-color:var(--primary)"> ${esc(o)}</label>`).join("")}</div>`).join("")}<button class="btn btn-p" type="submit">${icon("check")} Enviar respuestas</button></form>`;
+}
+function vEstPagos(){
+  const sid=ui.student;
+  const ps=S.payments.filter(p=>p.studentId===sid);
+  return head("Pagos","Mensualidad y trámites · sube tu voucher Yape/Plin",``)+
+  ps.map(p=>`<div class="card" style="margin-bottom:12px"><div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><span class="avatar" style="background:${p.concepto==="mensualidad"?"var(--primary)":"var(--violet)"}">${icon(p.concepto==="mensualidad"?"cash":"fut")}</span><div style="flex:1"><b>${p.concepto==="mensualidad"?"Mensualidad · "+esc(group(p.refId)?.nombre||""):"Trámite FUT"}</b><div style="font-size:12px;color:var(--muted)">Vence ${fdate(p.vencimiento)} · ${money(p.monto)}</div></div>${payBadge(p.estado)}${["pendiente","por_vencer","vencido"].includes(p.estado)?`<button class="btn btn-b btn-sm" data-action="upload-voucher" data-id="${p.id}">${icon("up")} Subir voucher</button>`:""}</div></div>`).join("")||`<div class="empty">Sin pagos registrados.</div>`;
+}
+function vEstAlertas(){
+  const sid=ui.student;
+  const ms=S.messages.filter(m=>m.studentId===sid);
+  return head("Alertas","Historial de comunicaciones (Canal 1 y Canal 2)",``)+
+  (ms.map(m=>`<div class="msg-item ${m.estado==="enviado"?"sent":""}"><div style="flex:1"><div style="margin-bottom:4px">${badge(m.evento,"blue")} ${badge("Canal "+m.canal,m.canal==="1"?"teal":"violet")}</div><div class="m-txt">${esc(m.texto)}</div><div class="m-meta">${new Date(m.generadoEn).toLocaleString("es-PE")}</div></div></div>`).join("")||`<div class="empty">${icon("bell")}<br>Sin alertas. Todo en orden.</div>`);
+}
+function vEstPerfil(){
+  const sid=ui.student,st=student(sid);
+  const certs=S.certificates.filter(c=>c.studentId===sid);
+  return head("Perfil y carnet","Identidad digital del estudiante",``)+
+  `<div class="grid g2"><div class="card" style="text-align:center"><div class="stripe" style="background:var(--grad-cool)"></div>${avatar(st.nombres+" "+st.apellidos,"width:64px;height:64px;font-size:22px;border-radius:18px;margin:8px auto")}<h3 style="margin-top:10px">${esc(st.nombres)} ${esc(st.apellidos)}</h3><div style="color:var(--muted);font-size:12px;margin-bottom:12px">${esc(st.codigo)} · DNI ${esc(st.dni)}</div><div class="qr-box">${qrSVG("GT-CARNET|"+st.codigo+"|"+st.dni)}</div><div style="font-size:11px;color:var(--muted);margin-top:8px">Presenta este QR en el kiosco de ingreso (presencial).</div>${st.beca?`<div style="margin-top:10px">${badge("Beca "+(st.beca.tipo==="total"?"100%":st.beca.pct+"%")+" · solo mensualidad","violet")}</div>`:""}</div>
+  <div class="card"><h3 style="margin-bottom:10px">Canales autorizados</h3><div style="font-size:13px;margin-bottom:8px">${icon("phone")} Canal 1 (estudiante): <b>+${esc(st.canal1)}</b></div><div style="font-size:13px;margin-bottom:12px">${icon("phone")} Canal 2 (pagador/tutor): <b>+${esc(st.canal2)}</b></div><div class="note">${icon("shield")} Consentimiento ${esc(st.consent.version)} registrado el ${new Date(st.consent.ts).toLocaleDateString("es-PE")} · IP ${esc(st.consent.ip)}. Puedes solicitar actualización o revocación en administración.</div><h3 style="margin:16px 0 10px">Certificados</h3>${certs.map(c=>`<button class="btn btn-g btn-sm" data-action="view-cert" data-id="${c.id}" style="margin-bottom:6px">${icon("cert")} ${esc(c.codigo)}</button>`).join("")||`<p style="font-size:12px;color:var(--muted)">Aún no tienes certificados emitidos.</p>`}</div></div>`;
+}
+function vEstFut(){
+  const sid=ui.student;
+  const fs=S.futs.filter(f=>f.studentId===sid);
+  return head("Mis trámites FUT","Formulario Único de Trámite · tu llave para regularizar",`<button class="btn btn-p" data-action="new-fut-st">${icon("plus")} Solicitar FUT</button>`)+
+  (fs.map(f=>`<div class="card" style="margin-bottom:12px"><div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><b style="color:var(--accent-2)">${esc(f.codigo)}</b>${futBadge(f.estado)}<span style="margin-left:auto;font-size:12px;color:var(--muted)">${f.arancel?money(f.arancel):"Gratis"}</span></div><p style="font-size:13px;margin-top:8px">${esc(f.detalle)}</p>${f.estado==="conforme"?`<div class="note" style="margin-top:8px">${icon("check")} Código habilitado. Entrégalo a tu docente para ejecutar el cambio (vigencia 7 días).</div>`:""}</div>`).join("")||`<div class="empty">${icon("fut")}<br>No tienes trámites. Si faltaste o necesitas revisar una nota, solicita un FUT.</div>`);
+}
+
+/* ============================== PUBLIC VERIFY ============================== */
+function vVerify(code){
+  const c=S.certificates.find(x=>x.codigo===code);
+  return `<div style="max-width:640px;margin:30px auto"><div class="card" style="text-align:center"><div class="stripe" style="background:var(--grad-accent)"></div><h2 style="margin:8px 0">Verificación de certificado</h2><p style="color:var(--muted);font-size:13px;margin-bottom:16px">Grupo Talenth · EMAGES GROUP</p>
+   ${c?`<div class="cert"><h2>Certificado de estudios</h2><p style="margin:8px 0;font-size:14px">Otorgado a <b>${esc(student(c.studentId).nombres)} ${esc(student(c.studentId).apellidos)}</b></p><p style="font-size:13px;color:var(--muted)">${esc(course(group(c.groupId).courseId).nombre)} · ${esc(group(c.groupId).nombre)}</p><p style="margin:10px 0;font-size:13px">Promedio <b>${c.snapshot.prom}</b> · Asistencia <b>${c.snapshot.pct}%</b> · Faltas <b>${c.snapshot.faltas}</b></p><div class="code">${esc(c.codigo)}</div><div style="margin-top:12px">${badge("VÁLIDO Y VERIFICADO","green")}</div><div style="font-size:11px;color:var(--muted);margin-top:8px">Emitido ${fdateLong(dstr(new Date(c.emitidoEn)))}</div></div>`:code?`<div class="empty">${icon("alert")}<br>Código no encontrado. Verifica e intenta nuevamente.</div>`:`<form id="frm-verify" style="display:flex;gap:8px;justify-content:center"><input class="ctl" name="code" placeholder="GT-CERT-2026-XXXXXX" style="flex:1"><button class="btn btn-b">${icon("search")} Verificar</button></form>`}</div></div>`;
+}
+
+/* ============================== ROUTER ============================== */
+function route(){
+  const h=location.hash||"#/admin";
+  const p=h.replace("#/","").split("/");
+  if(p[0]==="verificar"){shell(vVerify(p[1]||""),h);return;}
+  if(p[0]==="checkin"){const se=session(p[1]);if(se&&ui.role==="estudiante"){doCheckin(se.id);}location.hash="#/est";return;}
+  let content="";
+  if(ui.role==="admin"){
+    if(p[1]==="estudiantes")content=vAdminEst();
+    else if(p[1]==="cursos")content=vAdminCursos();
+    else if(p[1]==="sesiones")content=vAdminSesiones();
+    else if(p[1]==="fut")content=vAdminFut();
+    else if(p[1]==="pagos")content=vAdminPagos();
+    else if(p[1]==="certificados")content=vAdminCert();
+    else if(p[1]==="reportes")content=vAdminReportes();
+    else if(p[1]==="mensajes")content=vAdminMensajes();
+    else if(p[1]==="config")content=vAdminConfig();
+    else content=vAdminDash();
+  } else if(ui.role==="docente"){
+    if(p[1]==="sesion")content=vDocSesion(p[2]);
+    else if(p[1]==="grupos")content=vDocGrupos();
+    else if(p[1]==="actividades")content=vDocActividades();
+    else if(p[1]==="avisos")content=vDocAvisos();
+    else content=vDocHoy();
+  } else {
+    if(p[1]==="cursos")content=vEstCursos();
+    else if(p[1]==="curso")content=vEstCurso(p[2]);
+    else if(p[1]==="aula")content=vEstAula(p[2]);
+    else if(p[1]==="pagos")content=vEstPagos();
+    else if(p[1]==="alertas")content=vEstAlertas();
+    else if(p[1]==="perfil")content=vEstPerfil();
+    else if(p[1]==="fut")content=vEstFut();
+    else content=vEstInicio();
+  }
+  shell(content,h);
+  bindDynamic();
+}
+function render(){save();route();}
+
+/* ============================== ACTIONS ============================== */
+function doCheckin(seid){
+  const sid=ui.student,se=session(seid);
+  if(!enrolledIn(sid,seid)){toast("No estás matriculado en esta sesión.","err");return;}
+  if(attFor(seid,sid)){toast("Ya registraste tu check-in.","warn");return;}
+  const diff=nowMin()-toMin(se.hi);
+  const est=diff<=15?"P":diff<=30?"T":"F";
+  S.attendance.push({id:uid("at"),sessionId:seid,studentId:sid,estado:est,nota:est==="F"?0:null,notaOrigen:est==="F"?"ausencia":null,checkin:{ts:Date.now(),metodo:group(se.groupId).sede==="Virtual"?"link":"qr"},history:[]});
+  audit("Check-in",sid+" · "+seid+" · "+est);
+  toast(est==="P"?"Check-in registrado: PRESENTE ✓":est==="T"?"Check-in registrado: TARDANZA":"Fuera de ventana: FALTA","ok");
+  render();
+}
+function bindDynamic(){
+  const q=$("#est-q");if(q){q.addEventListener("input",()=>{ui.estQ=q.value;$("#est-tbody").innerHTML=estBody(estRows());$("#est-count").textContent=estRows().length+" registros";});}
+  const f=$("#est-filter");if(f)f.addEventListener("change",()=>{ui.estFilter=f.value;render();});
+  const rs=$("#rep-student");if(rs)rs.addEventListener("change",()=>{ui.reportStudent=rs.value;render();});
+  $$(".opt").forEach(o=>o.addEventListener("click",()=>{o.parentElement.querySelectorAll(".opt").forEach(x=>x.classList.remove("sel"));o.classList.add("sel");}));
+  // drag tiles
+  let dragEl=null;
+  $$("#tiles .tile").forEach(t=>{
+    t.addEventListener("dragstart",()=>{dragEl=t;t.classList.add("drag");});
+    t.addEventListener("dragend",()=>{t.classList.remove("drag");dragEl=null;});
+    t.addEventListener("dragover",e=>e.preventDefault());
+    t.addEventListener("drop",e=>{e.preventDefault();if(!dragEl||dragEl===t)return;const order=[...$$("#tiles .tile")].map(x=>x.dataset.tile);const from=order.indexOf(dragEl.dataset.tile),to=order.indexOf(t.dataset.tile);order.splice(from,1);order.splice(to,0,dragEl.dataset.tile);S.ui.tileOrder=order;save();render();toast("Servicios reordenados.");});
+  });
+}
+document.addEventListener("click",e=>{
+  const el=e.target.closest("[data-action]");if(!el)return;
+  const a=el.dataset.action,id=el.dataset.id;
+  if(a==="role"){ui.role=el.dataset.role;if(ui.role==="docente"&&!S.users.find(u=>u.id===ui.persona&&u.role==="docente"))ui.persona="u-doc1";location.hash=ui.role==="admin"?"#/admin":ui.role==="docente"?"#/docente":"#/est";render();return;}
+  if(a==="close-modal"){closeModal();return;}
+  if(a==="go-alerts"){location.hash=ui.role==="admin"?"#/admin/mensajes":ui.role==="docente"?"#/docente/avisos":"#/est/alertas";return;}
+  if(a==="run-cutoff"){const n=runCutoff(true);toast(n?n+" recordatorios generados en la cola.":"Corte ejecutado: sin pendientes.","ok");render();return;}
+  if(a==="new-student"){openModal("Nuevo estudiante · matrícula con consentimiento",studentForm(null),`<button class="btn btn-g" data-action="close-modal">Cancelar</button><button class="btn btn-p" data-action="submit-student">${icon("check")} Registrar</button>`);return;}
+  if(a==="edit-student"){e.stopPropagation();const s=student(id);openModal("Editar estudiante",studentForm(s),`<button class="btn btn-g" data-action="close-modal">Cancelar</button><button class="btn btn-p" data-action="submit-student">${icon("check")} Guardar</button>`);return;}
+  if(a==="submit-student"){
+    const frm=$("#frm-student");if(!frm.reportValidity())return;
+    const fd=new FormData(frm);const edad=+fd.get("edad");
+    if(edad<18&&!fd.get("tutorNombre")){toast("Menores requieren tutor legal.","err");return;}
+    const data={nombres:fd.get("nombres"),apellidos:fd.get("apellidos"),dni:fd.get("dni"),edad,canal1:fd.get("canal1"),canal2:fd.get("canal2"),tutor:edad<18?{nombre:fd.get("tutorNombre"),dni:fd.get("tutorDni"),relacion:fd.get("tutorRel"),telefono:fd.get("canal2"),email:fd.get("tutorEmail")}:null,beca:fd.get("beca")?{tipo:fd.get("beca"),pct:fd.get("beca")==="total"?100:50,ciclo:fd.get("ciclo")}:null,consent:{version:S.config.consentVersion,ts:Date.now(),ip:"190.236.14."+Math.floor(Math.random()*200+2),aceptado:true},estado:"activo"};
+    const fid=frm.dataset.id;
+    if(fid){Object.assign(student(fid),data);audit("Editar estudiante",fid);}else{data.id=uid("st");data.codigo="GT-2026-"+pad(S.students.length+1).padStart(3,"0");S.students.push(data);audit("Nuevo estudiante",data.codigo);}
+    closeModal();toast(fid?"Estudiante actualizado.":"Estudiante registrado con consentimiento "+S.config.consentVersion+".");render();return;}
+  if(a==="del-student"){e.stopPropagation();const s=student(id);const snap=JSON.stringify(s);const idx=S.students.indexOf(s);
+    S.students.splice(idx,1);S.enrollments=S.enrollments.filter(x=>x.studentId!==id);audit("Eliminar estudiante",id);
+    toast("Estudiante eliminado.","warn",()=>{S.students.splice(idx,0,JSON.parse(snap));});render();return;}
+  if(a==="drawer-student"){const s=student(id);const ens=S.enrollments.filter(x=>x.studentId===s.id);
+    openDrawer(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h3>${esc(s.nombres)} ${esc(s.apellidos)}</h3><button class="btn btn-g btn-sm" data-action="close-drawer">${icon("x")}</button></div>
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px">${avatar(s.nombres+" "+s.apellidos,"width:52px;height:52px;font-size:18px")}<div><b>${esc(s.codigo)}</b><div style="font-size:12px;color:var(--muted)">DNI ${esc(s.dni)} · ${s.edad} años</div></div></div>
+    <div class="note" style="margin-bottom:12px">${icon("shield")} Consentimiento ${esc(s.consent.version)} · ${new Date(s.consent.ts).toLocaleDateString("es-PE")} · IP ${esc(s.consent.ip)}</div>
+    <div style="font-size:13px;margin-bottom:6px">${icon("phone")} Canal 1: <b>+${esc(s.canal1)}</b></div><div style="font-size:13px;margin-bottom:12px">${icon("phone")} Canal 2: <b>+${esc(s.canal2)}</b></div>
+    ${s.tutor?`<div class="card" style="margin-bottom:12px"><b>Tutor legal</b><div style="font-size:12px;color:var(--muted)">${esc(s.tutor.nombre)} · ${esc(s.tutor.relacion)} · DNI ${esc(s.tutor.dni)}</div></div>`:""}
+    <h4 style="margin:12px 0 8px">Matrículas</h4>${ens.map(x=>{const g=group(x.groupId);const r=record(s.id,g.id);return `<div style="display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid #edf2f8"><span>${esc(g.nombre)}</span><span>${r.pct}% · ${r.faltas}F</span></div>`}).join("")||"<p style='font-size:12px;color:var(--muted)'>Sin matrículas.</p>"}
+    <div style="display:flex;gap:8px;margin-top:16px"><button class="btn btn-b btn-sm" data-action="enroll-pick" data-id="${s.id}">${icon("plus")} Matricular</button><button class="btn btn-g btn-sm" data-action="edit-student" data-id="${s.id}">${icon("edit")} Editar</button></div>`);return;}
+  if(a==="close-drawer"){closeDrawer();return;}
+  if(a==="sort"){const k=el.dataset.k;if(ui.estSort===k)ui.estDir*=-1;else{ui.estSort=k;ui.estDir=1;}render();return;}
+  if(a==="save-view"){const name=prompt("Nombre de la vista guardada:","Vista "+(ui.savedViews.length+1));if(name){ui.savedViews.push({name,q:ui.estQ,filter:ui.estFilter});toast("Vista guardada.");render();}return;}
+  if(a==="apply-view"){const v=ui.savedViews[+el.dataset.i];ui.estQ=v.q;ui.estFilter=v.filter;render();return;}
+  if(a==="new-course"){openModal("Nuevo curso",`<form id="frm-course"><div class="field"><label>Nombre</label><input name="nombre" required></div><div class="frow"><div class="field"><label>Siglas</label><input name="siglas" required></div><div class="field"><label>Modalidad</label><select name="modalidad"><option>Virtual</option><option>Presencial</option><option>Híbrido</option></select></div></div><div class="field"><label>Libro / material</label><input name="libro"></div></form>`,`<button class="btn btn-g" data-action="close-modal">Cancelar</button><button class="btn btn-p" data-action="submit-course">${icon("check")} Crear</button>`);return;}
+  if(a==="submit-course"){const f=$("#frm-course");if(!f.reportValidity())return;const fd=new FormData(f);S.courses.push({id:uid("c"),nombre:fd.get("nombre"),siglas:fd.get("siglas"),modalidad:fd.get("modalidad"),libro:fd.get("libro"),color:AVCOLORS[S.courses.length%AVCOLORS.length]});closeModal();toast("Curso creado.");render();return;}
+  if(a==="new-group"){openModal("Nuevo grupo · genera calendario con fechas",`<form id="frm-group"><div class="field"><label>Curso</label><select name="courseId">${S.courses.map(c=>`<option value="${c.id}">${esc(c.nombre)}</option>`).join("")}</select></div><div class="field"><label>Nombre del grupo</label><input name="nombre" required placeholder="Teens · Sábados C"></div><div class="frow"><div class="field"><label>Días (separados por coma, 0=Dom…6=Sáb)</label><input name="dias" required value="6"></div><div class="field"><label>Nº sesiones</label><select name="num"><option>4</option><option>8</option></select></div></div><div class="frow"><div class="field"><label>Hora inicio</label><input name="hi" type="time" required value="08:00"></div><div class="field"><label>Hora fin</label><input name="hf" type="time" required value="10:00"></div></div><div class="frow"><div class="field"><label>Fecha inicio</label><input name="fecha" type="date" required value="${today()}"></div><div class="field"><label>Docente</label><select name="docente">${S.users.filter(u=>u.role==="docente").map(u=>`<option value="${u.id}">${esc(u.name)}</option>`).join("")}</select></div></div><div class="frow"><div class="field"><label>Sede</label><select name="sede"><option>Callao</option><option>Virtual</option></select></div><div class="field"><label>Aula</label><input name="aula" value="A-201"></div></div></form>`,`<button class="btn btn-g" data-action="close-modal">Cancelar</button><button class="btn btn-p" data-action="submit-group">${icon("check")} Crear y generar sesiones</button>`);return;}
+  if(a==="submit-group"){const f=$("#frm-group");if(!f.reportValidity())return;const fd=new FormData(f);
+    const g={id:uid("g"),courseId:fd.get("courseId"),nombre:fd.get("nombre"),docenteId:fd.get("docente"),sede:fd.get("sede"),dias:fd.get("dias").split(",").map(x=>+x.trim()).filter(x=>x>=0&&x<=6),hi:fd.get("hi"),hf:fd.get("hf"),fechaInicio:fd.get("fecha"),numSesiones:+fd.get("num"),aula:fd.get("aula")};
+    if(!g.dias.length){toast("Días inválidos.","err");return;}
+    S.groups.push(g);
+    let d=g.fechaInicio,n=0;while(n<g.numSesiones){if(g.dias.includes(dow(d))){n++;S.sessions.push({id:"se-"+g.id+"-"+n,groupId:g.id,n,fecha:d,hi:g.hi,hf:g.hf,estado:"programada",motivoC:null,cerradaEn:null,video:{titulo:"News Clip · Unit "+n,duracion:240},preQuiz:[{q:"Sample pre-question?",o:["A","B","C","D"],a:0}],postQuiz:[{q:"Sample post-question?",o:["A","B","C","D"],a:0}],resumen:"Resumen de la sesión."});}d=addDays(d,1);}
+    audit("Nuevo grupo",g.nombre+" · "+g.numSesiones+" sesiones");closeModal();toast("Grupo creado con "+g.numSesiones+" sesiones fechadas.");render();return;}
+  if(a==="del-group"){const g=group(id);S.groups=S.groups.filter(x=>x.id!==id);S.sessions=S.sessions.filter(x=>x.groupId!==id);S.enrollments=S.enrollments.filter(x=>x.groupId!==id);audit("Eliminar grupo",id);toast("Grupo eliminado.","warn",()=>{S.groups.push(g);});render();return;}
+  if(a==="enroll"||a==="enroll-pick"){
+    const gid=a==="enroll"?id:null;const sid=a==="enroll-pick"?id:null;
+    openModal("Matricular estudiante",`<form id="frm-enroll">${gid?`<input type="hidden" name="gid" value="${gid}">`:`<div class="field"><label>Grupo</label><select name="gid">${S.groups.map(g=>`<option value="${g.id}">${esc(g.nombre)} · ${g.dias.map(d=>DIAS[d]).join("+")} ${ftime(g.hi)}</option>`).join("")}</select></div>`}${sid?`<input type="hidden" name="sid" value="${sid}">`:`<div class="field"><label>Estudiante</label><select name="sid">${S.students.map(s=>`<option value="${s.id}">${esc(s.nombres)} ${esc(s.apellidos)}</option>`).join("")}</select></div>`}<div class="note">${icon("shield")} El sistema valida automáticamente que no exista cruce de horarios.</div></form>`,`<button class="btn btn-g" data-action="close-modal">Cancelar</button><button class="btn btn-p" data-action="submit-enroll">${icon("check")} Matricular</button>`);return;}
+  if(a==="submit-enroll"){const fd=new FormData($("#frm-enroll"));const sid=fd.get("sid"),gid=fd.get("gid");
+    if(enrolledIn(sid,gid)){toast("Ya está matriculado en este grupo.","warn");return;}
+    const cf=conflict(sid,gid);if(cf){toast("CRUCE DE HORARIO con "+cf.nombre+" ("+cf.dias.map(d=>DIAS[d]).join("+")+" "+ftime(cf.hi)+"). Matrícula bloqueada.","err");return;}
+    S.enrollments.push({id:uid("en"),studentId:sid,groupId:gid,estado:"activa"});
+    groupSessions(gid).forEach(se=>{if(!actFor(se.id,sid))S.activities.push({id:uid("ac"),sessionId:se.id,studentId:sid,pre:{visto:false,quizScore:null,completadoEn:null,tardio:false},post:{score:null,completadoEn:null}});});
+    audit("Matrícula",sid+" → "+gid);closeModal();closeDrawer();toast("Matrícula registrada sin cruces ✓");render();return;}
+  if(a==="mark-c"){const se=session(id);openModal("Marcar sesión como CUBIERTA (C)",`<form id="frm-c"><div class="field"><label>Motivo institucional</label><select name="motivo"><option>Feriado nacional</option><option>Evento del país</option><option>Evento institucional</option><option>Emergencia</option></select></div><div class="note">Todos los matriculados pasan a C (como si asistieron), sin nota y sin alertas. No genera FUT ni cobro.</div></form>`,`<button class="btn btn-g" data-action="close-modal">Cancelar</button><button class="btn btn-p" data-action="submit-c" data-id="${id}">${icon("flag")} Aplicar C</button>`);return;}
+  if(a==="submit-c"){const se=session(id);const fd=new FormData($("#frm-c"));se.estado="no_dictada";se.motivoC=fd.get("motivo");
+    S.enrollments.filter(x=>x.groupId===se.groupId).forEach(x=>{let at=attFor(id,x.studentId);if(!at){at={id:uid("at"),sessionId:id,studentId:x.studentId,estado:"C",nota:null,notaOrigen:null,checkin:null,history:[]};S.attendance.push(at);}else{at.estado="C";at.nota=null;}});
+    audit("Sesión cubierta",id+" · "+se.motivoC);closeModal();toast("Sesión marcada C · sin nota, sin alertas.");render();return;}
+  if(a==="undo-c"){const se=session(id);se.estado="programada";se.motivoC=null;S.attendance=S.attendance.filter(x=>!(x.sessionId===id&&x.estado==="C"));audit("Revertir C",id);toast("Cobertura revertida.");render();return;}
+  if(a==="reprog"){const se=session(id);openModal("Reprogramar sesión",`<form id="frm-re"><div class="field"><label>Nueva fecha</label><input type="date" name="fecha" required value="${se.fecha}"></div></form>`,`<button class="btn btn-g" data-action="close-modal">Cancelar</button><button class="btn btn-p" data-action="submit-re" data-id="${id}">${icon("cal")} Reprogramar</button>`);return;}
+  if(a==="submit-re"){const se=session(id);const fd=new FormData($("#frm-re"));const old=se.fecha;se.fecha=fd.get("fecha");audit("Reprogramación",id+" "+old+"→"+se.fecha);queueMsg("reprog",null,"admin","Sesión "+id+" reprogramada de "+fdate(old)+" a "+fdate(se.fecha)+".");closeModal();toast("Sesión reprogramada y avisada.");render();return;}
+  if(a==="new-fut"||a==="new-fut-st"){const isSt=a==="new-fut-st";
+    openModal("Nuevo FUT",`<form id="frm-fut">${isSt?`<input type="hidden" name="sid" value="${ui.student}">`:`<div class="field"><label>Estudiante</label><select name="sid">${S.students.map(s=>`<option value="${s.id}">${esc(s.nombres)} ${esc(s.apellidos)}</option>`).join("")}</select></div>`}<div class="field"><label>Tipo de trámite</label><select name="tipo"><option value="justificacion">Justificación de falta</option><option value="revision">Revisión de nota</option><option value="rezagado">Evaluación de rezagado</option><option value="cambio">Cambio de grupo</option><option value="constancia">Constancia</option></select></div><div class="field"><label>Sesión afectada (opcional)</label><select name="sessionId"><option value="">—</option>${S.sessions.map(s=>`<option value="${s.id}">${esc(group(s.groupId).nombre)} · ${fdate(s.fecha)}</option>`).join("")}</select></div><div class="field"><label>Detalle / sustento</label><textarea name="detalle" required></textarea></div></form>`,`<button class="btn btn-g" data-action="close-modal">Cancelar</button><button class="btn btn-p" data-action="submit-fut">${icon("check")} Generar FUT</button>`);return;}
+  if(a==="submit-fut"){const f=$("#frm-fut");if(!f.reportValidity())return;const fd=new FormData(f);const tipo=fd.get("tipo");
+    const arancel=tipo==="justificacion"?0:S.config.aranceles[tipo]||0;
+    const code="GT-FUT-2026-"+String(100+S.futs.length+1).padStart(6,"0");
+    const fut={id:uid("f"),codigo:code,studentId:fd.get("sid"),tipo,sessionId:fd.get("sessionId")||null,detalle:fd.get("detalle"),sustento:"",arancel,estado:arancel?"pago_pendiente":"recibido",creadoEn:Date.now(),conformeEn:null,usadoEn:null};
+    S.futs.unshift(fut);
+    if(arancel)S.payments.unshift({id:uid("py"),studentId:fut.studentId,concepto:"fut",refId:fut.id,monto:arancel,vencimiento:addDays(today(),5),estado:"pendiente",voucher:null,pagadoEn:null});
+    audit("FUT creado",code);closeModal();toast("FUT "+code+" generado."+(arancel?" Pendiente de pago "+money(arancel)+".":""));render();return;}
+  if(a==="fut-conform"){const f=S.futs.find(x=>x.id===id);f.estado="conforme";f.conformeEn=Date.now();
+    const pay=S.payments.find(p=>p.refId===f.id);if(pay)pay.estado="pagado";
+    queueMsg("fut",f.studentId,"1","Tu FUT "+f.codigo+" está CONFORME. Entrégalo a tu docente para ejecutar el cambio (vigencia 7 días).");
+    audit("FUT conforme",f.codigo);toast("FUT conforme · docente habilitado para usar el código.");render();return;}
+  if(a==="fut-reject"){const f=S.futs.find(x=>x.id===id);f.estado="rechazado";audit("FUT rechazado",f.codigo);toast("FUT rechazado.","warn");render();return;}
+  if(a==="pay-ok"){const p=S.payments.find(x=>x.id===id);p.estado="pagado";p.pagadoEn=Date.now();audit("Voucher validado",p.id);toast("Voucher validado · pago conforme.");render();return;}
+  if(a==="pay-mark"){const p=S.payments.find(x=>x.id===id);p.estado="pagado";p.pagadoEn=Date.now();audit("Pago marcado",p.id);toast("Pago registrado.");render();return;}
+  if(a==="gen-month"){let n=0;S.enrollments.filter(e=>e.estado==="activa").forEach(e=>{const st=student(e.studentId);const exists=S.payments.some(p=>p.studentId===e.studentId&&p.concepto==="mensualidad"&&p.refId===e.groupId&&p.vencimiento>=today());if(exists)return;const base=180;const monto=st.beca?(st.beca.tipo==="total"?0:base/2):base;S.payments.push({id:uid("py"),studentId:e.studentId,concepto:"mensualidad",refId:e.groupId,monto,vencimiento:addDays(today(),7),estado:st.beca?"beca":"pendiente",voucher:null,pagadoEn:null});n++;});toast(n?n+" mensualidades generadas.":"Mensualidades ya al día.");render();return;}
+  if(a==="upload-voucher"){const p=S.payments.find(x=>x.id===id);p.estado="validacion";p.voucher={nombre:"yape-"+Date.now()+".jpg",ts:Date.now()};audit("Voucher subido",p.id);toast("Voucher recibido · administración validará en breve.");render();return;}
+  if(a==="emit-cert"){const en=S.enrollments.find(x=>x.id===el.dataset.en);const r=record(en.studentId,en.groupId);
+    if(!r.habilitado){toast("No habilitado: revisa faltas, promedio o deuda.","err");return;}
+    const code="GT-CERT-2026-"+uid("").slice(1);
+    const c={id:uid("ce"),codigo:code,studentId:en.studentId,groupId:en.groupId,emitidoEn:Date.now(),snapshot:{prom:r.prom,pct:r.pct,faltas:r.faltas}};
+    S.certificates.push(c);audit("Certificado emitido",code);toast("Certificado emitido ✓");openCert(c);render();return;}
+  if(a==="view-cert"){openCert(S.certificates.find(c=>c.id===id));return;}
+  if(a==="msg-sent"){const m=S.messages.find(x=>x.id===id);m.estado="enviado";m.enviadoEn=Date.now();m.enviadoPor=personaName();audit("Mensaje enviado",m.id);render();return;}
+  if(a==="msg-skip"){const m=S.messages.find(x=>x.id===id);m.estado="omitido";render();return;}
+  if(a==="mark-all-sent"){S.messages.filter(m=>m.estado==="pendiente").forEach(m=>{m.estado="enviado";m.enviadoEn=Date.now();m.enviadoPor=personaName();});toast("Cola marcada como enviada.");render();return;}
+  if(a==="save-config"){S.config.notifyNumber=$("#cfg-number").value.replace(/\D/g,"");S.config.cutoffHour=+$("#cfg-cutoff").value;audit("Configuración","número/corte");toast("Configuración guardada.");render();return;}
+  if(a==="save-aranceles"){$$(".fut-arancel").forEach(i=>S.config.aranceles[i.dataset.k]=+i.value);toast("Aranceles actualizados.");render();return;}
+  if(a==="reset-demo"){if(confirm("¿Restablecer todos los datos de demo?")){localStorage.removeItem(KEY);S=seed();save();toast("Demo restablecida.");render();}return;}
+  if(a==="open-session"){const se=session(id);se.estado="en_curso";audit("Apertura de sesión",id);toast("Sesión abierta · check-in habilitado.");location.hash="#/docente/sesion/"+id;render();return;}
+  if(a==="checkin"){doCheckin(id);return;}
+  if(a==="save-draft"){toast("Borrador guardado (sin notificaciones).");save();return;}
+  if(a==="close-session"){const se=session(id);
+    $$(".att-sel").forEach(sel=>{const st=sel.dataset.st;let at=attFor(id,st);if(!at){at={id:uid("at"),sessionId:id,studentId:st,estado:"P",nota:null,notaOrigen:null,checkin:null,history:[]};S.attendance.push(at);}at.estado=sel.value;});
+    $$(".nota-in").forEach(inp=>{const at=attFor(id,inp.dataset.st);if(at&&inp.value!==""){at.nota=Math.max(0,Math.min(20,+inp.value));at.notaOrigen="clase";}});
+    closeSession(id);toast("Sesión cerrada · faltas y ceros notificados a canales 1, 2 y administración.");location.hash="#/docente";render();return;}
+  if(a==="save-corrections"){const se=session(id);
+    if(!correctionOpen(se)){toast("Ventana cerrada. Usa un FUT conforme.","err");return;}
+    let changed=0;
+    $$(".att-sel").forEach(sel=>{const at=attFor(id,sel.dataset.st);if(at&&at.estado!==sel.value){at.history.push({ts:Date.now(),from:at.estado,to:sel.value});at.estado=sel.value;changed++;
+      if(sel.value!=="F"){const st=student(at.studentId);queueMsg("erratas",st.id,"1","Fe de erratas: tu registro del "+fdate(se.fecha)+" fue corregido a "+sel.value+".");if(st.tutor)queueMsg("erratas",st.id,"2","Fe de erratas: el registro de "+st.nombres+" del "+fdate(se.fecha)+" fue corregido a "+sel.value+".");}}});
+    $$(".nota-in").forEach(inp=>{const at=attFor(id,inp.dataset.st);const v=inp.value===""?null:Math.max(0,Math.min(20,+inp.value));if(at&&at.nota!==v){at.history.push({ts:Date.now(),from:at.nota,to:v});at.nota=v;changed++;}});
+    audit("Corrección en ventana",id+" · "+changed+" cambios");toast(changed?changed+" correcciones guardadas con fe de erratas.":"Sin cambios.");render();return;}
+  if(a==="fut-change"){const se=session(id);
+    openModal("Cambio post-ventana · requiere FUT conforme",`<form id="frm-futchange"><div class="field"><label>Código FUT</label><input name="code" required placeholder="GT-FUT-2026-000101"></div><div class="field"><label>Estudiante</label><select name="sid">${S.enrollments.filter(x=>x.groupId===se.groupId).map(x=>{const s=student(x.studentId);return `<option value="${s.id}">${esc(s.nombres)} ${esc(s.apellidos)}</option>`}).join("")}</select></div><div class="frow"><div class="field"><label>Nueva asistencia</label><select name="est"><option>P</option><option>T</option><option>J</option></select></div><div class="field"><label>Nueva nota</label><input name="nota" type="number" min="0" max="20" required></div></div><div class="note">Se valida: existencia, estudiante/sesión, tipo, conformidad de pago, no usado y vigencia.</div></form>`,`<button class="btn btn-g" data-action="close-modal">Cancelar</button><button class="btn btn-p" data-action="submit-futchange" data-id="${id}">${icon("shield")} Validar y aplicar</button>`);return;}
+  if(a==="submit-futchange"){const fd=new FormData($("#frm-futchange"));const se=session(id);
+    const v=validateFut(fd.get("code"),fd.get("sid"),id,fd.get("est")==="J"?"justificacion":"revision");
+    if(!v.ok){toast(v.err,"err");return;}
+    let at=attFor(id,fd.get("sid"));if(!at){at={id:uid("at"),sessionId:id,studentId:fd.get("sid"),estado:"P",nota:null,notaOrigen:null,checkin:null,history:[]};S.attendance.push(at);}
+    at.history.push({ts:Date.now(),from:at.estado+"/"+at.nota,to:fd.get("est")+"/"+fd.get("nota"),fut:v.f.codigo});
+    at.estado=fd.get("est");at.nota=Math.max(0,Math.min(20,+fd.get("nota")));at.notaOrigen="rezagado";
+    v.f.estado="ejecutado";v.f.usadoEn=Date.now();
+    audit("Cambio con FUT",v.f.codigo+" · "+id);closeModal();toast("FUT válido · cambio aplicado y código ejecutado.");render();return;}
+  if(a==="play-video"){const se=session(id);const ac=actFor(id,ui.student);let p=0;const bar=$("#vbar"),tm=$("#vtime");el.disabled=true;
+    const iv=setInterval(()=>{p+=4;if(bar)bar.style.width=p+"%";if(tm)tm.textContent=Math.floor(p*2.4/60)+":"+pad(Math.floor(p*2.4%60))+" / 4:00";
+      if(p>=100){clearInterval(iv);if(ac){ac.pre.visto=true;}save();toast("Video visto ✓ · ahora responde el pre-quiz.");render();}},120);return;}
+  if(a==="tab"){ui.tab[el.dataset.key]=el.dataset.tab;render();return;}
+  if(a==="copy"){navigator.clipboard?.writeText(el.dataset.text).then(()=>toast("Copiado al portapapeles."));return;}
+  if(a==="export-csv"){const sid=ui.reportStudent||S.students[0].id;let csv="Curso,Fecha,Asistencia,Nota\n";S.enrollments.filter(e=>e.studentId===sid).forEach(e=>{groupSessions(e.groupId).forEach(se=>{const a=attFor(se.id,sid);csv+=`"${course(group(e.groupId).courseId).nombre}",${se.fecha},${a?a.estado:""},${a&&a.nota!=null?a.nota:""}\n`;});});
+    const b=new Blob([csv],{type:"text/csv"});const u=URL.createObjectURL(b);const l=document.createElement("a");l.href=u;l.download="record-"+sid+".csv";l.click();toast("CSV exportado.");return;}
+  if(a==="print"){window.print();return;}
+});
+document.addEventListener("change",e=>{
+  const el=e.target;
+  if(el.dataset.action==="persona"){ui.persona=el.value;render();}
+  if(el.dataset.action==="student-sel"){ui.student=el.value;render();}
+});
+document.addEventListener("submit",e=>{
+  e.preventDefault();
+  const f=e.target;
+  if(f.id==="frm-verify"){const code=new FormData(f).get("code").trim().toUpperCase();location.hash="#/verificar/"+code;return;}
+  if(f.classList.contains("quiz-form")){
+    const kind=f.dataset.kind,seid=f.dataset.se,se=session(seid);const qs=kind==="pre"?se.preQuiz:se.postQuiz;
+    const fd=new FormData(f);let correct=0;
+    qs.forEach((q,i)=>{if(+fd.get("q"+i)===q.a)correct++;});
+    const score=Math.round(correct/qs.length*20);
+    let ac=actFor(seid,ui.student);if(!ac){ac={id:uid("ac"),sessionId:seid,studentId:ui.student,pre:{visto:false,quizScore:null,completadoEn:null,tardio:false},post:{score:null,completadoEn:null}};S.activities.push(ac);}
+    if(kind==="pre"){ac.pre.quizScore=score;ac.pre.completadoEn=Date.now();ac.pre.tardio=se.fecha<=today();}
+    else{ac.post.score=score;ac.post.completadoEn=Date.now();}
+    audit(kind==="pre"?"Pre-quiz":"Post-quiz",seid+" · "+score+"/20");
+    toast("Quiz enviado · "+score+"/20.","ok");render();return;}
+});
+$("#dscrim").addEventListener("click",closeDrawer);
+$("#scrim").addEventListener("click",e=>{if(e.target.id==="scrim")closeModal();});
+function openCert(c){const st=student(c.studentId),g=group(c.groupId);
+  openModal("Certificado emitido",`<div class="cert"><h2>CERTIFICADO</h2><p style="margin:8px 0">Otorgado a <b>${esc(st.nombres)} ${esc(st.apellidos)}</b></p><p style="font-size:13px;color:var(--muted)">${esc(course(g.courseId).nombre)}</p><p style="font-size:13px;margin:8px 0">Promedio <b>${c.snapshot.prom}</b> · Asistencia <b>${c.snapshot.pct}%</b></p><div class="code">${esc(c.codigo)}</div><div class="qr-box" style="margin-top:12px">${qrSVG(verifyURL(c.codigo))}</div><div style="font-size:11px;color:var(--muted);margin-top:8px">Verifica en ${esc(verifyURL(c.codigo))}</div></div>`,`<button class="btn btn-g" data-action="copy" data-text="${esc(verifyURL(c.codigo))}">${icon("copy")} Copiar enlace</button><button class="btn btn-b" data-action="print">${icon("print")} Imprimir</button><button class="btn btn-p" data-action="close-modal">Listo</button>`,true);
+}
+window.addEventListener("hashchange",route);
+load();runCutoff(false);route();
+</script>
+</body>
+</html>
