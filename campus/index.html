@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Campus Grupo Talenth · v1.8b</title>
+<title>Campus Grupo Talenth · v1.9 Ficha Completa</title>
 <meta name="theme-color" content="#071a2c">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -24,7 +24,7 @@ body{font-family:var(--fb);background:var(--paper);color:var(--ink);font-size:14
 #app{display:none;min-height:100vh}
 .topbar{position:fixed;inset:0 0 auto;height:var(--nav);z-index:70;display:flex;align-items:center;gap:10px;padding:0 16px;background:rgba(7,26,44,.95);color:#fff}
 .brand{display:flex;align-items:center;gap:10px;font-family:var(--fd);font-weight:700;font-size:15px}.brand .mark{width:34px;height:34px;border-radius:10px;background:var(--grad-hot);display:grid;place-items:center}
-.net-badge{font-size:10px;font-weight:800;padding:4px 9px;border-radius:20px;background:rgba(255,176,32,.25);color:#ffd591;white-space:nowrap}.net-badge.cloud{background:rgba(23,178,106,.28);color:#86efac}.net-badge.err{background:rgba(240,68,56,.25);color:#ffb4ab}
+.net-badge{font-size:10px;font-weight:800;padding:4px 9px;border-radius:20px;background:rgba(23,178,106,.28);color:#86efac;white-space:nowrap}
 .user-info{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:12px;color:#bcd3e8}.user-info b{color:#fff}
 .iconbtn{border:0;background:rgba(255,255,255,.11);color:#fff;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;cursor:pointer}
 .layout{display:flex;padding-top:var(--nav)}
@@ -38,13 +38,16 @@ body{font-family:var(--fb);background:var(--paper);color:var(--ink);font-size:14
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
 .grid{display:grid;gap:16px}.g2{grid-template-columns:repeat(2,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
 .kpi .num{font-family:var(--fd);font-size:26px;font-weight:700}.kpi .lbl{font-size:12px;color:var(--muted)}
-.badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:800}.b-violet{background:rgba(139,92,246,.15);color:#8b5cf6}
+.badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:800}.b-violet{background:rgba(139,92,246,.15);color:#8b5cf6}.b-green{background:rgba(23,178,106,.14);color:var(--green)}
 .tw{overflow:auto;border-radius:var(--r);border:1px solid var(--line);background:var(--surface)}table{width:100%;border-collapse:collapse}th{font-size:11px;text-transform:uppercase;color:var(--muted);text-align:left;padding:12px;background:#f5f9fc;border-bottom:1px solid var(--line)}td{padding:12px;border-bottom:1px solid #edf3f8;font-size:13px}
 .toast{position:fixed;right:18px;bottom:80px;background:var(--ink);color:#fff;padding:12px 16px;border-radius:12px;font-size:13px;z-index:300;border-left:4px solid var(--green);animation:pop .3s ease}
 .fi{width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);font-size:14px}
 label{font-size:12px;font-weight:700;color:var(--muted);display:flex;flex-direction:column;gap:4px}
-.note{font-size:12px;color:var(--muted);background:#f3f8fc;border:1px dashed var(--line);border-radius:10px;padding:10px 12px;margin-bottom:14px}
-.diag{font-family:ui-monospace,monospace;font-size:12px;background:#071a2c;color:#86efac;padding:12px;border-radius:10px;word-break:break-all}
+label .req{color:var(--red);font-weight:800}
+.section-title{font-family:var(--fd);font-size:16px;font-weight:700;color:var(--ink);margin:20px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--line)}
+.section-title:first-child{margin-top:0}
+.tutor-section{background:#fff7ed;border:2px dashed #ffb020;border-radius:12px;padding:16px;margin-top:16px}
+.tutor-badge{background:#ffb020;color:#071a2c;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;margin-bottom:12px;display:inline-block}
 @keyframes pop{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
 @media(max-width:860px){.sidebar{display:none}.main{margin-left:0;padding:16px}.g2,.g4{grid-template-columns:1fr}}
 </style>
@@ -63,12 +66,12 @@ label{font-size:12px;font-weight:700;color:var(--muted);display:flex;flex-direct
   <div class="login-box">
     <div class="mark"><svg class="ic lg" style="color:#fff"><use href="#i-logo"/></svg></div>
     <h2>Grupo Talenth</h2>
-    <p>Campus v1.8b · Entra siempre, sincroniza en la nube</p>
+    <p>Campus v1.9 · Ficha completa</p>
     <input type="tel" id="login-phone" placeholder="Celular (ej: 930175586)" inputmode="numeric">
     <input type="password" id="login-pin" placeholder="Clave (ej: 1234)" inputmode="numeric">
     <button id="btn-login">Ingresar</button>
     <div class="err" id="login-err"></div>
-    <div class="help">Funciona sin internet. La nube es respaldo, no puerta.</div>
+    <div class="help">Funciona sin internet. La nube es respaldo.</div>
   </div>
 </div>
 
@@ -86,7 +89,7 @@ label{font-size:12px;font-weight:700;color:var(--muted);display:flex;flex-direct
 </div>
 
 <div id="modal-bg" style="display:none;position:fixed;inset:0;background:rgba(7,26,44,.6);z-index:400;align-items:flex-start;justify-content:center;padding:5vh 16px;overflow:auto">
-  <div style="background:#fff;border-radius:18px;max-width:640px;width:100%;padding:20px">
+  <div style="background:#fff;border-radius:18px;max-width:720px;width:100%;padding:24px;max-height:90vh;overflow-y:auto">
     <div style="display:flex;justify-content:space-between;margin-bottom:14px"><h3 id="modal-title">Nuevo estudiante</h3><button class="iconbtn" style="background:#eef4f9;color:#071a2c" onclick="closeModal()">✕</button></div>
     <div id="modal-body"></div>
   </div>
@@ -96,7 +99,7 @@ label{font-size:12px;font-weight:700;color:var(--muted);display:flex;flex-direct
 const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const uid=p=>(p?p+"-":"")+Math.random().toString(36).slice(2,8).toUpperCase();
-const KEY='gt-campus-v18', SKEY='gt_session_v18';
+const KEY='gt-campus-v19', SKEY='gt_session_v19';
 const SB_URL='https://isnqfjwruqwqmzzmegci.supabase.co';
 const SB_KEY='sb_publishable__h4NuoTLzZlU1nfEE4XKqg_I_RQDrlK';
 const H1234='03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4';
@@ -110,12 +113,12 @@ async function hashPin(p){const d=new TextEncoder().encode(p);const b=await cryp
 
 function seed(){
  return {students:[
-  {id:"st-1",codigo:"GT-001",nombres:"Valeria",apellidos:"Rojas Carmen",dni:"76543210",edad:15,canal1:"51911111111",canal2:"51922222222",captacion:"Visita a colegio",colegio:"I.E. Nuestra Señora del Carmen",direccion:"",distrito:"Callao",cumple:"2011-03-14",beca:{tipo:"total",pct:100}},
-  {id:"st-2",codigo:"GT-002",nombres:"Diego",apellidos:"Ramos Silva",dni:"76543211",edad:17,canal1:"51911111112",canal2:"51922222223",captacion:"Campo / volanteo",colegio:"I.E. San Juan Bosco",direccion:"",distrito:"Bellavista",cumple:"2009-07-22",beca:null},
-  {id:"st-3",codigo:"GT-003",nombres:"Lucía",apellidos:"Fernández Prado",dni:"76543212",edad:16,canal1:"51911111113",canal2:"51922222224",captacion:"Internet / Redes",colegio:"I.E. América Callao",direccion:"",distrito:"La Perla",cumple:"2010-11-02",beca:{tipo:"parcial",pct:50}},
-  {id:"st-4",codigo:"GT-004",nombres:"Marco",apellidos:"Pérez Giron",dni:"76543213",edad:24,canal1:"51911111114",canal2:"51911111114",captacion:"Internet / Redes",colegio:"",direccion:"",distrito:"Los Olivos",cumple:"2002-05-30",beca:null},
-  {id:"st-5",codigo:"GT-005",nombres:"Ana",apellidos:"Torres Vega",dni:"76543214",edad:19,canal1:"51911111115",canal2:"51922222226",captacion:"Referido",colegio:"",direccion:"",distrito:"Ventanilla",cumple:"2007-01-18",beca:null},
-  {id:"st-6",codigo:"GT-006",nombres:"José",apellidos:"Chávez Rojas",dni:"76543215",edad:14,canal1:"51911111116",canal2:"51922222227",captacion:"Visita a colegio",colegio:"I.E. República de Venezuela",direccion:"",distrito:"Callao",cumple:"2012-09-09",beca:null}
+  {id:"st-1",codigo:"GT-2026-001",nombres:"Valeria",apellidos:"Rojas Carmen",dni:"76543210",fechaNac:"2011-03-14",genero:"Femenino",canal1:"51911111111",canal2:"51922222222",email:"",direccion:"",distrito:"Callao",colegio:"I.E. Nuestra Señora del Carmen",ocupacion:"Estudiante",programa:"Inglés",nivel:"Básico",track:"Teens",modalidad:"Presencial",sede:"Callao",turno:"Mañana",fechaMatricula:"2026-01-15",captacion:"Visita a colegio",subCanal:"",asesor:"",beca:{tipo:"total",pct:100},formaPago:"Yape",alergias:"",tutor:{nombre:"Carmen Rojas",dni:"41234567",relacion:"Madre",telefono:"51922222222"},estado:"activo",observaciones:""},
+  {id:"st-2",codigo:"GT-2026-002",nombres:"Diego",apellidos:"Ramos Silva",dni:"76543211",fechaNac:"2009-07-22",genero:"Masculino",canal1:"51911111112",canal2:"51922222223",email:"",direccion:"",distrito:"Bellavista",colegio:"I.E. San Juan Bosco",ocupacion:"Estudiante",programa:"Inglés",nivel:"Básico",track:"Teens",modalidad:"Presencial",sede:"Callao",turno:"Mañana",fechaMatricula:"2026-01-15",captacion:"Campo / volanteo",subCanal:"",asesor:"",beca:null,formaPago:"Yape",alergias:"",tutor:{nombre:"Luis Ramos",dni:"41234568",relacion:"Padre",telefono:"51922222223"},estado:"activo",observaciones:""},
+  {id:"st-3",codigo:"GT-2026-003",nombres:"Lucía",apellidos:"Fernández Prado",dni:"76543212",fechaNac:"2010-11-02",genero:"Femenino",canal1:"51911111113",canal2:"51922222224",email:"",direccion:"",distrito:"La Perla",colegio:"I.E. América Callao",ocupacion:"Estudiante",programa:"Inglés",nivel:"Básico",track:"Teens",modalidad:"Presencial",sede:"Callao",turno:"Mañana",fechaMatricula:"2026-01-15",captacion:"Internet / Redes",subCanal:"",asesor:"",beca:{tipo:"parcial",pct:50},formaPago:"Yape",alergias:"",tutor:{nombre:"María Prado",dni:"41234569",relacion:"Madre",telefono:"51922222224"},estado:"activo",observaciones:""},
+  {id:"st-4",codigo:"GT-2026-004",nombres:"Marco",apellidos:"Pérez Giron",dni:"76543213",fechaNac:"2002-05-30",genero:"Masculino",canal1:"51911111114",canal2:"51911111114",email:"",direccion:"",distrito:"Los Olivos",colegio:"",ocupacion:"Trabajador",programa:"Inglés",nivel:"Intermedio",track:"Adultos",modalidad:"Online",sede:"Virtual",turno:"Noche",fechaMatricula:"2026-01-15",captacion:"Internet / Redes",subCanal:"",asesor:"",beca:null,formaPago:"Yape",alergias:"",tutor:null,estado:"activo",observaciones:""},
+  {id:"st-5",codigo:"GT-2026-005",nombres:"Ana",apellidos:"Torres Vega",dni:"76543214",fechaNac:"2007-01-18",genero:"Femenino",canal1:"51911111115",canal2:"51922222226",email:"",direccion:"",distrito:"Ventanilla",colegio:"",ocupacion:"Estudiante",programa:"Inglés",nivel:"Intermedio",track:"Adultos",modalidad:"Online",sede:"Virtual",turno:"Noche",fechaMatricula:"2026-01-15",captacion:"Referido",subCanal:"",asesor:"",beca:null,formaPago:"Yape",alergias:"",tutor:null,estado:"activo",observaciones:""},
+  {id:"st-6",codigo:"GT-2026-006",nombres:"José",apellidos:"Chávez Rojas",dni:"76543215",fechaNac:"2012-09-09",genero:"Masculino",canal1:"51911111116",canal2:"51922222227",email:"",direccion:"",distrito:"Callao",colegio:"I.E. República de Venezuela",ocupacion:"Estudiante",programa:"Inglés",nivel:"Básico",track:"Kids",modalidad:"Presencial",sede:"Callao",turno:"Mañana",fechaMatricula:"2026-01-15",captacion:"Visita a colegio",subCanal:"",asesor:"",beca:null,formaPago:"Yape",alergias:"",tutor:{nombre:"Rosa Rojas",dni:"41234570",relacion:"Madre",telefono:"51922222227"},estado:"activo",observaciones:""}
  ],groups:[
   {id:"g-1",nombre:"Teens · Sábados A",curso:"Inglés Básico",dias:[6],hi:"08:00",hf:"10:00",sede:"Callao",aula:"A-201",costo:180},
   {id:"g-2",nombre:"Adultos · Online A",curso:"Inglés Intermedio",dias:[1,3,5],hi:"19:00",hf:"21:00",sede:"Virtual",aula:"Teams",costo:180}
@@ -125,36 +128,10 @@ function seed(){
 function loadData(){try{const r=localStorage.getItem(KEY);S=r?JSON.parse(r):seed();if(!r)localStorage.setItem(KEY,JSON.stringify(S));}catch(e){S=seed();}}
 function save(){localStorage.setItem(KEY,JSON.stringify(S));if(sb){clearTimeout(pushTimer);pushTimer=setTimeout(push,700);}}
 async function push(){if(!sb){sbStatus='sin librería';updateNet();return;}try{const {error}=await sb.from("campus_state").upsert({id:"main",data:S,updated_at:new Date().toISOString()});if(error){sbStatus='error al subir: '+error.message;netMode='local';}else{sbStatus='ok';netMode='cloud';lastRemote=Date.now();}updateNet();}catch(e){sbStatus='catch al subir: '+e.message;netMode='local';updateNet();}}
+async function pullCloud(){if(!window.supabase){sbStatus='la librería Supabase NO cargó';netMode='local';updateNet();return;}if(!sb){try{sb=window.supabase.createClient(SB_URL,SB_KEY);}catch(e){sbStatus='cliente falló: '+e.message;updateNet();return;}}sbStatus='probando…';updateNet();try{const {data,error}=await sb.from("campus_state").select("*").eq("id","main").single();if(error){sbStatus='nube rechazó: '+error.message;netMode='local';}else if(!data||!data.data){sbStatus='nube OK pero vacía → subiendo datos locales';netMode='cloud';await push();}else{lastRemote=new Date(data.updated_at).getTime();S=data.data;localStorage.setItem(KEY,JSON.stringify(S));netMode='cloud';sbStatus='ok';if(currentUser)route(location.hash||"#/home");}}catch(e){sbStatus='error de red: '+e.message;netMode='local';}updateNet();}
+function updateNet(){const b=$("#net-badge");if(!b)return;if(netMode==='cloud'){b.className='net-badge';b.textContent='☁ Nube';}else{b.style.background='rgba(255,176,32,.25)';b.style.color='#ffd591';b.textContent='📴 Local';}}
 
-async function pullCloud(){
- if(!window.supabase){sbStatus='la librería Supabase NO cargó (revisa el <script> del CDN)';netMode='local';updateNet();return;}
- if(!sb){try{sb=window.supabase.createClient(SB_URL,SB_KEY);}catch(e){sbStatus='cliente falló: '+e.message;updateNet();return;}}
- sbStatus='probando…';updateNet();
- try{
-  const {data,error}=await sb.from("campus_state").select("*").eq("id","main").single();
-  if(error){sbStatus='nube rechazó: '+error.message;netMode='local';}
-  else if(!data||!data.data){sbStatus='nube OK pero vacía → subiendo datos locales';netMode='cloud';await push();}
-  else{lastRemote=new Date(data.updated_at).getTime();S=data.data;localStorage.setItem(KEY,JSON.stringify(S));netMode='cloud';sbStatus='ok';if(currentUser)route(location.hash||"#/home");}
- }catch(e){sbStatus='error de red: '+e.message;netMode='local';}
- updateNet();
-}
-
-function updateNet(){const b=$("#net-badge");if(!b)return;
- if(netMode==='cloud'){b.className='net-badge cloud';b.textContent='☁ Nube';}
- else{b.className='net-badge '+(sbStatus.startsWith('error')||sbStatus.startsWith('nube rechazó')||sbStatus.startsWith('catch')?'err':'');b.textContent='📴 Local';}
- const d=$("#diag");if(d)d.textContent=sbStatus;
-}
-
-async function doLogin(){
- const phone=$("#login-phone").value.trim(),pin=$("#login-pin").value.trim(),err=$("#login-err");
- err.textContent="";if(!phone||!pin){err.textContent="Completa celular y clave";return;}
- $("#btn-login").disabled=true;$("#btn-login").textContent="Verificando…";
- try{const h=await hashPin(pin);const u=USERS.find(x=>x.phone===phone&&x.pin===h);
-  if(!u){err.textContent="Credenciales incorrectas";return;}
-  currentUser=u;localStorage.setItem(SKEY,JSON.stringify(u));enterApp();
- }catch(e){err.textContent="Error: "+e.message;}
- finally{$("#btn-login").disabled=false;$("#btn-login").textContent="Ingresar";}
-}
+async function doLogin(){const phone=$("#login-phone").value.trim(),pin=$("#login-pin").value.trim(),err=$("#login-err");err.textContent="";if(!phone||!pin){err.textContent="Completa celular y clave";return;}$("#btn-login").disabled=true;$("#btn-login").textContent="Verificando…";try{const h=await hashPin(pin);const u=USERS.find(x=>x.phone===phone&&x.pin===h);if(!u){err.textContent="Credenciales incorrectas";return;}currentUser=u;localStorage.setItem(SKEY,JSON.stringify(u));enterApp();}catch(e){err.textContent="Error: "+e.message;}finally{$("#btn-login").disabled=false;$("#btn-login").textContent="Ingresar";}}
 function enterApp(){$("#login-screen").style.display="none";$("#app").style.display="block";$("#user-name").textContent=currentUser.name;$("#user-role").textContent=currentUser.role==="super"?"ADM Principal":"Administración";renderSidebar();route("#/home");updateNet();}
 function checkSession(){const s=localStorage.getItem(SKEY);if(s){try{currentUser=JSON.parse(s);enterApp();return}catch(e){}}$("#login-screen").style.display="flex";$("#app").style.display="none";}
 function logout(){localStorage.removeItem(SKEY);currentUser=null;$("#app").style.display="none";$("#login-screen").style.display="flex";}
@@ -162,63 +139,109 @@ function logout(){localStorage.removeItem(SKEY);currentUser=null;$("#app").style
 const NAVS={super:[["home","Inicio","#/home"],["users","Estudiantes","#/users"],["cal","Grupos","#/groups"],["cloud","Nube y respaldo","#/backup"]],admin:[["home","Inicio","#/home"],["users","Estudiantes","#/users"],["cal","Grupos","#/groups"]]};
 function renderSidebar(){const nav=NAVS[currentUser.role]||NAVS.admin;$("#sidebar").innerHTML=`<div class="side-label">Menú</div>`+nav.map(n=>`<a class="side-link" href="${n[2]}" onclick="route('${n[2]}');return false;"><svg class="ic"><use href="#i-${n[0]}"/></svg>${n[1]}</a>`).join("");}
 
-function route(hash){
- const view=$("#view");
- if(hash==="#/home"||hash==="#/"||!hash){
-  view.innerHTML=`<div class="vh"><div><h1>Hola, ${esc(currentUser.name)} 👋</h1><div>Campus v1.8b · Estado: <b id="home-net">${netMode==='cloud'?'☁ Nube sincronizada':'📴 Local'}</b></div></div></div>
-  <div class="grid g4">
-   <div class="card"><div class="kpi"><div><div class="num">${S.students.length}</div><div class="lbl">Estudiantes</div></div></div></div>
-   <div class="card"><div class="kpi"><div><div class="num">${S.groups.length}</div><div class="lbl">Grupos</div></div></div></div>
-   <div class="card"><div class="kpi"><div><div class="num">${S.enrollments.length}</div><div class="lbl">Matrículas</div></div></div></div>
-   <div class="card"><div class="kpi"><div><div class="num">${S.students.filter(s=>s.beca).length}</div><div class="lbl">Becados</div></div></div></div>
-  </div>`;
- }else if(hash==="#/users"){renderUsers();}
- else if(hash==="#/groups"){
-  view.innerHTML=`<div class="vh"><h1>Grupos</h1></div><div class="grid g2">${S.groups.map(g=>`<div class="card"><h3>${esc(g.nombre)}</h3><div style="color:var(--muted);font-size:13px;margin:8px 0">${esc(g.curso||'')} · ${esc(g.sede)} · ${esc(g.aula)}</div><div style="font-size:12px">${(g.dias||[]).map(d=>["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"][d]).join(", ")} ${g.hi}–${g.hf} · S/ ${g.costo}</div></div>`).join("")}</div>`;
- }else if(hash==="#/backup"){
-  view.innerHTML=`<div class="vh"><h1>Nube y respaldo</h1><div style="display:flex;gap:8px"><button class="btn btn-g" onclick="pullCloud().then(()=>toast('Prueba terminada'))">🔁 Probar conexión</button><button class="btn btn-p" ${currentUser.role!=='super'?'disabled':''} onclick="push().then(()=>toast('Subido a la nube ✓'))">☁ Subir ahora</button></div></div>
-  <div class="note">El login es <b>100% local</b>: nunca falla aunque caiga Supabase. La nube es respaldo y sincronización entre dispositivos. Si aquí ves "📴 Local", el botón "Probar conexión" te dirá el motivo exacto.</div>
-  <div class="card"><h3 style="margin-bottom:10px">Diagnóstico en vivo</h3><div class="diag" id="diag">${esc(sbStatus)}</div><div style="margin-top:10px;font-size:13px">Modo: <b>${netMode==='cloud'?'☁ Nube':'📴 Local'}</b> · Estudiantes: <b>${S.students.length}</b></div></div>
-  <div class="card"><h3 style="margin-bottom:10px">Prueba de contingencia (recomendada)</h3><p style="font-size:13px;color:var(--muted)">Apaga tu WiFi, recarga la página e ingresa con tu celular y PIN. Debes entrar igual y poder crear estudiantes. Al encender el WiFi, pulsa "Subir ahora" y verás ☁ Nube. Eso demuestra que una contingencia no te deja afuera.</p></div>`;
-  updateNet();
- }
- $$(".side-link").forEach(a=>a.classList.toggle("on",a.getAttribute("href")===hash));
-}
+function route(hash){const view=$("#view");if(hash==="#/home"||hash==="#/"||!hash){view.innerHTML=`<div class="vh"><div><h1>Hola, ${esc(currentUser.name)} 👋</h1><div>Campus v1.9 · Estado: <b>${netMode==='cloud'?'☁ Nube sincronizada':'📴 Local'}</b></div></div></div><div class="grid g4"><div class="card"><div class="kpi"><div><div class="num">${S.students.length}</div><div class="lbl">Estudiantes</div></div></div></div><div class="card"><div class="kpi"><div><div class="num">${S.groups.length}</div><div class="lbl">Grupos</div></div></div></div><div class="card"><div class="kpi"><div><div class="num">${S.enrollments.length}</div><div class="lbl">Matrículas</div></div></div></div><div class="card"><div class="kpi"><div><div class="num">${S.students.filter(s=>s.beca).length}</div><div class="lbl">Becados</div></div></div></div></div>`;}else if(hash==="#/users"){renderUsers();}else if(hash==="#/groups"){view.innerHTML=`<div class="vh"><h1>Grupos</h1></div><div class="grid g2">${S.groups.map(g=>`<div class="card"><h3>${esc(g.nombre)}</h3><div style="color:var(--muted);font-size:13px;margin:8px 0">${esc(g.curso||'')} · ${esc(g.sede)} · ${esc(g.aula)}</div><div style="font-size:12px">${(g.dias||[]).map(d=>["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"][d]).join(", ")} ${g.hi}–${g.hf} · S/ ${g.costo}</div></div>`).join("")}</div>`;}else if(hash==="#/backup"){view.innerHTML=`<div class="vh"><h1>Nube y respaldo</h1><div style="display:flex;gap:8px"><button class="btn btn-g" onclick="pullCloud().then(()=>toast('Prueba terminada'))">🔁 Probar conexión</button><button class="btn btn-p" ${currentUser.role!=='super'?'disabled':''} onclick="push().then(()=>toast('Subido a la nube ✓'))">☁ Subir ahora</button></div></div><div class="card"><h3 style="margin-bottom:10px">Diagnóstico en vivo</h3><div style="font-family:ui-monospace,monospace;font-size:12px;background:#071a2c;color:#86efac;padding:12px;border-radius:10px;word-break:break-all">${esc(sbStatus)}</div><div style="margin-top:10px;font-size:13px">Modo: <b>${netMode==='cloud'?'☁ Nube':'📴 Local'}</b> · Estudiantes: <b>${S.students.length}</b></div></div>`;updateNet();}$$(".side-link").forEach(a=>a.classList.toggle("on",a.getAttribute("href")===hash));}
 
 const CAPS=["Campo / volanteo","Visita a colegio","Internet / Redes","Referido","Convenio","WhatsApp entrante"];
+const SUBCAPS=["Facebook","Instagram","TikTok","Google","Amigo/Familiar","Feria vocacional","Visita colegio","Otro"];
+const PROGRAMAS=["Inglés","Francés","Italiano","Administración","Contabilidad","Negocios Internacionales","Aviación Comercial","Cajero Bancario","Computación e Informática"];
+const NIVELES=["Básico","Intermedio","Avanzado","Módulo 1","Módulo 2"];
+const TRACKS=["Kids","Teens","Adultos","Business","Docentes"];
+const MODALIDADES=["Presencial","Online","Híbrido"];
+const SEDES=["Callao","Virtual","Lima Norte","Lima Sur"];
+const TURNOS=["Mañana","Tarde","Noche"];
+const FORMAS_PAGO=["Yape","Plin","Transferencia","Efectivo","Tarjeta"];
+const GENEROS=["Masculino","Femenino","Otro","Prefiero no decir"];
+
+function calcEdad(fechaNac){if(!fechaNac)return 0;const hoy=new Date();const nac=new Date(fechaNac+"T12:00:00");let edad=hoy.getFullYear()-nac.getFullYear();const m=hoy.getMonth()-nac.getMonth();if(m<0||(m===0&&hoy.getDate()<nac.getDate()))edad--;return edad;}
+
 function openStudentForm(id){
- const s=id?S.students.find(x=>x.id===id):{nombres:"",apellidos:"",dni:"",edad:"",cumple:"",captacion:"",colegio:"",direccion:"",distrito:"",canal1:"",canal2:"",beca:null};
+ const s=id?S.students.find(x=>x.id===id):{nombres:"",apellidos:"",dni:"",fechaNac:"",genero:"",canal1:"",canal2:"",email:"",direccion:"",distrito:"",colegio:"",ocupacion:"",programa:"",nivel:"",track:"",modalidad:"",sede:"",turno:"",fechaMatricula:"",captacion:"",subCanal:"",asesor:"",beca:null,formaPago:"",alergias:"",tutor:null,estado:"activo",observaciones:""};
+ const edad=calcEdad(s.fechaNac);
+ const esMenor=edad<18;
  $("#modal-title").textContent=id?"Editar estudiante":"Nuevo estudiante";
- $("#modal-body").innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-  <label>Nombres<input class="fi" id="f-nom" value="${esc(s.nombres)}"></label>
-  <label>Apellidos<input class="fi" id="f-ape" value="${esc(s.apellidos)}"></label>
-  <label>DNI<input class="fi" id="f-dni" value="${esc(s.dni)}"></label>
-  <label>Edad<input class="fi" id="f-edad" type="number" value="${s.edad||''}"></label>
-  <label>Cumpleaños<input class="fi" id="f-cumple" type="date" value="${esc(s.cumple)}"></label>
-  <label>Captación<select class="fi" id="f-cap"><option value="">—</option>${CAPS.map(c=>`<option ${s.captacion===c?"selected":""}>${c}</option>`).join("")}</select></label>
-  <label>Colegio<input class="fi" id="f-col" value="${esc(s.colegio)}"></label>
+ $("#modal-body").innerHTML=`
+ <div class="section-title">📋 Datos personales</div>
+ <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+  <label>DNI <span class="req">*</span><input class="fi" id="f-dni" value="${esc(s.dni)}" maxlength="8" inputmode="numeric"></label>
+  <label>Género <span class="req">*</span><select class="fi" id="f-genero"><option value="">—</option>${GENEROS.map(g=>`<option ${s.genero===g?"selected":""}>${g}</option>`).join("")}</select></label>
+  <label>Nombres <span class="req">*</span><input class="fi" id="f-nom" value="${esc(s.nombres)}"></label>
+  <label>Apellidos <span class="req">*</span><input class="fi" id="f-ape" value="${esc(s.apellidos)}"></label>
+  <label>Fecha de nacimiento <span class="req">*</span><input class="fi" id="f-nac" type="date" value="${esc(s.fechaNac)}" onchange="updateEdad()"></label>
+  <label>Edad (auto)<input class="fi" id="f-edad" value="${edad}" readonly style="background:#f5f9fc"></label>
+ </div>
+ <div class="section-title">📞 Contacto</div>
+ <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+  <label>Celular estudiante <span class="req">*</span><input class="fi" id="f-c1" value="${esc(s.canal1)}" inputmode="numeric"></label>
+  <label>Celular pagador/tutor <span class="req">*</span><input class="fi" id="f-c2" value="${esc(s.canal2)}" inputmode="numeric"></label>
+  <label>Email (opcional)<input class="fi" id="f-email" type="email" value="${esc(s.email)}"></label>
   <label>Distrito<input class="fi" id="f-dist" value="${esc(s.distrito)}"></label>
   <label>Dirección<input class="fi" id="f-dir" value="${esc(s.direccion)}"></label>
-  <label>Canal 1 (estudiante)<input class="fi" id="f-c1" value="${esc(s.canal1)}"></label>
-  <label>Canal 2 (tutor)<input class="fi" id="f-c2" value="${esc(s.canal2)}"></label>
-  <label>Beca<select class="fi" id="f-beca"><option value="">Sin beca</option><option value="total" ${s.beca&&s.beca.tipo==="total"?"selected":""}>Total 100%</option><option value="parcial" ${s.beca&&s.beca.tipo==="parcial"?"selected":""}>Parcial 50%</option></select></label>
  </div>
- <div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-g" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="saveStudent('${id||""}')">Guardar</button></div>`;
+ <div class="section-title">🎓 Académico previo</div>
+ <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+  <label>Colegio de procedencia<input class="fi" id="f-col" value="${esc(s.colegio)}"></label>
+  <label>Ocupación actual<select class="fi" id="f-ocup"><option value="">—</option><option value="Estudiante" ${s.ocupacion==="Estudiante"?"selected":""}>Estudiante</option><option value="Trabajador" ${s.ocupacion==="Trabajador"?"selected":""}>Trabajador</option><option value="Desempleado" ${s.ocupacion==="Desempleado"?"selected":""}>Desempleado</option></select></label>
+ </div>
+ <div class="section-title">📚 Programa actual</div>
+ <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+  <label>Programa/Carrera <span class="req">*</span><select class="fi" id="f-prog"><option value="">—</option>${PROGRAMAS.map(p=>`<option ${s.programa===p?"selected":""}>${p}</option>`).join("")}</select></label>
+  <label>Nivel <span class="req">*</span><select class="fi" id="f-niv"><option value="">—</option>${NIVELES.map(n=>`<option ${s.nivel===n?"selected":""}>${n}</option>`).join("")}</select></label>
+  <label>Track <span class="req">*</span><select class="fi" id="f-track"><option value="">—</option>${TRACKS.map(t=>`<option ${s.track===t?"selected":""}>${t}</option>`).join("")}</select></label>
+  <label>Modalidad <span class="req">*</span><select class="fi" id="f-mod"><option value="">—</option>${MODALIDADES.map(m=>`<option ${s.modalidad===m?"selected":""}>${m}</option>`).join("")}</select></label>
+  <label>Sede <span class="req">*</span><select class="fi" id="f-sede"><option value="">—</option>${SEDES.map(s2=>`<option ${s.sede===s2?"selected":""}>${s2}</option>`).join("")}</select></label>
+  <label>Turno <span class="req">*</span><select class="fi" id="f-turno"><option value="">—</option>${TURNOS.map(t=>`<option ${s.turno===t?"selected":""}>${t}</option>`).join("")}</select></label>
+  <label>Fecha de matrícula <span class="req">*</span><input class="fi" id="f-mat" type="date" value="${esc(s.fechaMatricula)}"></label>
+ </div>
+ <div class="section-title">📢 Captación y comercial</div>
+ <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+  <label>Canal de captación <span class="req">*</span><select class="fi" id="f-cap"><option value="">—</option>${CAPS.map(c=>`<option ${s.captacion===c?"selected":""}>${c}</option>`).join("")}</select></label>
+  <label>Sub-canal (opcional)<select class="fi" id="f-subcap"><option value="">—</option>${SUBCAPS.map(sc=>`<option ${s.subCanal===sc?"selected":""}>${sc}</option>`).join("")}</select></label>
+  <label>Asesor que atendió<input class="fi" id="f-asesor" value="${esc(s.asesor)}"></label>
+ </div>
+ <div class="section-title">💰 Económico</div>
+ <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+  <label>Beca <span class="req">*</span><select class="fi" id="f-beca"><option value="">Sin beca</option><option value="total" ${s.beca&&s.beca.tipo==="total"?"selected":""}>Total 100%</option><option value="parcial" ${s.beca&&s.beca.tipo==="parcial"?"selected":""}>Parcial 50%</option></select></label>
+  <label>Forma de pago <span class="req">*</span><select class="fi" id="f-pago"><option value="">—</option>${FORMAS_PAGO.map(f=>`<option ${s.formaPago===f?"selected":""}>${f}</option>`).join("")}</select></label>
+ </div>
+ <div class="section-title">🩺 Salud</div>
+ <div style="display:grid;grid-template-columns:1fr;gap:12px">
+  <label>Alergias (opcional)<input class="fi" id="f-alergias" value="${esc(s.alergias)}" placeholder="Ninguna, o describe..."></label>
+ </div>
+ <div id="tutor-section" class="tutor-section" style="display:${esMenor?'block':'none'}">
+  <span class="tutor-badge">👨‍👩‍👧 MENOR DE EDAD — Datos del tutor legal</span>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+   <label>Nombre del tutor <span class="req">*</span><input class="fi" id="f-tutor-nom" value="${esc(s.tutor?.nombre||'')}"></label>
+   <label>DNI del tutor <span class="req">*</span><input class="fi" id="f-tutor-dni" value="${esc(s.tutor?.dni||'')}" maxlength="8" inputmode="numeric"></label>
+   <label>Relación <span class="req">*</span><select class="fi" id="f-tutor-rel"><option value="">—</option><option value="Madre" ${s.tutor?.relacion==="Madre"?"selected":""}>Madre</option><option value="Padre" ${s.tutor?.relacion==="Padre"?"selected":""}>Padre</option><option value="Apoderado" ${s.tutor?.relacion==="Apoderado"?"selected":""}>Apoderado</option></select></label>
+   <label>Teléfono del tutor <span class="req">*</span><input class="fi" id="f-tutor-tel" value="${esc(s.tutor?.telefono||'')}" inputmode="numeric"></label>
+  </div>
+ </div>
+ <div class="section-title">⚙️ Estado</div>
+ <div style="display:grid;grid-template-columns:1fr;gap:12px">
+  <label>Estado<select class="fi" id="f-estado"><option value="activo" ${s.estado==="activo"?"selected":""}>Activo</option><option value="inactivo" ${s.estado==="inactivo"?"selected":""}>Inactivo</option><option value="egresado" ${s.estado==="egresado"?"selected":""}>Egresado</option></select></label>
+  <label>Observaciones internas<textarea class="fi" id="f-obs" rows="3">${esc(s.observaciones||'')}</textarea></label>
+ </div>
+ <div style="margin-top:20px;display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-g" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="saveStudent('${id||""}')">Guardar</button></div>`;
  $("#modal-bg").style.display="flex";
 }
+function updateEdad(){const nac=$("#f-nac").value;const edad=calcEdad(nac);$("#f-edad").value=edad;const tutorSec=$("#tutor-section");if(tutorSec)tutorSec.style.display=edad<18?'block':'none';}
 function closeModal(){$("#modal-bg").style.display="none";}
 function saveStudent(id){
  const g=x=>$("#"+x).value.trim();
- if(!g("f-nom")||!g("f-ape")){toast("Nombres y apellidos son obligatorios");return;}
- const data={nombres:g("f-nom"),apellidos:g("f-ape"),dni:g("f-dni"),edad:+g("f-edad")||0,cumple:g("f-cumple"),captacion:g("f-cap"),colegio:g("f-col"),distrito:g("f-dist"),direccion:g("f-dir"),canal1:g("f-c1"),canal2:g("f-c2"),beca:g("f-beca")?{tipo:g("f-beca"),pct:g("f-beca")==="total"?100:50}:null};
+ const dni=g("f-dni"),nom=g("f-nom"),ape=g("f-ape"),nac=g("f-nac"),gen=g("f-genero"),c1=g("f-c1"),c2=g("f-c2"),prog=g("f-prog"),niv=g("f-niv"),track=g("f-track"),mod=g("f-mod"),sede=g("f-sede"),turno=g("f-turno"),mat=g("f-mat"),cap=g("f-cap"),pago=g("f-pago");
+ if(!dni||!nom||!ape||!nac||!gen||!c1||!c2||!prog||!niv||!track||!mod||!sede||!turno||!mat||!cap||!pago){toast("Completa todos los campos obligatorios (*)");return;}
+ if(dni.length!==8){toast("DNI debe tener 8 dígitos");return;}
+ const edad=calcEdad(nac);
+ const data={dni,nombres:nom,apellidos:ape,fechaNac:nac,genero:gen,edad,canal1:c1,canal2:c2,email:g("f-email"),direccion:g("f-dir"),distrito:g("f-dist"),colegio:g("f-col"),ocupacion:g("f-ocup"),programa:prog,nivel:niv,track,modalidad:mod,sede,turno,fechaMatricula:mat,captacion:cap,subCanal:g("f-subcap"),asesor:g("f-asesor"),beca:g("f-beca")?{tipo:g("f-beca"),pct:g("f-beca")==="total"?100:50}:null,formaPago:pago,alergias:g("f-alergias"),estado:g("f-estado"),observaciones:g("f-obs")};
+ if(edad<18){const tNom=g("f-tutor-nom"),tDni=g("f-tutor-dni"),tRel=g("f-tutor-rel"),tTel=g("f-tutor-tel");if(!tNom||!tDni||!tRel||!tTel){toast("Completa los datos del tutor (obligatorio para menores)");return;}data.tutor={nombre:tNom,dni:tDni,relacion:tRel,telefono:tTel};}else{data.tutor=null;}
  if(id){Object.assign(S.students.find(x=>x.id===id),data);}else{data.id=uid("st");data.codigo="GT-"+String(S.students.length+1).padStart(3,"0");S.students.push(data);}
  save();closeModal();toast(id?"Actualizado ✓":"Estudiante registrado ✓");renderUsers();
 }
 function delStudent(id){if(confirm("¿Eliminar este estudiante?")){S.students=S.students.filter(x=>x.id!==id);S.enrollments=S.enrollments.filter(e=>e.studentId!==id);save();toast("Eliminado");renderUsers();}}
 function renderUsers(){
  $("#view").innerHTML=`<div class="vh"><h1>Estudiantes</h1><button class="btn btn-p" onclick="openStudentForm()">+ Nuevo estudiante</button></div>
- <div class="tw"><table><thead><tr><th>Código</th><th>Nombre</th><th>Captación</th><th>Colegio</th><th>Distrito</th><th>Cumple</th><th>Beca</th><th></th></tr></thead><tbody>
- ${S.students.map(s=>`<tr><td><b>${esc(s.codigo)}</b></td><td>${esc(s.nombres)} ${esc(s.apellidos)}</td><td>${esc(s.captacion||"—")}</td><td>${esc(s.colegio||"—")}</td><td>${esc(s.distrito||"—")}</td><td>${s.cumple?esc(s.cumple):"—"}</td><td>${s.beca?`<span class="badge b-violet">${s.beca.pct}%</span>`:"Regular"}</td><td><button class="btn btn-g btn-sm" onclick="openStudentForm('${s.id}')">✎</button> <button class="btn btn-g btn-sm" style="color:var(--red)" onclick="delStudent('${s.id}')">🗑</button></td></tr>`).join("")||`<tr><td colspan="8" style="text-align:center;color:var(--muted)">Sin estudiantes.</td></tr>`}
+ <div class="tw"><table><thead><tr><th>Código</th><th>Nombre</th><th>Edad</th><th>Programa</th><th>Track</th><th>Captación</th><th>Distrito</th><th>Beca</th><th>Estado</th><th></th></tr></thead><tbody>
+ ${S.students.map(s=>`<tr><td><b>${esc(s.codigo)}</b></td><td>${esc(s.nombres)} ${esc(s.apellidos)}</td><td>${calcEdad(s.fechaNac)}</td><td>${esc(s.programa||'—')}</td><td>${esc(s.track||'—')}</td><td>${esc(s.captacion||"—")}</td><td>${esc(s.distrito||"—")}</td><td>${s.beca?`<span class="badge b-violet">${s.beca.pct}%</span>`:"Regular"}</td><td>${s.estado==='activo'?'<span class="badge b-green">Activo</span>':esc(s.estado)}</td><td><button class="btn btn-g btn-sm" onclick="openStudentForm('${s.id}')">✎</button> <button class="btn btn-g btn-sm" style="color:var(--red)" onclick="delStudent('${s.id}')">🗑</button></td></tr>`).join("")||`<tr><td colspan="10" style="text-align:center;color:var(--muted)">Sin estudiantes.</td></tr>`}
  </tbody></table></div>`;
 }
 
