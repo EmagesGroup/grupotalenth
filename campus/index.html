@@ -42,6 +42,8 @@ body{font-family:var(--fb);background:var(--paper);color:var(--ink);font-size:14
 .tw{overflow:auto;border-radius:var(--r);border:1px solid var(--line);background:var(--surface)}table{width:100%;border-collapse:collapse}th{font-size:11px;text-transform:uppercase;color:var(--muted);text-align:left;padding:12px 14px;background:#f5f9fc;border-bottom:1px solid var(--line)}td{padding:12px 14px;border-bottom:1px solid #edf3f8;font-size:13px}
 .avatar{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:13px;flex:none}
 .toast{position:fixed;right:18px;bottom:80px;background:var(--ink);color:#fff;padding:12px 16px;border-radius:12px;font-size:13px;z-index:300;animation:pop .3s ease}.toast.ok{border-left:4px solid var(--green)}
+.fi{width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);font-size:14px}
+label{font-size:12px;font-weight:700;color:var(--muted);display:flex;flex-direction:column;gap:4px}
 @keyframes pop{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
 @media(max-width:860px){.sidebar{display:none}.main{margin-left:0;padding:16px}.g2,.g4{grid-template-columns:1fr}}
 </style>
@@ -82,19 +84,27 @@ body{font-family:var(--fb);background:var(--paper);color:var(--ink);font-size:14
   </div>
 </div>
 
+<!-- MODAL DE ESTUDIANTE -->
+<div id="modal-bg" style="display:none;position:fixed;inset:0;background:rgba(7,26,44,.6);z-index:400;align-items:flex-start;justify-content:center;padding:5vh 16px;overflow:auto">
+  <div style="background:#fff;border-radius:18px;max-width:640px;width:100%;padding:20px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:14px"><h3 id="modal-title">Nuevo estudiante</h3><button class="iconbtn" style="background:#eef4f9;color:#071a2c" onclick="closeModal()">✕</button></div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
 <script>
 const $=s=>document.querySelector(s);
+const $$=s=>document.querySelectorAll(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const uid=p=>(p?p+"-":"")+Math.random().toString(36).slice(2,8).toUpperCase();
 const KEY='gt-campus-stable';
 let S=null, currentUser=null;
 
-// Datos de prueba
 function seed(){
   return {
     students:[
-      {id:"st-1",codigo:"GT-001",nombres:"Valeria",apellidos:"Rojas",dni:"76543210",edad:15,canal1:"51911111111",canal2:"51922222222",colegio:"I.E. Callao",distrito:"Callao",cumple:"2011-03-14",beca:{tipo:"total",pct:100}},
-      {id:"st-2",codigo:"GT-002",nombres:"Diego",apellidos:"Ramos",dni:"76543211",edad:17,canal1:"51911111112",canal2:"51922222223",colegio:"I.E. Bellavista",distrito:"Bellavista",cumple:"2009-07-22",beca:null}
+      {id:"st-1",codigo:"GT-001",nombres:"Valeria",apellidos:"Rojas",dni:"76543210",edad:15,canal1:"51911111111",canal2:"51922222222",colegio:"I.E. Callao",distrito:"Callao",direccion:"Av. Sáenz Peña 123",cumple:"2011-03-14",captacion:"Visita a colegio",beca:{tipo:"total",pct:100}},
+      {id:"st-2",codigo:"GT-002",nombres:"Diego",apellidos:"Ramos",dni:"76543211",edad:17,canal1:"51911111112",canal2:"51922222223",colegio:"I.E. Bellavista",distrito:"Bellavista",direccion:"Jr. Lima 456",cumple:"2009-07-22",captacion:"Campo / volanteo",beca:null}
     ],
     groups:[
       {id:"g-1",nombre:"Teens · Sábados A",curso:"Inglés Básico",dias:[6],hi:"08:00",hf:"10:00",sede:"Callao",aula:"A-201",costo:180},
@@ -112,21 +122,17 @@ function loadData(){
     if(!raw) localStorage.setItem(KEY, JSON.stringify(S));
   }catch(e){ S=seed(); }
 }
-
 function save(){ localStorage.setItem(KEY, JSON.stringify(S)); }
-
 function toast(msg){
   const t=document.createElement("div");t.className="toast ok";t.textContent=msg;
   document.body.appendChild(t);setTimeout(()=>t.remove(),3000);
 }
 
-// Login simple y garantizado
 function doLogin(){
   const phone=$("#login-phone").value.trim();
   const pin=$("#login-pin").value.trim();
   const err=$("#login-err");
   err.textContent="";
-  
   if(phone==="930175586" && pin==="1234"){
     currentUser={name:"Jhonnatan Giron",role:"super"};
   }else if(phone==="930175587" && pin==="1234"){
@@ -135,7 +141,6 @@ function doLogin(){
     err.textContent="Usa 930175586 / 1234 o 930175587 / 1234";
     return;
   }
-  
   localStorage.setItem("gt_session", JSON.stringify(currentUser));
   enterApp();
 }
@@ -187,27 +192,59 @@ function route(hash){
       <div class="card"><div class="kpi"><div><div class="num">${S.groups.length}</div><div class="lbl">Grupos</div></div></div></div>
     </div>`;
   }else if(hash==="#/users"){
-    view.innerHTML=`<div class="vh"><h1>Estudiantes</h1><button class="btn btn-p" onclick="toast('Función en desarrollo')">+ Nuevo</button></div>
-    <div class="tw"><table><thead><tr><th>Código</th><th>Nombre</th><th>Distrito</th><th>Beca</th></tr></thead><tbody>
-    ${S.students.map(s=>`<tr><td><b>${esc(s.codigo)}</b></td><td>${esc(s.nombres)} ${esc(s.apellidos)}</td><td>${esc(s.distrito)}</td><td>${s.beca?`<span class="badge b-green">Beca ${s.beca.pct}%</span>`:"Regular"}</td></tr>`).join("")}
-    </tbody></table></div>`;
+    renderUsers(); // ¡Aquí estaba el error! Ahora llama a la función correcta.
   }else if(hash==="#/groups"){
     view.innerHTML=`<div class="vh"><h1>Grupos</h1></div>
     <div class="grid g2">${S.groups.map(g=>`<div class="card"><h3>${esc(g.nombre)}</h3><div style="color:var(--muted);font-size:13px;margin:8px 0">${esc(g.curso)} · ${esc(g.sede)} · ${esc(g.aula)}</div><div style="font-size:12px">Sábados ${g.hi} - ${g.hf} · S/ ${g.costo}</div></div>`).join("")}</div>`;
   }
-  
-  // Actualizar clase activa en sidebar
-  $$(".side-link").forEach(a=>{
-    a.classList.toggle("on", a.getAttribute("href")===hash);
-  });
+  $$(".side-link").forEach(a=>{ a.classList.toggle("on", a.getAttribute("href")===hash); });
 }
 
-// Event Listeners
+const CAPS=["Campo / volanteo","Visita a colegio","Internet / Redes","Referido","Convenio","WhatsApp entrante"];
+function openStudentForm(id){
+  const s=id?S.students.find(x=>x.id===id):{nombres:"",apellidos:"",dni:"",edad:"",cumple:"",captacion:"",colegio:"",direccion:"",distrito:"",canal1:"",canal2:"",beca:null};
+  $("#modal-title").textContent=id?"Editar estudiante":"Nuevo estudiante";
+  $("#modal-body").innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <label>Nombres<input class="fi" id="f-nom" value="${esc(s.nombres)}"></label>
+    <label>Apellidos<input class="fi" id="f-ape" value="${esc(s.apellidos)}"></label>
+    <label>DNI<input class="fi" id="f-dni" value="${esc(s.dni)}"></label>
+    <label>Edad<input class="fi" id="f-edad" type="number" value="${s.edad||''}"></label>
+    <label>Cumpleaños<input class="fi" id="f-cumple" type="date" value="${esc(s.cumple)}"></label>
+    <label>Captación<select class="fi" id="f-cap"><option value="">—</option>${CAPS.map(c=>`<option ${s.captacion===c?"selected":""}>${c}</option>`).join("")}</select></label>
+    <label>Colegio<input class="fi" id="f-col" value="${esc(s.colegio)}"></label>
+    <label>Distrito<input class="fi" id="f-dist" value="${esc(s.distrito)}"></label>
+    <label>Dirección<input class="fi" id="f-dir" value="${esc(s.direccion)}"></label>
+    <label>Canal 1 (estudiante)<input class="fi" id="f-c1" value="${esc(s.canal1)}"></label>
+    <label>Canal 2 (tutor)<input class="fi" id="f-c2" value="${esc(s.canal2)}"></label>
+    <label>Beca<select class="fi" id="f-beca"><option value="">Sin beca</option><option value="total" ${s.beca?.tipo==="total"?"selected":""}>Total 100%</option><option value="parcial" ${s.beca?.tipo==="parcial"?"selected":""}>Parcial 50%</option></select></label>
+  </div>
+  <div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end">
+    <button class="btn btn-g" onclick="closeModal()">Cancelar</button>
+    <button class="btn btn-p" onclick="saveStudent('${id||""}')">Guardar</button>
+  </div>`;
+  $("#modal-bg").style.display="flex";
+}
+function closeModal(){$("#modal-bg").style.display="none";}
+function saveStudent(id){
+  const g=x=>$("#"+x).value.trim();
+  if(!g("f-nom")||!g("f-ape")){toast("Nombres y apellidos son obligatorios");return;}
+  const data={nombres:g("f-nom"),apellidos:g("f-ape"),dni:g("f-dni"),edad:+g("f-edad")||0,cumple:g("f-cumple"),captacion:g("f-cap"),colegio:g("f-col"),distrito:g("f-dist"),direccion:g("f-dir"),canal1:g("f-c1"),canal2:g("f-c2"),beca:g("f-beca")?{tipo:g("f-beca"),pct:g("f-beca")==="total"?100:50}:null};
+  if(id){Object.assign(S.students.find(x=>x.id===id),data);}
+  else{data.id=uid("st");data.codigo="GT-"+String(S.students.length+1).padStart(3,"0");S.students.push(data);}
+  save();closeModal();toast(id?"Actualizado ✓":"Estudiante registrado ✓");renderUsers();
+}
+function delStudent(id){if(confirm("¿Eliminar este estudiante?")){S.students=S.students.filter(x=>x.id!==id);save();toast("Eliminado");renderUsers();}}
+function renderUsers(){
+  $("#view").innerHTML=`<div class="vh"><h1>Estudiantes</h1><button class="btn btn-p" onclick="openStudentForm()">+ Nuevo estudiante</button></div>
+  <div class="tw"><table><thead><tr><th>Código</th><th>Nombre</th><th>Captación</th><th>Colegio</th><th>Distrito</th><th>Cumple</th><th>Beca</th><th></th></tr></thead><tbody>
+  ${S.students.map(s=>`<tr><td><b>${esc(s.codigo)}</b></td><td>${esc(s.nombres)} ${esc(s.apellidos)}</td><td>${esc(s.captacion||"—")}</td><td>${esc(s.colegio||"—")}</td><td>${esc(s.distrito||"—")}</td><td>${s.cumple?esc(s.cumple):"—"}</td><td>${s.beca?`<span class="badge b-green">${s.beca.pct}%</span>`:"Regular"}</td><td><button class="btn btn-g" style="padding:6px 10px" onclick="openStudentForm('${s.id}')">✎</button> <button class="btn btn-g" style="padding:6px 10px;color:#f04438" onclick="delStudent('${s.id}')">🗑</button></td></tr>`).join("")||`<tr><td colspan="8" style="text-align:center;color:var(--muted)">Sin estudiantes. Crea el primero.</td></tr>`}
+  </tbody></table></div>`;
+}
+
 $("#btn-login").addEventListener("click", doLogin);
 $("#login-pin").addEventListener("keypress", e=>{ if(e.key==="Enter") doLogin(); });
 $("#btn-logout").addEventListener("click", logout);
 
-// Boot
 loadData();
 checkSession();
 </script>
