@@ -1,4 +1,4 @@
-const CACHE = "talenth-campus-v16b";
+const CACHE = "talenth-campus-v16c";
 self.addEventListener("install", e => self.skipWaiting());
 self.addEventListener("activate", e => {
   e.waitUntil(
