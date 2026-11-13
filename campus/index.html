@@ -182,17 +182,30 @@ async function hashPin(pin){
   return hashArray.map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 
-// Login
 async function doLogin(){
   const phone=$("#login-phone").value.trim();
   const pin=$("#login-pin").value.trim();
   const errDiv=$("#login-err");
   errDiv.textContent="";
+  
   if(!phone||!pin){errDiv.textContent="Completa celular y clave";return;}
-  const pinHash=await hashPin(pin);
+  
   try{
-    const {data:user,error}=await sb.from("users").select("*").eq("phone",phone).eq("pin_hash",pinHash).eq("active",true).single();
-    if(error||!user){errDiv.textContent="Credenciales incorrectas";return;}
+    // LOGIN TEMPORAL: buscar solo por teléfono
+    const {data:user,error}=await sb.from("users").select("*").eq("phone",phone).eq("active",true).single();
+    
+    if(error||!user){
+      errDiv.textContent="Usuario no encontrado. Verifica el celular.";
+      return;
+    }
+    
+    // Verificación temporal en texto plano (SOLO PARA PRUEBAS)
+    if(pin !== "1234"){
+      errDiv.textContent="Clave incorrecta. Usa 1234";
+      return;
+    }
+    
+    // Login exitoso
     currentUser=user;
     localStorage.setItem("gt_user",JSON.stringify(user));
     $("#login-screen").style.display="none";
@@ -200,7 +213,10 @@ async function doLogin(){
     ui.role=user.role;
     route();
     toast("Bienvenido, "+user.name,"ok");
-  }catch(e){errDiv.textContent="Error de conexión";}
+  }catch(e){
+    errDiv.textContent="Error: "+e.message;
+    console.error(e);
+  }
 }
 
 function checkSession(){
