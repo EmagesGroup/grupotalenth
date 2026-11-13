@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Campus Grupo Talenth · v1.8</title>
+<title>Campus Grupo Talenth · v1.8b</title>
 <meta name="theme-color" content="#071a2c">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 :root{--ink:#071a2c;--ocean:#0e4d78;--primary:#0a84ff;--accent:#ff3b5c;--green:#17b26a;--red:#f04438;--paper:#eef4f9;--surface:#fff;--line:#d7e3ee;--muted:#5c7186;--grad-hero:linear-gradient(135deg,#071a2c,#0e4d78 52%,#0a84ff 125%);--grad-hot:linear-gradient(120deg,#ff3b5c,#ff8a3d);--r:16px;--nav:64px;--side:240px;--fd:"Space Grotesk",system-ui;--fb:"Inter",system-ui}
-*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+*{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--fb);background:var(--paper);color:var(--ink);font-size:14px;line-height:1.5}
 .ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}.ic.lg{width:24px;height:24px}
 #login-screen{position:fixed;inset:0;z-index:200;background:var(--grad-hero);display:flex;align-items:center;justify-content:center;padding:20px}
@@ -18,35 +18,33 @@ body{font-family:var(--fb);background:var(--paper);color:var(--ink);font-size:14
 .login-box h2{font-family:var(--fd);font-size:24px;margin-bottom:8px}
 .login-box p{color:var(--muted);font-size:13px;margin-bottom:24px}
 .login-box input{width:100%;padding:14px;border-radius:12px;border:1.5px solid var(--line);font-size:16px;margin-bottom:14px;text-align:center}
-.login-box input:focus{outline:none;border-color:var(--primary)}
 .login-box button{width:100%;padding:14px;border-radius:12px;border:0;background:var(--grad-hot);color:#fff;font-weight:700;font-size:16px;cursor:pointer}
 .login-box .err{color:var(--red);font-size:12px;margin-top:10px;min-height:16px}
 .login-box .help{margin-top:20px;font-size:11px;color:var(--muted)}
 #app{display:none;min-height:100vh}
-.topbar{position:fixed;inset:0 0 auto;height:var(--nav);z-index:70;display:flex;align-items:center;gap:10px;padding:0 16px;background:rgba(7,26,44,.95);backdrop-filter:blur(14px);color:#fff}
+.topbar{position:fixed;inset:0 0 auto;height:var(--nav);z-index:70;display:flex;align-items:center;gap:10px;padding:0 16px;background:rgba(7,26,44,.95);color:#fff}
 .brand{display:flex;align-items:center;gap:10px;font-family:var(--fd);font-weight:700;font-size:15px}.brand .mark{width:34px;height:34px;border-radius:10px;background:var(--grad-hot);display:grid;place-items:center}
-.net-badge{font-size:10px;font-weight:800;padding:4px 9px;border-radius:20px;background:rgba(255,176,32,.25);color:#ffd591;white-space:nowrap}.net-badge.cloud{background:rgba(23,178,106,.28);color:#86efac}
+.net-badge{font-size:10px;font-weight:800;padding:4px 9px;border-radius:20px;background:rgba(255,176,32,.25);color:#ffd591;white-space:nowrap}.net-badge.cloud{background:rgba(23,178,106,.28);color:#86efac}.net-badge.err{background:rgba(240,68,56,.25);color:#ffb4ab}
 .user-info{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:12px;color:#bcd3e8}.user-info b{color:#fff}
 .iconbtn{border:0;background:rgba(255,255,255,.11);color:#fff;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;cursor:pointer}
 .layout{display:flex;padding-top:var(--nav)}
 .sidebar{position:fixed;top:var(--nav);bottom:0;left:0;width:var(--side);background:var(--grad-hero);color:#cfe1f4;padding:16px 10px;overflow-y:auto}
 .side-label{font-size:10px;letter-spacing:.17em;text-transform:uppercase;color:#7fa6c8;padding:8px 12px 6px}
 .side-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:11px;color:#cfe1f4;font-weight:600;font-size:13px;margin-bottom:2px;text-decoration:none}
-.side-link:hover{background:rgba(255,255,255,.08);color:#fff}
 .side-link.on{background:rgba(10,132,255,.28);color:#fff;box-shadow:inset 3px 0 0 var(--primary)}
 .main{margin-left:var(--side);flex:1;padding:24px}
 .vh{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:16px;flex-wrap:wrap}.vh h1{font-size:24px}
 .btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:11px;padding:10px 16px;font-weight:700;font-size:13px;cursor:pointer}.btn-p{background:var(--grad-hot);color:#fff}.btn-g{background:var(--surface);color:var(--ink);border:1px solid var(--line)}.btn-sm{padding:6px 10px;font-size:12px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:16px}
 .grid{display:grid;gap:16px}.g2{grid-template-columns:repeat(2,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
-.kpi{display:flex;gap:14px;align-items:center}.kpi .num{font-family:var(--fd);font-size:26px;font-weight:700}.kpi .lbl{font-size:12px;color:var(--muted)}
-.badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:800}.b-green{background:rgba(23,178,106,.14);color:var(--green)}.b-amber{background:rgba(255,176,32,.18);color:#a35b00}.b-violet{background:rgba(139,92,246,.15);color:var(--primary)}
-.tw{overflow:auto;border-radius:var(--r);border:1px solid var(--line);background:var(--surface)}table{width:100%;border-collapse:collapse}th{font-size:11px;text-transform:uppercase;color:var(--muted);text-align:left;padding:12px 14px;background:#f5f9fc;border-bottom:1px solid var(--line)}td{padding:12px 14px;border-bottom:1px solid #edf3f8;font-size:13px}
-.avatar{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:13px;flex:none}
+.kpi .num{font-family:var(--fd);font-size:26px;font-weight:700}.kpi .lbl{font-size:12px;color:var(--muted)}
+.badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:800}.b-violet{background:rgba(139,92,246,.15);color:#8b5cf6}
+.tw{overflow:auto;border-radius:var(--r);border:1px solid var(--line);background:var(--surface)}table{width:100%;border-collapse:collapse}th{font-size:11px;text-transform:uppercase;color:var(--muted);text-align:left;padding:12px;background:#f5f9fc;border-bottom:1px solid var(--line)}td{padding:12px;border-bottom:1px solid #edf3f8;font-size:13px}
 .toast{position:fixed;right:18px;bottom:80px;background:var(--ink);color:#fff;padding:12px 16px;border-radius:12px;font-size:13px;z-index:300;border-left:4px solid var(--green);animation:pop .3s ease}
 .fi{width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);font-size:14px}
 label{font-size:12px;font-weight:700;color:var(--muted);display:flex;flex-direction:column;gap:4px}
 .note{font-size:12px;color:var(--muted);background:#f3f8fc;border:1px dashed var(--line);border-radius:10px;padding:10px 12px;margin-bottom:14px}
+.diag{font-family:ui-monospace,monospace;font-size:12px;background:#071a2c;color:#86efac;padding:12px;border-radius:10px;word-break:break-all}
 @keyframes pop{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
 @media(max-width:860px){.sidebar{display:none}.main{margin-left:0;padding:16px}.g2,.g4{grid-template-columns:1fr}}
 </style>
@@ -57,6 +55,7 @@ label{font-size:12px;font-weight:700;color:var(--muted);display:flex;flex-direct
 <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v10a1 1 0 01-1 1h-5v-7h-6v7H4a1 1 0 01-1-1V11z"/></symbol>
 <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.7-3.5 3.4-5.5 6.5-5.5s5.8 2 6.5 5.5M16 4.6a3.5 3.5 0 010 6.8"/></symbol>
 <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+<symbol id="i-cloud" viewBox="0 0 24 24"><path d="M6 19a4 4 0 010-8 6 6 0 0111.3-2A4.5 4.5 0 0118 19H6z"/></symbol>
 <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
 </svg>
 
@@ -64,7 +63,7 @@ label{font-size:12px;font-weight:700;color:var(--muted);display:flex;flex-direct
   <div class="login-box">
     <div class="mark"><svg class="ic lg" style="color:#fff"><use href="#i-logo"/></svg></div>
     <h2>Grupo Talenth</h2>
-    <p>Campus v1.8 · Entra siempre, sincroniza en la nube</p>
+    <p>Campus v1.8b · Entra siempre, sincroniza en la nube</p>
     <input type="tel" id="login-phone" placeholder="Celular (ej: 930175586)" inputmode="numeric">
     <input type="password" id="login-pin" placeholder="Clave (ej: 1234)" inputmode="numeric">
     <button id="btn-login">Ingresar</button>
@@ -76,7 +75,7 @@ label{font-size:12px;font-weight:700;color:var(--muted);display:flex;flex-direct
 <div id="app">
   <div class="topbar">
     <div class="brand"><span class="mark"><svg class="ic" style="color:#fff"><use href="#i-logo"/></svg></span><span>GRUPO TALENTH</span></div>
-    <span class="net-badge" id="net-badge">📴 Local</span>
+    <span class="net-badge" id="net-badge">⏳ Conectando…</span>
     <div class="user-info"><span><b id="user-name">Usuario</b> · <span id="user-role">Rol</span></span>
     <button class="iconbtn" id="btn-logout"><svg class="ic"><use href="#i-logout"/></svg></button></div>
   </div>
@@ -105,7 +104,7 @@ const USERS=[
  {phone:'930175586',pin:H1234,role:'super',name:'Jhonnatan Giron'},
  {phone:'930175587',pin:H1234,role:'admin',name:'Isabel Mendoza'}
 ];
-let S=null,currentUser=null,sb=null,netMode='local',pushTimer=null,lastRemote=0;
+let S=null,currentUser=null,sb=null,netMode='local',sbStatus='esperando',pushTimer=null,lastRemote=0;
 
 async function hashPin(p){const d=new TextEncoder().encode(p);const b=await crypto.subtle.digest('SHA-256',d);return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
 
@@ -125,20 +124,32 @@ function seed(){
 
 function loadData(){try{const r=localStorage.getItem(KEY);S=r?JSON.parse(r):seed();if(!r)localStorage.setItem(KEY,JSON.stringify(S));}catch(e){S=seed();}}
 function save(){localStorage.setItem(KEY,JSON.stringify(S));if(sb){clearTimeout(pushTimer);pushTimer=setTimeout(push,700);}}
-async function push(){if(!sb)return;try{await sb.from("campus_state").upsert({id:"main",data:S,updated_at:new Date().toISOString()});netMode='cloud';updateNet();}catch(e){netMode='local';updateNet();}}
-function updateNet(){const b=$("#net-badge");if(!b)return;b.className='net-badge '+(netMode==='cloud'?'cloud':'');b.textContent=netMode==='cloud'?'☁ Nube':'📴 Local';}
+async function push(){if(!sb){sbStatus='sin librería';updateNet();return;}try{const {error}=await sb.from("campus_state").upsert({id:"main",data:S,updated_at:new Date().toISOString()});if(error){sbStatus='error al subir: '+error.message;netMode='local';}else{sbStatus='ok';netMode='cloud';lastRemote=Date.now();}updateNet();}catch(e){sbStatus='catch al subir: '+e.message;netMode='local';updateNet();}}
 
-async function pullCloud(){if(!sb)return;try{const {data}=await sb.from("campus_state").select("*").eq("id","main").single();if(data&&data.data&&data.data.students){lastRemote=new Date(data.updated_at).getTime();S=data.data;localStorage.setItem(KEY,JSON.stringify(S));netMode='cloud';if(currentUser)route(location.hash||"#/home");}}catch(e){}}
+async function pullCloud(){
+ if(!window.supabase){sbStatus='la librería Supabase NO cargó (revisa el <script> del CDN)';netMode='local';updateNet();return;}
+ if(!sb){try{sb=window.supabase.createClient(SB_URL,SB_KEY);}catch(e){sbStatus='cliente falló: '+e.message;updateNet();return;}}
+ sbStatus='probando…';updateNet();
+ try{
+  const {data,error}=await sb.from("campus_state").select("*").eq("id","main").single();
+  if(error){sbStatus='nube rechazó: '+error.message;netMode='local';}
+  else if(!data||!data.data){sbStatus='nube OK pero vacía → subiendo datos locales';netMode='cloud';await push();}
+  else{lastRemote=new Date(data.updated_at).getTime();S=data.data;localStorage.setItem(KEY,JSON.stringify(S));netMode='cloud';sbStatus='ok';if(currentUser)route(location.hash||"#/home");}
+ }catch(e){sbStatus='error de red: '+e.message;netMode='local';}
+ updateNet();
+}
 
-function initSB(){if(!window.supabase)return;sb=window.supabase.createClient(SB_URL,SB_KEY);sb.channel("gt").on("postgres_changes",{event:"*",schema:"public",table:"campus_state"},p=>{const r=p.new;if(r&&r.data&&new Date(r.updated_at).getTime()>lastRemote){lastRemote=new Date(r.updated_at).getTime();S=r.data;localStorage.setItem(KEY,JSON.stringify(S));if(currentUser)route(location.hash||"#/home");toast("Datos sincronizados de la nube ✓");}}).subscribe();pullCloud();}
+function updateNet(){const b=$("#net-badge");if(!b)return;
+ if(netMode==='cloud'){b.className='net-badge cloud';b.textContent='☁ Nube';}
+ else{b.className='net-badge '+(sbStatus.startsWith('error')||sbStatus.startsWith('nube rechazó')||sbStatus.startsWith('catch')?'err':'');b.textContent='📴 Local';}
+ const d=$("#diag");if(d)d.textContent=sbStatus;
+}
 
 async function doLogin(){
  const phone=$("#login-phone").value.trim(),pin=$("#login-pin").value.trim(),err=$("#login-err");
  err.textContent="";if(!phone||!pin){err.textContent="Completa celular y clave";return;}
  $("#btn-login").disabled=true;$("#btn-login").textContent="Verificando…";
- try{
-  const h=await hashPin(pin);
-  const u=USERS.find(x=>x.phone===phone&&x.pin===h);
+ try{const h=await hashPin(pin);const u=USERS.find(x=>x.phone===phone&&x.pin===h);
   if(!u){err.textContent="Credenciales incorrectas";return;}
   currentUser=u;localStorage.setItem(SKEY,JSON.stringify(u));enterApp();
  }catch(e){err.textContent="Error: "+e.message;}
@@ -148,14 +159,13 @@ function enterApp(){$("#login-screen").style.display="none";$("#app").style.disp
 function checkSession(){const s=localStorage.getItem(SKEY);if(s){try{currentUser=JSON.parse(s);enterApp();return}catch(e){}}$("#login-screen").style.display="flex";$("#app").style.display="none";}
 function logout(){localStorage.removeItem(SKEY);currentUser=null;$("#app").style.display="none";$("#login-screen").style.display="flex";}
 
-const NAVS={super:[["home","Inicio","#/home"],["users","Estudiantes","#/users"],["cal","Grupos","#/groups"],["cloud","Respaldo","#/backup"]],admin:[["home","Inicio","#/home"],["users","Estudiantes","#/users"],["cal","Grupos","#/groups"]]};
+const NAVS={super:[["home","Inicio","#/home"],["users","Estudiantes","#/users"],["cal","Grupos","#/groups"],["cloud","Nube y respaldo","#/backup"]],admin:[["home","Inicio","#/home"],["users","Estudiantes","#/users"],["cal","Grupos","#/groups"]]};
 function renderSidebar(){const nav=NAVS[currentUser.role]||NAVS.admin;$("#sidebar").innerHTML=`<div class="side-label">Menú</div>`+nav.map(n=>`<a class="side-link" href="${n[2]}" onclick="route('${n[2]}');return false;"><svg class="ic"><use href="#i-${n[0]}"/></svg>${n[1]}</a>`).join("");}
 
 function route(hash){
  const view=$("#view");
  if(hash==="#/home"||hash==="#/"||!hash){
-  const debt=S.enrollments.length;
-  view.innerHTML=`<div class="vh"><div><h1>Hola, ${esc(currentUser.name)} 👋</h1><div>Campus v1.8 · Estado: ${netMode==='cloud'?'☁ Nube sincronizada':'📴 Local (sin nube)'}</div></div></div>
+  view.innerHTML=`<div class="vh"><div><h1>Hola, ${esc(currentUser.name)} 👋</h1><div>Campus v1.8b · Estado: <b id="home-net">${netMode==='cloud'?'☁ Nube sincronizada':'📴 Local'}</b></div></div></div>
   <div class="grid g4">
    <div class="card"><div class="kpi"><div><div class="num">${S.students.length}</div><div class="lbl">Estudiantes</div></div></div></div>
    <div class="card"><div class="kpi"><div><div class="num">${S.groups.length}</div><div class="lbl">Grupos</div></div></div></div>
@@ -164,14 +174,13 @@ function route(hash){
   </div>`;
  }else if(hash==="#/users"){renderUsers();}
  else if(hash==="#/groups"){
-  view.innerHTML=`<div class="vh"><h1>Grupos</h1></div><div class="grid g2">${S.groups.map(g=>`<div class="card"><h3>${esc(g.nombre)}</h3><div style="color:var(--muted);font-size:13px;margin:8px 0">${esc(g.curso)} · ${esc(g.sede)} · ${esc(g.aula)}</div><div style="font-size:12px">${g.dias.map(d=>["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"][d]).join(", ")} ${g.hi}–${g.hf} · S/ ${g.costo}</div></div>`).join("")}</div>`;
+  view.innerHTML=`<div class="vh"><h1>Grupos</h1></div><div class="grid g2">${S.groups.map(g=>`<div class="card"><h3>${esc(g.nombre)}</h3><div style="color:var(--muted);font-size:13px;margin:8px 0">${esc(g.curso||'')} · ${esc(g.sede)} · ${esc(g.aula)}</div><div style="font-size:12px">${(g.dias||[]).map(d=>["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"][d]).join(", ")} ${g.hi}–${g.hf} · S/ ${g.costo}</div></div>`).join("")}</div>`;
  }else if(hash==="#/backup"){
-  view.innerHTML=`<div class="vh"><h1>Respaldo y sincronización</h1></div>
-  <div class="note">${currentUser.role==='super'?'Solo el ADM principal puede forzar sincronización.':'Vista de solo lectura para administración.'}</div>
-  <div class="grid g2">
-   <div class="card"><h3 style="margin-bottom:10px">Estado de la nube</h3><div style="font-size:14px">Conexión: <b>${netMode==='cloud'?'☁ Nube activa':'📴 Local'}</b><br>Estudiantes guardados: <b>${S.students.length}</b><br>Proyecto: <code style="font-size:11px">isnqfjwruqwqmzzmegci</code></div><div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-b" style="background:var(--primary);color:#fff" ${currentUser.role!=='super'?'disabled':''} onclick="push().then(()=>{toast('Subido a la nube ✓');updateNet();})">☁ Forzar sincronizar</button><button class="btn btn-g" ${currentUser.role!=='super'?'disabled':''} onclick="pullCloud().then(()=>toast('Jalado de la nube ✓'))">⬇ Jalar de la nube</button></div></div>
-   <div class="card"><h3 style="margin-bottom:10px">Contingencia</h3><p style="font-size:13px;color:var(--muted)">Si se cae Supabase o pierdes internet, la app <b>sigue funcionando con los datos locales</b> y el login nunca falla. Al recuperar red, sincroniza sola. Puedes probarlo: desactiva tu WiFi y recarga — entrarás igual.</p></div>
-  </div>`;
+  view.innerHTML=`<div class="vh"><h1>Nube y respaldo</h1><div style="display:flex;gap:8px"><button class="btn btn-g" onclick="pullCloud().then(()=>toast('Prueba terminada'))">🔁 Probar conexión</button><button class="btn btn-p" ${currentUser.role!=='super'?'disabled':''} onclick="push().then(()=>toast('Subido a la nube ✓'))">☁ Subir ahora</button></div></div>
+  <div class="note">El login es <b>100% local</b>: nunca falla aunque caiga Supabase. La nube es respaldo y sincronización entre dispositivos. Si aquí ves "📴 Local", el botón "Probar conexión" te dirá el motivo exacto.</div>
+  <div class="card"><h3 style="margin-bottom:10px">Diagnóstico en vivo</h3><div class="diag" id="diag">${esc(sbStatus)}</div><div style="margin-top:10px;font-size:13px">Modo: <b>${netMode==='cloud'?'☁ Nube':'📴 Local'}</b> · Estudiantes: <b>${S.students.length}</b></div></div>
+  <div class="card"><h3 style="margin-bottom:10px">Prueba de contingencia (recomendada)</h3><p style="font-size:13px;color:var(--muted)">Apaga tu WiFi, recarga la página e ingresa con tu celular y PIN. Debes entrar igual y poder crear estudiantes. Al encender el WiFi, pulsa "Subir ahora" y verás ☁ Nube. Eso demuestra que una contingencia no te deja afuera.</p></div>`;
+  updateNet();
  }
  $$(".side-link").forEach(a=>a.classList.toggle("on",a.getAttribute("href")===hash));
 }
@@ -213,17 +222,17 @@ function renderUsers(){
  </tbody></table></div>`;
 }
 
-function toast(msg){const t=document.createElement("div");t.className="toast";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);}
+function toast(msg){const t=document.createElement("div");t.className="toast";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3500);}
 
 $("#btn-login").addEventListener("click",doLogin);
 $("#login-pin").addEventListener("keypress",e=>{if(e.key==="Enter")doLogin();});
 $("#btn-logout").addEventListener("click",logout);
-window.addEventListener("online",()=>{initSB();});
-window.addEventListener("offline",()=>{netMode='local';updateNet();});
+window.addEventListener("online",()=>{pullCloud();});
+window.addEventListener("offline",()=>{netMode='local';sbStatus='sin internet (modo contingencia activo)';updateNet();});
 
 loadData();
 checkSession();
-initSB();
+pullCloud();
 </script>
 </body>
 </html>
