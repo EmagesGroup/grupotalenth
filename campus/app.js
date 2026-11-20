@@ -73,14 +73,14 @@ const TRASH_DAYS=30;
 let S=null,currentUser=null,sb=null,netMode="local",sbStatus="esperando",pushTimer=null,dragI=null;
 let ui={q:"",estado:"activo",prog:"",cap:"",sort:"codigo",dir:1,limit:25,sel:new Set(),view:null,
 leadFilter:0,leadQ:"",roomTab:"alumnos",roomQ:"",roomSort:"nombre",
-trashF:"todos",eventQ:""};
+trashF:"todos",eventQ:"",grpF:"activo",grpQ:"",sesF:"todas",payF:"todos"};
 
 async function hashPin(p){try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,"0")).join("")}catch(e){return p==="1234"?H1234:""}}
 
-function blankStudent(){return{id:"",codigo:"",formFisico:"",dni:"",nombres:"",apellidos:"",fechaNac:"",genero:"",canal1:"",canal2:"",email:"",direccion:"",referencia:"",distrito:"",colegio:"",ultimoGrado:"",anioEgreso:"",ocupacion:"",centroTrabajo:"",programa:"",nivel:"",track:"",modalidad:"",sede:"",turno:"",fechaMatricula:today(),captacion:"",subCanal:"",asesor:"",fechaContacto:"",obsComercial:"",becaSel:"ninguna",formaPago:"",cicloFacturacion:"Mensual",alergias:"",tutorNombre:"",tutorDni:"",tutorRel:"",tutorTel:"",tutorEmail:"",estado:"activo",fechaSalida:"",motivoSalida:"",obs:"",createdAt:Date.now(),updatedAt:Date.now()}}
+function blankStudent(){return{id:"",codigo:"",formFisico:"",dni:"",nombres:"",apellidos:"",fechaNac:"",genero:"",canal1:"",canal2:"",email:"",direccion:"",referencia:"",distrito:"",colegio:"",ultimoGrado:"",anioEgreso:"",ocupacion:"",centroTrabajo:"",programa:"",nivel:"",track:"",ciclo:"",carrera:"",modalidad:"",sede:"",turno:"",fechaMatricula:today(),captacion:"",subCanal:"",asesor:"",fechaContacto:"",obsComercial:"",becaSel:"ninguna",formaPago:"",cicloFacturacion:"Mensual",alergias:"",tutorNombre:"",tutorDni:"",tutorRel:"",tutorTel:"",tutorEmail:"",estado:"activo",fechaSalida:"",motivoSalida:"",obs:"",createdAt:Date.now(),updatedAt:Date.now()}}
 function toForm(s){const f=blankStudent();Object.keys(f).forEach(k=>{if(s[k]!==undefined)f[k]=s[k]});if(!f.fechaNac&&s.cumple)f.fechaNac=s.cumple;f.becaSel=s.beca?(s.beca.tipo==="total"?"total":"parcial"):(s.becaSel||"ninguna");if(s.tutor){f.tutorNombre=s.tutor.nombre||"";f.tutorDni=s.tutor.dni||"";f.tutorRel=s.tutor.relacion||"";f.tutorTel=s.tutor.telefono||"";f.tutorEmail=s.tutor.email||""}return f}
 function fromForm(f){const s=Object.assign({},f);s.beca=f.becaSel==="total"?{tipo:"total",pct:100}:f.becaSel==="parcial"?{tipo:"parcial",pct:50}:null;s.edad=calcEdad(f.fechaNac);s.tutor=s.edad<18?{nombre:f.tutorNombre,dni:f.tutorDni,relacion:f.tutorRel,telefono:f.tutorTel,email:f.tutorEmail}:null;s.updatedAt=Date.now();return s}
-const missing=s=>{const f=toForm(s);return["dni","nombres","apellidos","fechaNac","genero","canal1","canal2","distrito","programa","nivel","track","modalidad","sede","turno","fechaMatricula","captacion","becaSel","formaPago"].filter(k=>!String(f[k]||"").trim()).length};
+const missing=s=>{const f=toForm(s);return["dni","nombres","apellidos","fechaNac","genero","canal1","canal2","distrito","programa","nivel","modalidad","sede","turno","fechaMatricula","captacion","becaSel","formaPago"].filter(k=>!String(f[k]||"").trim()).length};
 
 const student=id=>S.students.find(s=>s.id===id);
 const room=id=>S.rooms.find(r=>r.id===id);
@@ -92,10 +92,11 @@ const cycle=id=>S.cycles.find(c=>c.id===id);
 const career=id=>S.careers.find(c=>c.id===id);
 const lead=id=>S.leads.find(l=>l.id===id);
 const event=id=>S.events.find(e=>e.id===id);
-
 const sName=s=>s?s.nombres+" "+s.apellidos:"—";
 const myRooms=()=>currentUser&&currentUser.role==="docente"?S.rooms.filter(r=>r.docenteId===currentUser.docenteId):S.rooms;
 const enrollsOf=rid=>S.enrollments.filter(e=>e.roomId===rid&&e.estado==="activa");
+const att=(seid,sid)=>S.attendance.find(a=>a.sessionId===seid&&a.studentId===sid);
+const correctionOpen=se=>new Date()<=new Date(addDays(se.fecha,1)+"T23:59:59");
 
 function genSessions(r){let d=r.fechaInicio,n=0,out=[],guard=0;
  while(n<(r.numSesiones||12)&&guard<500){if((r.dias||[]).includes(dow(d))){n++;out.push({id:"se-"+r.id+"-"+n,roomId:r.id,n,fecha:d,hi:r.hi,hf:r.hf,estado:"programada",motivoC:"",cerradaEn:null})}d=addDays(d,1);guard++}return out}
@@ -112,15 +113,11 @@ function seed(){
  mk({id:"st-6",codigo:"GT-2026-006",formFisico:"F-006",dni:"76543215",nombres:"José",apellidos:"Chávez Rojas",fechaNac:"2012-09-09",genero:"Masculino",canal1:"911111116",canal2:"922222227",distrito:"Callao",colegio:"I.E. República de Venezuela",ocupacion:"Estudiante",programa:"prog-ing",track:"tr-kids",nivel:"niv-bas",ciclo:"cic-01",modalidad:"Presencial",sede:"Callao",turno:"Mañana",fechaMatricula:addDays(t,-20),captacion:"Visita a colegio",becaSel:"ninguna",formaPago:"Efectivo",tutorNombre:"Rosa Rojas",tutorDni:"41234570",tutorRel:"Madre",tutorTel:"922222227"}),
  mk({id:"st-7",codigo:"GT-2026-007",formFisico:"F-007",dni:"76543216",nombres:"Carlos",apellidos:"Ruiz Mendoza",fechaNac:"1998-04-15",genero:"Masculino",canal1:"911111117",canal2:"911111117",distrito:"Callao",ocupacion:"Trabajador",programa:"prog-caj",carrera:"car-caj",ciclo:"cic-08",modalidad:"Presencial",sede:"Callao",turno:"Mañana",fechaMatricula:addDays(t,-90),captacion:"Internet / Redes",becaSel:"ninguna",formaPago:"Yape"}),
  mk({id:"st-8",codigo:"GT-2026-008",formFisico:"F-008",dni:"76543217",nombres:"Pedro",apellidos:"Sánchez López",fechaNac:"1997-08-22",genero:"Masculino",canal1:"911111118",canal2:"911111118",distrito:"Bellavista",ocupacion:"Trabajador",programa:"prog-caj",carrera:"car-caj",ciclo:"cic-12",modalidad:"Presencial",sede:"Callao",turno:"Mañana",fechaMatricula:addDays(t,-120),captacion:"Referido",becaSel:"ninguna",formaPago:"Yape"})];
-
- const cycles=[];
- for(let i=1;i<=12;i++)cycles.push({id:"cic-"+String(i).padStart(2,"0"),numero:i});
-
+ const cycles=[];for(let i=1;i<=12;i++)cycles.push({id:"cic-"+String(i).padStart(2,"0"),numero:i});
  const rooms=[
  {id:"room-1",nombre:"Técnicos · Sábados Mañana",programa:"prog-caj",dias:[6],hi:"08:00",hf:"11:00",sede:"Callao",aula:"A-301",cupo:35,docenteId:"u-doc1",fechaInicio:addDays(lastSat,-14),numSesiones:12,estado:"activo"},
  {id:"room-2",nombre:"Kids Básico 01 · Sábados",programa:"prog-ing",track:"tr-kids",nivel:"niv-bas",ciclo:"cic-01",dias:[6],hi:"08:00",hf:"10:00",sede:"Callao",aula:"A-201",cupo:35,docenteId:"u-doc1",fechaInicio:addDays(lastSat,-14),numSesiones:12,estado:"activo"},
  {id:"room-3",nombre:"Adultos Intermedio · Lun-Mié Noche",programa:"prog-ing",track:"tr-adu",nivel:"niv-int",ciclo:"cic-01",dias:[1,3],hi:"19:00",hf:"21:00",sede:"Virtual",aula:"Teams",cupo:35,docenteId:"u-doc2",fechaInicio:addDays(t,-21),numSesiones:12,estado:"activo"}];
-
  const enrollments=[
  {id:"en-1",studentId:"st-1",roomId:"room-2",estado:"activa"},
  {id:"en-2",studentId:"st-2",roomId:"room-2",estado:"activa"},
@@ -130,9 +127,7 @@ function seed(){
  {id:"en-6",studentId:"st-6",roomId:"room-2",estado:"activa"},
  {id:"en-7",studentId:"st-7",roomId:"room-1",estado:"activa"},
  {id:"en-8",studentId:"st-8",roomId:"room-1",estado:"activa"}];
-
  const sessions=[];rooms.forEach(r=>{genSessions(r).forEach(x=>sessions.push(x))});
-
  const subjects=[
  {id:"sub-mat",nombre:"Matemática Financiera",tipo:"comun",carreras:["car-adm","car-con","car-caj","car-neg","car-pla"]},
  {id:"sub-eti",nombre:"Ética Profesional",tipo:"comun",carreras:["car-adm","car-con","car-caj","car-avi","car-neg","car-pla"]},
@@ -144,26 +139,20 @@ function seed(){
  {id:"sub-pla",nombre:"Planillas y RRHH",tipo:"especifica",carrera:"car-pla"},
  {id:"sub-comex",nombre:"Comercio Exterior",tipo:"especifica",carrera:"car-neg"},
  {id:"sub-ges",nombre:"Gestión Empresarial",tipo:"especifica",carrera:"car-adm"}];
-
  const leads=[
  {id:"ld-1",nombres:"María",apellidos:"González",celular:"999888777",email:"",programa:"prog-ing",track:"tr-adu",nivelSugerido:"niv-bas",cicloSugerido:"cic-01",distrito:"Callao",captacion:"Charla/Evento",eventoId:null,estado:1,createdAt:Date.now()-86400000*2,observaciones:"Interesada en horario nocturno"},
  {id:"ld-2",nombres:"Roberto",apellidos:"Díaz",celular:"999888776",email:"roberto@mail.com",programa:"prog-caj",carrera:"car-caj",cicloSugerido:"cic-01",distrito:"Bellavista",captacion:"Internet / Redes",estado:3,createdAt:Date.now()-86400000*5,observaciones:"Evaluación agendada para el 20/11"},
  {id:"ld-3",nombres:"Sofía",apellidos:"Ramírez",celular:"999888775",email:"",programa:"prog-avi",carrera:"car-avi",cicloSugerido:"cic-01",distrito:"La Perla",captacion:"Referido",estado:5,createdAt:Date.now()-86400000*10,observaciones:"Matriculada en room-1"}];
-
  const events=[
  {id:"ev-1",nombre:"Conferencia: Oportunidades en Aviación Comercial 2026",fecha:addDays(t,7),hora:"10:00",capacidad:100,programa:"prog-avi",qrCode:"GT-EV-001",asistentes:[
   {id:"at-1",nombres:"Juan",apellidos:"Pérez",celular:"988777666",programa:"prog-avi",email:"",distrito:"Callao",comoSeEntero:"Instagram",convertido:false},
   {id:"at-2",nombres:"Ana",apellidos:"Torres",celular:"988777665",programa:"prog-avi",email:"ana@mail.com",distrito:"Bellavista",comoSeEntero:"Facebook",convertido:true,leadId:"ld-4"}
  ]}];
-
  return{version:"3.0",meta:{updatedAt:0},views:[],trash:[],
  config:{notifyNumber:"51999888777",cutoffHour:15,email:"hola@grupotalenth.com",consentVersion:"v1.3",cupoDefault:35,certFee:30},
  programs:PROGRAMAS,tracks:TRACKS,levels:NIVELES,cycles,
- careers:CAREERS,
- subjects,
- students,rooms,enrollments,sessions,
- leads,events,
- payments:[],messages:[],certificates:[],audit:[],cutoffs:{}};
+ careers:CAREERS,subjects,students,rooms,enrollments,sessions,
+ leads,events,payments:[],messages:[],certificates:[],audit:[],cutoffs:{}};
 }
 
 function migrate(d){
@@ -171,12 +160,9 @@ function migrate(d){
  const base=seed();
  d.version="3.0";d.meta=d.meta||{updatedAt:0};d.views=d.views||[];d.trash=d.trash||[];
  d.config=Object.assign({},base.config,d.config||{});
- d.programs=d.programs||base.programs;
- d.tracks=d.tracks||base.tracks;
- d.levels=d.levels||base.levels;
- d.cycles=d.cycles||base.cycles;
- d.careers=d.careers||base.careers;
- d.subjects=d.subjects||base.subjects;
+ d.programs=d.programs||base.programs;d.tracks=d.tracks||base.tracks;
+ d.levels=d.levels||base.levels;d.cycles=d.cycles||base.cycles;
+ d.careers=d.careers||base.careers;d.subjects=d.subjects||base.subjects;
  d.students=d.students.map(s=>{const o=fromForm(toForm(s));o.id=s.id||uid("st");o.codigo=s.codigo||("GT-2026-"+String(Math.floor(Math.random()*900)+100));o.formFisico=s.formFisico||("F-"+String(o.codigo).slice(-3));o.createdAt=s.createdAt||Date.now();o.estado=o.estado||"activo";return o});
  d.rooms=(d.rooms||[]).map(r=>Object.assign({docenteId:"u-doc1",fechaInicio:today(),numSesiones:12,dias:[6],hi:"08:00",hf:"11:00",sede:"Callao",aula:"A-301",cupo:35,programa:"prog-caj",estado:"activo"},r));
  d.enrollments=d.enrollments||[];d.sessions=d.sessions||[];d.attendance=d.attendance||[];
@@ -258,7 +244,6 @@ function toast(msg,type="ok",undo){const t=document.createElement("div");t.class
  t.innerHTML=icon(type==="err"?"x":"check")+`<span>${esc(msg)}</span>`+(undo?`<button>Deshacer</button>`:"");
  if(undo)t.querySelector("button").onclick=()=>{undo();t.remove()};$("#toasts").appendChild(t);setTimeout(()=>t.remove(),undo?8000:3600)}
 function copyText(t){navigator.clipboard.writeText(t).then(()=>toast("Copiado ✓")).catch(()=>toast("No se pudo copiar","err"))}
-
 function vHome(){const act=S.students.filter(s=>s.estado==="activo").length,pend=S.messages.filter(m=>m.estado==="pendiente").length;
  const futP=S.payments.filter(p=>p.estado==="pendiente"||p.estado==="vencido").length;
  const ts=S.sessions.filter(s=>s.fecha===today()&&(currentUser.role!=="docente"||room(s.roomId).docenteId===currentUser.docenteId));
@@ -279,6 +264,7 @@ function filtered(){let l=[...S.students];
  if(ui.cap)l=l.filter(s=>s.captacion===ui.cap);
  if(ui.q){const q=ui.q.toLowerCase();l=l.filter(s=>[s.codigo,s.dni,s.nombres,s.apellidos,s.colegio,s.distrito,s.programa,s.captacion,s.canal1,s.canal2].join(" ").toLowerCase().includes(q))}
  l.sort((a,b)=>{const k=ui.sort;const va=k==="nombre"?a.apellidos+" "+a.nombres:k==="edad"?calcEdad(a.fechaNac):(a[k]||"");const vb=k==="nombre"?b.apellidos+" "+b.nombres:k==="edad"?calcEdad(b.fechaNac):(b[k]||"");return(va>vb?1:va<vb?-1:0)*ui.dir});return l}
+
 function vUsers(){if(!isStaff()){route("#/home");return}
  $("#view").innerHTML=head("Estudiantes","Ficha de 18 obligatorios + 4 de tutor si es menor",
  `<button class="btn btn-g" onclick="saveView()">${icon("check")} Guardar vista</button><button class="btn btn-g" onclick="exportCSV()">${icon("down")} CSV</button><button class="btn btn-p" onclick="openStudentForm()">${icon("plus")} Nuevo estudiante</button>`)+
@@ -290,6 +276,7 @@ function vUsers(){if(!isStaff()){route("#/home");return}
  <div class="bulkbar" id="bulkbar"><span id="bulkcount"></span><button class="btn btn-g btn-sm" onclick="bulkEstado('activo')">Activar</button><button class="btn btn-w btn-sm" onclick="bulkEstado('inactivo')">${icon("archive")} Archivar</button><button class="btn btn-g btn-sm" onclick="bulkEstado('egresado')">Egresar</button><button class="btn btn-d btn-sm" onclick="requestBulkTrash()">${icon("lock")} Eliminar (protegido)</button><button class="btn btn-g btn-sm" onclick="ui.sel.clear();refreshTable()">Limpiar</button></div>
  <div class="tw"><table><thead><tr><th style="width:36px"><input type="checkbox" onchange="toggleAll(this.checked)"></th><th class="s" onclick="setSort('codigo')">Código ⇅</th><th class="s" onclick="setSort('nombre')">Estudiante ⇅</th><th class="s" onclick="setSort('edad')">Edad ⇅</th><th class="s" onclick="setSort('programa')">Programa ⇅</th><th class="s" onclick="setSort('captacion')">Captación ⇅</th><th class="s" onclick="setSort('distrito')">Distrito ⇅</th><th>Beca</th><th class="s" onclick="setSort('estado')">Estado ⇅</th><th></th></tr></thead><tbody id="tbody"></tbody></table></div>
  <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span id="count" style="font-size:12px;color:var(--muted);font-weight:700"></span><button class="btn btn-g btn-sm" id="more" onclick="ui.limit+=25;refreshTable()">Cargar más</button></div>`;refreshTable()}
+
 function refreshTable(){const l=filtered(),show=l.slice(0,ui.limit);
  $("#tbody").innerHTML=show.map(s=>{const m=missing(s),e=calcEdad(s.fechaNac);return `<tr>
  <td><input type="checkbox" ${ui.sel.has(s.id)?"checked":""} onchange="toggleSel('${s.id}',this.checked)"></td>
@@ -305,32 +292,48 @@ function refreshTable(){const l=filtered(),show=l.slice(0,ui.limit);
  $("#bulkbar").classList.toggle("on",ui.sel.size>0);$("#bulkcount").textContent=ui.sel.size+" seleccionados";
  $("#views").innerHTML=S.views.map((v,i)=>`<button class="chip view ${ui.view===i?"on":""}" draggable="true" ondragstart="dragI=${i}" ondragover="event.preventDefault()" ondrop="dropView(event,${i})" onclick="applyView(${i})" title="Arrastra para reordenar">${esc(v.name)}</button>`).join("")+
  (S.views.length?`<button class="chip" onclick="delView()">✕ quitar</button>`:`<span style="font-size:12px;color:var(--muted)">Filtra y guarda vistas para reutilizarlas.</span>`)}
+
 function setSort(k){if(ui.sort===k)ui.dir*=-1;else{ui.sort=k;ui.dir=1}refreshTable()}
 function toggleSel(id,on){on?ui.sel.add(id):ui.sel.delete(id);refreshTable()}
 function toggleAll(on){filtered().slice(0,ui.limit).forEach(s=>on?ui.sel.add(s.id):ui.sel.delete(s.id));refreshTable()}
 function bulkEstado(e){S.students.forEach(s=>{if(ui.sel.has(s.id)){s.estado=e;if(e!=="activo")s.fechaSalida=today()}});audit("Estado masivo",ui.sel.size+" → "+e);ui.sel.clear();save();toast("Estado actualizado ✓");refreshTable()}
+
+function requestTrashStudent(sid){if(!isStaff())return;const s=student(sid);if(!s)return;
+ const rel={enrollments:S.enrollments.filter(e=>e.studentId===sid),attendance:S.attendance.filter(a=>a.studentId===sid),payments:S.payments.filter(p=>p.studentId===sid)};
+ const cfg={title:"Eliminar estudiante",keyword:s.dni,action:"Enviar a papelera",
+ intro:"La ficha y todo su historial académico se moverán a la Papelera. Podrás restaurarlo completo.",
+ impact:[{n:rel.enrollments.length,l:"Matrículas"},{n:rel.attendance.length,l:"Asistencias"},{n:rel.payments.length,l:"Recibos"}],
+ detail:`Confirma escribiendo el DNI de <b>${esc(sName(s))}</b>.`,
+ run:reason=>{S.trash.unshift({id:uid("tr"),type:"student",label:sName(s),sub:s.codigo,payload:s,related:rel,deletedAt:Date.now(),deletedBy:currentUser.name,reason});
+  S.students=S.students.filter(x=>x.id!==sid);S.enrollments=S.enrollments.filter(x=>x.studentId!==sid);
+  S.attendance=S.attendance.filter(x=>x.studentId!==sid);S.payments=S.payments.filter(x=>x.studentId!==sid);
+  audit("Estudiante a papelera",s.codigo+" · motivo: "+reason);save();renderSidebar();vUsers();
+  toast("Estudiante enviado a papelera","warn",()=>{const t=S.trash[0];if(t)restoreTrash(t.id,true)})}};
+ askConfirm(cfg)}
+
 function requestBulkTrash(){const ids=[...ui.sel];if(!ids.length)return;
  const cfg={title:"Eliminar "+ids.length+" estudiantes",keyword:"ELIMINAR",action:"Enviar "+ids.length+" a papelera",
  intro:"Estás por mover varias fichas con todo su historial. Es reversible desde Papelera.",
  detail:"Escribe <b>ELIMINAR</b> en mayúsculas para continuar.",
  run:reason=>{ids.forEach(sid=>{const s=student(sid);if(!s)return;
-  const rel={enrollments:S.enrollments.filter(e=>e.studentId===sid),attendance:S.attendance.filter(a=>a.studentId===sid),
-  payments:S.payments.filter(p=>p.studentId===sid)};
+  const rel={enrollments:S.enrollments.filter(e=>e.studentId===sid),attendance:S.attendance.filter(a=>a.studentId===sid),payments:S.payments.filter(p=>p.studentId===sid)};
   S.trash.unshift({id:uid("tr"),type:"student",label:sName(s),sub:s.codigo,payload:s,related:rel,deletedAt:Date.now(),deletedBy:currentUser.name,reason});
   S.students=S.students.filter(x=>x.id!==sid);S.enrollments=S.enrollments.filter(x=>x.studentId!==sid);
   S.attendance=S.attendance.filter(x=>x.studentId!==sid);S.payments=S.payments.filter(x=>x.studentId!==sid)});
   ui.sel.clear();audit("Eliminación masiva a papelera",ids.length+" · "+reason);save();renderSidebar();vUsers();toast(ids.length+" estudiantes en papelera","warn")}};
  askConfirm(cfg)}
+
 function saveView(){const name=prompt("Nombre de la vista:","Vista "+(S.views.length+1));if(!name)return;S.views.push({name,q:ui.q,estado:ui.estado,prog:ui.prog,cap:ui.cap,sort:ui.sort,dir:ui.dir});save();refreshTable();toast("Vista guardada ✓")}
 function applyView(i){const v=S.views[i];if(!v)return;Object.assign(ui,{q:v.q,estado:v.estado,prog:v.prog,cap:v.cap,sort:v.sort,dir:v.dir,view:i,limit:25});vUsers()}
 function delView(){S.views.pop();ui.view=null;save();refreshTable()}
 function dropView(e,i){e.preventDefault();if(dragI===null||dragI===i)return;const v=S.views.splice(dragI,1)[0];S.views.splice(i,0,v);dragI=null;save();refreshTable()}
+
 function openDrawer(id){const s=student(id);if(!s)return;const m=missing(s),ens=S.enrollments.filter(e=>e.studentId===id);
  $("#drawer").innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h3>${esc(sName(s))}</h3><button class="btn btn-g btn-sm" onclick="closeDrawer()">${icon("x")}</button></div>
  <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px">${avatar(sName(s),"width:52px;height:52px;font-size:18px")}<div><b>${esc(s.codigo)}</b> · ${esc(s.formFisico||"—")}<div style="font-size:12px;margin-top:4px">${estadoBadge(s.estado)} ${m?`<span class="badge b-amber">${m} pendientes</span>`:'<span class="badge b-green">Ficha completa</span>'}</div></div></div>
  <div class="section-title">Personales</div><dl class="dl"><dt>DNI</dt><dd>${esc(s.dni)}</dd><dt>Nacimiento</dt><dd>${ffull(s.fechaNac)} (${calcEdad(s.fechaNac)} años)</dd><dt>Género</dt><dd>${esc(s.genero||"—")}</dd></dl>
  <div class="section-title">Contacto</div><dl class="dl"><dt>Canal 1</dt><dd>${esc(s.canal1)}</dd><dt>Canal 2</dt><dd>${esc(s.canal2)}</dd><dt>Email</dt><dd>${esc(s.email||"—")}</dd><dt>Distrito</dt><dd>${esc(s.distrito||"—")}</dd><dt>Dirección</dt><dd>${esc(s.direccion||"—")}</dd></dl>
- <div class="section-title">Programa</div><dl class="dl"><dt>Programa</dt><dd>${esc((program(s.programa)||{}).nombre||"—")}</dd><dt>Track</dt><dd>${esc((track(s.track)||{}).nombre||"—")}</dd><dt>Nivel</dt><dd>${esc((level(s.nivel)||{}).nombre||"—")}</dd><dt>Ciclo</dt><dd>${esc((cycle(s.ciclo)||{}).numero||"—")}</dd><dt>Modalidad</dt><dd>${esc(s.modalidad||"—")} · ${esc(s.sede||"—")} · ${esc(s.turno||"—")}</dd><dt>Matrícula</dt><dd>${ffull(s.fechaMatricula)}</dd></dl>
+ <div class="section-title">Programa</div><dl class="dl"><dt>Programa</dt><dd>${esc((program(s.programa)||{}).nombre||"—")}</dd><dt>Track</dt><dd>${esc((track(s.track)||{}).nombre||"—")}</dd><dt>Nivel</dt><dd>${esc((level(s.nivel)||{}).nombre||"—")}</dd><dt>Ciclo</dt><dd>${esc((cycle(s.ciclo)||{}).numero||"—")}</dd><dt>Carrera</dt><dd>${esc((career(s.carrera)||{}).nombre||"—")}</dd><dt>Modalidad</dt><dd>${esc(s.modalidad||"—")} · ${esc(s.sede||"—")} · ${esc(s.turno||"—")}</dd><dt>Matrícula</dt><dd>${ffull(s.fechaMatricula)}</dd></dl>
  <div class="section-title">Comercial</div><dl class="dl"><dt>Captación</dt><dd>${esc(s.captacion||"—")}${s.subCanal?" · "+esc(s.subCanal):""}</dd><dt>Asesor</dt><dd>${esc(s.asesor||"—")}</dd><dt>Beca</dt><dd>${s.beca?s.beca.pct+"%":"Sin beca"}</dd><dt>Pago</dt><dd>${esc(s.formaPago||"—")}</dd></dl>
  ${s.tutor?`<div class="section-title">Tutor legal</div><dl class="dl"><dt>Nombre</dt><dd>${esc(s.tutor.nombre)}</dd><dt>DNI</dt><dd>${esc(s.tutor.dni)}</dd><dt>Relación</dt><dd>${esc(s.tutor.relacion)}</dd><dt>Teléfono</dt><dd>${esc(s.tutor.telefono)}</dd></dl>`:""}
  <div class="section-title">Salud</div><dl class="dl"><dt>Alergias</dt><dd>${esc(s.alergias||"Ninguna")}</dd><dt>Observaciones</dt><dd>${esc(s.obs||"—")}</dd></dl>
@@ -339,10 +342,11 @@ function openDrawer(id){const s=student(id);if(!s)return;const m=missing(s),ens=
  $("#drawer").classList.add("on");$("#dscrim").classList.add("on")}
 function closeDrawer(){$("#drawer").classList.remove("on");$("#dscrim").classList.remove("on")}
 function setEstado(id,e){const s=student(id);if(!s)return;s.estado=e;if(e!=="activo")s.fechaSalida=today();save();toast("Estado: "+e);route(location.hash||"#/home");openDrawer(id)}
+
 function openStudentForm(id){if(!isStaff())return;
  const s=id?toForm(student(id)):blankStudent(),edad=calcEdad(s.fechaNac);
  openModal((id?"Editar":"Nuevo")+" estudiante · ficha física",
- `<div class="note">${icon("shield")} Los campos con <span style="color:var(--red)">*</span> son obligatorios (18). Si es menor de 18 se activan 4 campos de tutor. El código F-XXX vincula con tu archivo en papel.</div>
+ `<div class="note">${icon("shield")} Los campos con <span style="color:var(--red)">*</span> son obligatorios. Si es menor de 18 se activan 4 campos de tutor.</div>
  <div class="section-title">📋 Datos personales</div><div class="fgrid">
  <label>DNI <span class="req">*</span><input class="fi" id="f-dni" maxlength="8" inputmode="numeric" value="${esc(s.dni)}"></label>
  <label>Género <span class="req">*</span><select class="fi" id="f-genero">${opts(GENEROS,s.genero)}</select></label>
@@ -363,11 +367,11 @@ function openStudentForm(id){if(!isStaff())return;
  <label>Último grado<input class="fi" id="f-ultimoGrado" value="${esc(s.ultimoGrado)}"></label>
  <label>Centro de trabajo<input class="fi" id="f-centroTrabajo" value="${esc(s.centroTrabajo)}"></label></div>
  <div class="section-title">📚 Programa</div><div class="fgrid">
- <label>Programa <span class="req">*</span><select class="fi" id="f-programa">${opts(S.programs.map(p=>p.nombre),s.programa)}</select></label>
- <label>Track (solo Inglés)<select class="fi" id="f-track">${opts(S.tracks.map(t=>t.nombre),s.track)}</select></label>
- <label>Nivel <span class="req">*</span><select class="fi" id="f-nivel">${opts(S.levels.map(l=>l.nombre),s.nivel)}</select></label>
- <label>Ciclo/Módulo<select class="fi" id="f-ciclo">${opts(S.cycles.map(c=>String(c.numero).padStart(2,"0")),s.ciclo)}</select></label>
- <label>Carrera (solo técnicos)<select class="fi" id="f-carrera">${opts(S.careers.map(c=>c.nombre),s.carrera)}</select></label>
+ <label>Programa <span class="req">*</span><select class="fi" id="f-programa">${opts(S.programs.map(p=>p.nombre),(program(s.programa)||{}).nombre)}</select></label>
+ <label>Track (solo Inglés)<select class="fi" id="f-track">${opts(S.tracks.map(t=>t.nombre),(track(s.track)||{}).nombre)}</select></label>
+ <label>Nivel <span class="req">*</span><select class="fi" id="f-nivel">${opts(S.levels.map(l=>l.nombre),(level(s.nivel)||{}).nombre)}</select></label>
+ <label>Ciclo/Módulo<select class="fi" id="f-ciclo">${opts(S.cycles.map(c=>String(c.numero).padStart(2,"0")),(cycle(s.ciclo)||{}).numero?String((cycle(s.ciclo)||{}).numero).padStart(2,"0"):"")}</select></label>
+ <label>Carrera (solo técnicos)<select class="fi" id="f-carrera">${opts(S.careers.map(c=>c.nombre),(career(s.carrera)||{}).nombre)}</select></label>
  <label>Modalidad <span class="req">*</span><select class="fi" id="f-modalidad">${opts(["Presencial","Online","Híbrido"],s.modalidad)}</select></label>
  <label>Sede <span class="req">*</span><select class="fi" id="f-sede">${opts(["Callao","Virtual","Lima Norte","Lima Sur"],s.sede)}</select></label>
  <label>Turno <span class="req">*</span><select class="fi" id="f-turno">${opts(["Mañana","Tarde","Noche"],s.turno)}</select></label>
@@ -395,7 +399,9 @@ function openStudentForm(id){if(!isStaff())return;
  <label>Motivo salida<input class="fi" id="f-motivoSalida" value="${esc(s.motivoSalida)}"></label></div>
  <label style="margin-top:12px">Observaciones internas<textarea class="fi" id="f-obs">${esc(s.obs)}</textarea></label>`,
  `<button class="btn btn-g" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="saveStudent('${id||""}')">${icon("check")} Guardar ficha</button>`,"wide")}
+
 function updEdad(){const e=calcEdad($("#f-fechaNac").value);$("#f-edad").value=e;$("#tutor-sec").style.display=e<18?"block":"none"}
+
 function saveStudent(id){const f=blankStudent();
  ["dni","genero","nombres","apellidos","fechaNac","canal1","canal2","distrito","email","direccion","referencia","colegio","ocupacion","ultimoGrado","centroTrabajo","programa","nivel","track","modalidad","sede","turno","fechaMatricula","captacion","subCanal","asesor","fechaContacto","becaSel","formaPago","cicloFacturacion","alergias","tutorNombre","tutorDni","tutorRel","tutorTel","tutorEmail","estado","formFisico","fechaSalida","motivoSalida","obs"].forEach(k=>{const el=$("#f-"+k);if(el)f[k]=el.value.trim()});
  f.programa=S.programs.find(p=>p.nombre===f.programa)?.id||f.programa;
@@ -403,7 +409,7 @@ function saveStudent(id){const f=blankStudent();
  f.nivel=S.levels.find(l=>l.nombre===f.nivel)?.id||f.nivel;
  f.ciclo=S.cycles.find(c=>String(c.numero).padStart(2,"0")===f.ciclo)?.id||f.ciclo;
  f.carrera=S.careers.find(c=>c.nombre===f.carrera)?.id||f.carrera;
- const miss=["dni","nombres","apellidos","fechaNac","genero","canal1","canal2","distrito","programa","nivel","track","modalidad","sede","turno","fechaMatricula","captacion","becaSel","formaPago"].filter(k=>!f[k]);if(miss.length){toast("Faltan "+miss.length+" campos obligatorios (*)","err");return}
+ const miss=["dni","nombres","apellidos","fechaNac","genero","canal1","canal2","distrito","programa","nivel","modalidad","sede","turno","fechaMatricula","captacion","becaSel","formaPago"].filter(k=>!f[k]);if(miss.length){toast("Faltan "+miss.length+" campos obligatorios (*)","err");return}
  if(!/^\d{8}$/.test(f.dni)){toast("DNI debe tener 8 dígitos","err");return}
  if(!/^\d{9}$/.test(f.canal1)||!/^\d{9}$/.test(f.canal2)){toast("Celulares deben tener 9 dígitos","err");return}
  if(S.students.some(s=>s.dni===f.dni&&s.id!==id)){toast("Ese DNI ya está registrado","err");return}
@@ -471,7 +477,7 @@ function vRoomDetail(rid){
   
   const grouped={};
   l.forEach(x=>{
-   const carr=(career(x.s.carrera)||{}).nombre||"Sin carrera";
+   const carr=(career(x.s.carrera)||{}).nombre||(track(x.s.track)||{}).nombre||"General";
    const cic=(cycle(x.s.ciclo)||{}).numero||"?";
    const key=carr+"|"+cic;
    if(!grouped[key])grouped[key]={carrera:carr,ciclo:cic,students:[]};
@@ -496,7 +502,8 @@ function vRoomDetail(rid){
   const pendiente=pagos.filter(p=>["pendiente","vencido"].includes(p.estado)).reduce((a,p)=>a+p.monto,0);
   body=`<div class="grid g2"><div class="card"><h3 style="margin-bottom:12px">Datos del salón</h3><dl class="dl">
    <dt>Programa</dt><dd>${esc((program(g.programa)||{}).nombre||"—")}</dd><dt>Track</dt><dd>${esc((track(g.track)||{}).nombre||"—")}</dd>
-   <dt>Nivel</dt><dd>${esc((level(g.nivel)||{}).nombre||"—")}</dd><dt>Días</dt><dd>${(g.dias||[]).map(d=>DIAS[d]).join(", ")}</dd>
+   <dt>Nivel</dt><dd>${esc((level(g.nivel)||{}).nombre||"—")}</dd><dt>Ciclo</dt><dd>${esc((cycle(g.ciclo)||{}).numero||"—")}</dd>
+   <dt>Carrera</dt><dd>${esc((career(g.carrera)||{}).nombre||"—")}</dd><dt>Días</dt><dd>${(g.dias||[]).map(d=>DIAS[d]).join(", ")}</dd>
    <dt>Horario</dt><dd>${ftime(g.hi)} – ${ftime(g.hf)}</dd><dt>Inicio</dt><dd>${ffull(rg.ini)}</dd><dt>Fin</dt><dd>${ffull(rg.fin)}</dd>
    <dt>Sesiones</dt><dd>${g.numSesiones}</dd><dt>Sede / Aula</dt><dd>${esc(g.sede)} · ${esc(g.aula)}</dd>
    <dt>Docente</dt><dd>${esc((teacher(g.docenteId)||{}).name||"")}</dd><dt>Cupo</dt><dd>${en.length} / ${cupo} alumnos</dd></dl></div>
@@ -515,7 +522,9 @@ function vRoomDetail(rid){
   <div class="card"><div class="kpi"><span class="ico" style="background:var(--grad-hot)">${icon("chart","lg")}</span><div><div class="num">${pct}%</div><div class="lbl">Ocupación del aula</div></div></div></div>
  </div>
  <div class="tabs">${tabs.map(t=>`<button class="${ui.roomTab===t[0]?"on":""}" onclick="ui.roomTab='${t[0]}';vRoomDetail('${rid}')">${t[1]}</button>`).join("")}</div>${body}`}
+
 function archiveRoom(rid){const g=room(rid);g.estado=(g.estado||"activo")==="archivado"?"activo":"archivado";audit("Archivar/reactivar salón",g.nombre+" → "+g.estado);save();vRoomDetail(rid);toast("Salón "+(g.estado==="archivado"?"archivado":"reactivado")+" ✓")}
+
 function requestTrashRoom(rid){if(!isStaff())return;const g=room(rid);if(!g)return;
  const ses=S.sessions.filter(s=>s.roomId===rid),ids=ses.map(s=>s.id);
  const rel={sessions:ses,attendance:S.attendance.filter(a=>ids.includes(a.sessionId)),
@@ -535,8 +544,9 @@ function requestTrashRoom(rid){if(!isStaff())return;const g=room(rid);if(!g)retu
  audit("Salón a papelera",g.nombre+" · motivo: "+reason);save();renderSidebar();route("#/rooms");
  toast("Salón enviado a papelera · recuperable "+TRASH_DAYS+" días","warn",()=>{const t=S.trash[0];if(t)restoreTrash(t.id,true)})}};
  askConfirm(cfg)}
+
 function openRoomForm(rid){
- const g=rid?room(rid):{nombre:"",programa:"prog-caj",dias:[6],numSesiones:12,hi:"08:00",hf:"11:00",fechaInicio:today(),sede:"Callao",aula:"A-301",cupo:S.config.cupoDefault||35,docenteId:"u-doc1"};
+ const g=rid?room(rid):{nombre:"",programa:"prog-caj",track:"",nivel:"",ciclo:"",carrera:"",dias:[6],numSesiones:12,hi:"08:00",hf:"11:00",fechaInicio:today(),sede:"Callao",aula:"A-301",cupo:S.config.cupoDefault||35,docenteId:"u-doc1"};
  openModal(rid?"Editar salón":"Nuevo salón",`<div class="fgrid">
  <label>Nombre <span class="req">*</span><input class="fi" id="g-nombre" value="${esc(g.nombre)}" placeholder="Técnicos · Sábados Mañana"></label>
  <label>Programa<select class="fi" id="g-programa">${opts(S.programs.map(p=>p.nombre),(program(g.programa)||{}).nombre)}</select></label>
@@ -555,6 +565,7 @@ function openRoomForm(rid){
  <label>Cupo del aula (20–35)<input class="fi" id="g-cupo" type="number" min="20" max="35" value="${g.cupo||35}"></label></div>
  <div class="note" style="margin-top:12px">${icon("cal")} ${rid?"Al cambiar días, sesiones o fecha de inicio se regeneran las sesiones <b>no dictadas</b>; las ya cerradas conservan su historial.":"Se generan automáticamente las sesiones con fechas reales según el patrón de días."}</div>`,
  `<button class="btn btn-g" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="saveRoom('${rid||""}')">${icon("check")} ${rid?"Guardar cambios":"Crear y generar sesiones"}</button>`)}
+
 function saveRoom(rid){const v=k=>$("#g-"+k).value.trim(),dias=v("dias").split(",").map(x=>+x.trim()).filter(x=>x>=0&&x<=6);
  if(!v("nombre")||!dias.length||toMin(v("hf"))<=toMin(v("hi"))){toast("Nombre, días y horario válidos requeridos","err");return}
  const cupo=Math.max(20,Math.min(35,+v("cupo")||35));
@@ -572,17 +583,21 @@ function saveRoom(rid){const v=k=>$("#g-"+k).value.trim(),dias=v("dias").split("
   audit("Editar salón",g.nombre);save();closeModal();toast("Salón actualizado ✓");vRoomDetail(rid)}
  else{const g=Object.assign({id:uid("room"),estado:"activo"},data);S.rooms.push(g);genSessions(g).forEach(x=>S.sessions.push(x));
   audit("Nuevo salón",g.nombre);save();closeModal();toast("Salón creado con "+g.numSesiones+" sesiones ✓");route("#/room/"+g.id)}}
+
 function conflict(sid,rid){const g=room(rid);for(const e of S.enrollments.filter(e=>e.studentId===sid&&e.estado==="activa")){const o=room(e.roomId);if(!o||o.id===rid)continue;
  if((g.dias||[]).some(d=>(o.dias||[]).includes(d))&&toMin(g.hi)<toMin(o.hf)&&toMin(o.hi)<toMin(g.hf))return o}return null}
+
 function openEnroll(rid){const g=room(rid),en=enrollsOf(rid).length,cupo=g.cupo||35;
  if(en>=cupo){toast("El salón está completo ("+cupo+" alumnos). Amplía el cupo o crea otro salón.","err");return}
  const avail=S.students.filter(s=>s.estado==="activo"&&!S.enrollments.some(e=>e.studentId===s.id&&e.roomId===rid&&e.estado==="activa"));
  openModal("Matricular en "+esc(g.nombre),`<div class="note">${icon("shield")} Anti-cruce de horarios activo. Cupos disponibles: <b>${cupo-en}</b>.</div>
  <label>Estudiante activo<select class="fi" id="e-sid">${avail.map(s=>`<option value="${s.id}">${esc(sName(s))} · ${esc(s.codigo)}</option>`).join("")||'<option value="">Sin estudiantes disponibles</option>'}</select></label>`,
  `<button class="btn btn-g" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="saveEnroll('${rid}')">${icon("check")} Matricular</button>`)}
+
 function openEnrollFor(sid){const avail=S.rooms.filter(g=>(g.estado||"activo")==="activo"&&!S.enrollments.some(e=>e.studentId===sid&&e.roomId===g.id&&e.estado==="activa"));
  openModal("Matricular a "+esc(sName(student(sid))),`<label>Salón<select class="fi" id="e-rid">${avail.map(g=>`<option value="${g.id}">${esc(g.nombre)} · ${(g.dias||[]).map(d=>DIAS[d]).join("+")} ${ftime(g.hi)} (${enrollsOf(g.id).length}/${g.cupo||35})</option>`).join("")||'<option value="">Sin salones disponibles</option>'}</select></label>`,
  `<button class="btn btn-g" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="saveEnrollFor('${sid}')">${icon("check")} Matricular</button>`)}
+
 function addEnroll(sid,rid){if(!sid||!rid){toast("Selecciona estudiante y salón","err");return false}
  const g=room(rid);if(enrollsOf(rid).length>=(g.cupo||35)){toast("Salón completo","err");return false}
  const cf=conflict(sid,rid);if(cf){toast("CRUCE con "+cf.nombre+" ("+ftime(cf.hi)+"–"+ftime(cf.hf)+")","err");return false}
@@ -590,6 +605,7 @@ function addEnroll(sid,rid){if(!sid||!rid){toast("Selecciona estudiante y salón
  const st=student(sid);let monto=g.costo||180;if(st.beca)monto=st.beca.tipo==="total"?0:g.costo*(1-st.beca.pct/100);
  S.payments.push({id:uid("py"),studentId:sid,concepto:"mensualidad",refId:rid,periodo:periodo(),monto,vencimiento:addDays(today(),7),estado:st.beca?"beca":"pendiente",voucher:null,pagadoEn:null});
  audit("Matrícula",st.codigo+" → "+g.nombre);save();return true}
+
 function saveEnroll(rid){if(addEnroll($("#e-sid").value,rid)){closeModal();toast("Matriculado sin cruces ✓");vRoomDetail(rid)}}
 function saveEnrollFor(sid){const rid=$("#e-rid").value;if(addEnroll(sid,rid)){closeModal();closeDrawer();toast("Matriculado sin cruces ✓");route("#/room/"+rid)}}
 
@@ -598,11 +614,12 @@ function vPipeline(){
  let l=[...S.leads];if(ui.leadFilter>0)l=l.filter(l=>l.estado===ui.leadFilter);
  if(ui.leadQ){const q=ui.leadQ.toLowerCase();l=l.filter(l=>[l.nombres,l.apellidos,l.celular,(program(l.programa)||{}).nombre||""].join(" ").toLowerCase().includes(q))}
  
- $("#view").innerHTML=head("Pipeline de Admisión","7 estados · arrastra leads de una columna a otra",
+ $("#view").innerHTML=head("Pipeline de Admisión","7 estados · gestión de prospectos desde charlas hasta matrícula",
  `<button class="btn btn-p" onclick="openLeadForm()">${icon("plus")} Nuevo Lead</button>`)+
  `<div class="toolbar"><div class="search">${icon("search")}<input placeholder="Buscar por nombre, celular o programa…" value="${esc(ui.leadQ)}" oninput="ui.leadQ=this.value;vPipeline()"></div>
  <div class="chips"><button class="chip ${ui.leadFilter===0?"on":""}" onclick="ui.leadFilter=0;vPipeline()">Todos</button>${LEAD_STATES.map(s=>`<button class="chip ${ui.leadFilter===s.id?"on":""}" onclick="ui.leadFilter=${s.id};vPipeline()" style="border-color:${s.color}">${esc(s.nombre)}</button>`).join("")}</div></div>
  <div class="pipeline">${LEAD_STATES.map(s=>{const col=l.filter(x=>x.estado===s.id);return `<div class="pipeline-col" style="border-top:3px solid ${s.color}"><h4>${esc(s.nombre)} <span class="cnt">${col.length}</span></h4>${col.map(x=>`<div class="pipeline-card" onclick="openLeadDetail('${x.id}')"><b>${esc(x.nombres)} ${esc(x.apellidos)}</b><div class="meta">${esc(x.celular)} · ${esc((program(x.programa)||{}).nombre||"")}</div><div class="meta">${esc(x.distrito||"")} · ${ffull(dstr(new Date(x.createdAt)))}</div>${x.carrera?`<div class="tag">${esc((career(x.carrera)||{}).nombre||"")}</div>`:""}</div>`).join("")||`<div class="empty" style="padding:20px">Sin leads</div>`}</div>`}).join("")}</div>`}
+
 function openLeadForm(){openModal("Nuevo Lead",`<div class="fgrid">
  <label>Nombres <span class="req">*</span><input class="fi" id="l-nombres"></label>
  <label>Apellidos <span class="req">*</span><input class="fi" id="l-apellidos"></label>
@@ -615,6 +632,7 @@ function openLeadForm(){openModal("Nuevo Lead",`<div class="fgrid">
  <label>Cómo se enteró<select class="fi" id="l-captacion">${opts(CAPS,"")}</select></label>
  <label>Edad/Fecha nac<input class="fi" id="l-fechaNac" type="date"></label></div>`,
  `<button class="btn btn-g" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="saveLead()">${icon("check")} Crear Lead</button>`)}
+
 function saveLead(){const nombres=$("#l-nombres").value.trim(),apellidos=$("#l-apellidos").value.trim(),celular=$("#l-celular").value.trim();
  if(!nombres||!apellidos||!celular){toast("Nombres, apellidos y celular son obligatorios","err");return}
  if(!/^\d{9}$/.test(celular)){toast("Celular debe tener 9 dígitos","err");return}
@@ -623,13 +641,16 @@ function saveLead(){const nombres=$("#l-nombres").value.trim(),apellidos=$("#l-a
  const car=S.careers.find(c=>c.nombre===$("#l-carrera").value)?.id||"";
  const l={id:uid("ld"),nombres,apellidos,celular,email:$("#l-email").value.trim(),programa:prog,track:trk,carrera:car,distrito:$("#l-distrito").value.trim(),captacion:$("#l-captacion").value,fechaNac:$("#l-fechaNac").value,estado:1,createdAt:Date.now(),observaciones:""};
  S.leads.push(l);audit("Nuevo lead",l.nombres+" "+l.apellidos);save();closeModal();toast("Lead creado ✓");vPipeline()}
+
 function openLeadDetail(id){const l=lead(id);if(!l)return;
  openModal("Lead: "+esc(l.nombres)+" "+esc(l.apellidos),`<div class="section-title">Datos de contacto</div><dl class="dl"><dt>Celular</dt><dd>${esc(l.celular)}</dd><dt>Email</dt><dd>${esc(l.email||"—")}</dd><dt>Distrito</dt><dd>${esc(l.distrito||"—")}</dd></dl>
  <div class="section-title">Interés académico</div><dl class="dl"><dt>Programa</dt><dd>${esc((program(l.programa)||{}).nombre||"—")}</dd><dt>Track</dt><dd>${esc((track(l.track)||{}).nombre||"—")}</dd><dt>Carrera</dt><dd>${esc((career(l.carrera)||{}).nombre||"—")}</dd><dt>Cómo se enteró</dt><dd>${esc(l.captacion||"—")}</dd></dl>
  <div class="section-title">Estado actual</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">${LEAD_STATES.map(s=>`<button class="btn ${l.estado===s.id?"btn-p":"btn-g"} btn-sm" onclick="changeLeadState('${l.id}',${s.id})" style="border-color:${s.color}">${esc(s.nombre)}</button>`).join("")}</div>
  <label style="margin-top:12px">Observaciones<textarea class="fi" id="ld-obs">${esc(l.observaciones||"")}</textarea></label>`,
  `<button class="btn btn-g" onclick="closeModal()">Cerrar</button>${l.estado===5?`<button class="btn btn-p" onclick="convertLeadToStudent('${l.id}')">${icon("check")} Convertir a estudiante</button>`:""}`)}
+
 function changeLeadState(id,estado){const l=lead(id);if(!l)return;l.estado=estado;audit("Lead estado",l.nombres+" → "+LEAD_STATES.find(s=>s.id===estado)?.nombre);save();openLeadDetail(id);vPipeline();toast("Estado actualizado ✓")}
+
 function convertLeadToStudent(id){const l=lead(id);if(!l)return;
  const f=blankStudent();f.nombres=l.nombres;f.apellidos=l.apellidos;f.canal1=l.celular;f.canal2=l.celular;f.email=l.email;f.distrito=l.distrito;f.programa=l.programa;f.track=l.track;f.carrera=l.carrera;f.captacion=l.captacion||"Pipeline";
  f.id=uid("st");f.codigo="GT-2026-"+String(S.students.length+1).padStart(3,"0");f.formFisico="F-"+String(S.students.length+1).padStart(3,"0");
@@ -644,6 +665,7 @@ function vEvents(){if(!isStaff()){route("#/home");return}
  return `<div class="card"><div class="stripe" style="background:var(--grad-cool)"></div><h3>${esc(e.nombre)}</h3><div style="font-size:12px;color:var(--muted);margin:8px 0">${ffull(e.fecha)} · ${esc(e.hora)} · ${esc((program(e.programa)||{}).nombre||"")}</div>
  <div class="room-stats"><div class="room-stat"><div class="n">${asist.length}</div><div class="l">Asistentes</div></div><div class="room-stat"><div class="n">${conv}</div><div class="l">Convertidos</div></div><div class="room-stat"><div class="n">${e.capacidad-asist.length}</div><div class="l">Cupos</div></div></div>
  <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-b btn-sm" onclick="viewEventDetail('${e.id}')">${icon("eye")} Ver asistentes</button><button class="btn btn-g btn-sm" onclick="copyText('grupotalenth.com/evento/${esc(e.qrCode)}')">${icon("copy")} Copiar enlace</button><button class="btn btn-g btn-sm" onclick="generateEventQR('${e.id}')">${icon("qr")} Ver QR</button></div></div>`}).join("")||`<div class="card" style="grid-column:1/-1"><div class="empty">${icon("mega")}<br>No hay eventos creados.</div></div>`}</div>`}
+
 function openEventForm(){openModal("Nuevo Evento/Charla",`<div class="fgrid">
  <label>Nombre <span class="req">*</span><input class="fi" id="e-nombre" placeholder="Conferencia: Oportunidades en Aviación 2026"></label>
  <label>Programa<select class="fi" id="e-programa">${opts(S.programs.map(p=>p.nombre),"")}</select></label>
@@ -651,11 +673,13 @@ function openEventForm(){openModal("Nuevo Evento/Charla",`<div class="fgrid">
  <label>Hora <span class="req">*</span><input class="fi" id="e-hora" type="time" value="10:00"></label>
  <label>Capacidad máxima<input class="fi" id="e-capacidad" type="number" min="10" max="200" value="100"></label></div>`,
  `<button class="btn btn-g" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="saveEvent()">${icon("check")} Crear Evento</button>`)}
+
 function saveEvent(){const nombre=$("#e-nombre").value.trim(),fecha=$("#e-fecha").value,hora=$("#e-hora").value,capacidad=+$("#e-capacidad").value||100;
  if(!nombre||!fecha||!hora){toast("Nombre, fecha y hora son obligatorios","err");return}
  const prog=S.programs.find(p=>p.nombre===$("#e-programa").value)?.id||"";
  const e={id:uid("ev"),nombre,fecha,hora,capacidad,programa:prog,qrCode:"GT-EV-"+String(S.events.length+1).padStart(3,"0"),asistentes:[]};
  S.events.push(e);audit("Evento creado",e.nombre);save();closeModal();toast("Evento creado ✓");vEvents()}
+
 function viewEventDetail(id){const e=event(id);if(!e)return;
  openModal("Asistentes: "+esc(e.nombre),`<div class="note">${icon("qr")} Enlace para registro: <b>grupotalenth.com/evento/${esc(e.qrCode)}</b></div>
  <div class="tw"><table><thead><tr><th>Nombre</th><th>Celular</th><th>Programa</th><th>Email</th><th>Distrito</th><th>Cómo se enteró</th><th>Convertido</th><th></th></tr></thead><tbody>
@@ -663,6 +687,7 @@ function viewEventDetail(id){const e=event(id);if(!e)return;
  </tbody></table></div>
  <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-b btn-sm" onclick="addEventAttendee('${e.id}')">${icon("plus")} Agregar asistente manual</button><button class="btn btn-g btn-sm" onclick="convertAllAttendees('${e.id}')">${icon("arrow")} Convertir todos a Leads</button></div>`,
  `<button class="btn btn-g" onclick="closeModal()">Cerrar</button>`,"wide")}
+
 function addEventAttendee(eid){const e=event(eid);if(!e)return;
  openModal("Agregar asistente a "+esc(e.nombre),`<div class="fgrid">
  <label>Nombres <span class="req">*</span><input class="fi" id="a-nombres"></label>
@@ -673,26 +698,29 @@ function addEventAttendee(eid){const e=event(eid);if(!e)return;
  <label>Distrito<input class="fi" id="a-distrito"></label>
  <label>Cómo se enteró<select class="fi" id="a-como">${opts(["Facebook","Instagram","TikTok","Google","Amigo/Familiar","Feria vocacional","Otro"],"")}</select></label></div>`,
  `<button class="btn btn-g" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="saveEventAttendee('${eid}')">${icon("check")} Agregar</button>`)}
+
 function saveEventAttendee(eid){const nombres=$("#a-nombres").value.trim(),apellidos=$("#a-apellidos").value.trim(),celular=$("#a-celular").value.trim();
  if(!nombres||!apellidos||!celular){toast("Nombres, apellidos y celular son obligatorios","err");return}
  if(!/^\d{9}$/.test(celular)){toast("Celular debe tener 9 dígitos","err");return}
  const e=event(eid);if(!e)return;
  const a={id:uid("at"),nombres,apellidos,celular,email:$("#a-email").value.trim(),programa:S.programs.find(p=>p.nombre===$("#a-programa").value)?.id||"",distrito:$("#a-distrito").value.trim(),comoSeEntero:$("#a-como").value,convertido:false};
  e.asistentes.push(a);audit("Asistente agregado",e.nombre);save();closeModal();viewEventDetail(eid);toast("Asistente agregado ✓")}
+
 function convertAttendeeToLead(eid,aid){const e=event(eid);if(!e)return;const a=e.asistentes.find(x=>x.id===aid);if(!a)return;
  const l={id:uid("ld"),nombres:a.nombres,apellidos:a.apellidos,celular:a.celular,email:a.email,programa:a.programa,distrito:a.distrito,captacion:"Charla/Evento",eventoId:e.id,estado:1,createdAt:Date.now(),observaciones:"Asistió a: "+e.nombre};
  S.leads.push(l);a.convertido=true;a.leadId=l.id;audit("Asistente convertido a lead",l.nombres+" "+l.apellidos);save();viewEventDetail(eid);toast("Convertido a Lead ✓")}
+
 function convertAllAttendees(eid){const e=event(eid);if(!e)return;const pending=e.asistentes.filter(a=>!a.convertido);
  if(!pending.length){toast("Todos los asistentes ya fueron convertidos");return}
  if(!confirm(`¿Convertir ${pending.length} asistentes a Leads?`))return;
  pending.forEach(a=>{const l={id:uid("ld"),nombres:a.nombres,apellidos:a.apellidos,celular:a.celular,email:a.email,programa:a.programa,distrito:a.distrito,captacion:"Charla/Evento",eventoId:e.id,estado:1,createdAt:Date.now(),observaciones:"Asistió a: "+e.nombre};
  S.leads.push(l);a.convertido=true;a.leadId=l.id});
  audit("Conversión masiva",e.nombre+" · "+pending.length+" leads");save();viewEventDetail(eid);toast(pending.length+" asistentes convertidos a Leads ✓")}
+
 function generateEventQR(eid){const e=event(eid);if(!e)return;
  const url=location.origin+location.pathname+"#/evento/"+e.qrCode;
  openModal("Código QR del Evento",`<div style="text-align:center"><div style="font-size:13px;color:var(--muted);margin-bottom:12px">Escanea este código para registrar asistentes</div><div style="display:inline-block;padding:20px;background:#fff;border:2px solid var(--line);border-radius:12px"><div style="font-size:48px">${icon("qr","lg")}</div><div style="font-size:12px;margin-top:10px;color:var(--muted)">${esc(url)}</div></div><div style="margin-top:16px"><button class="btn btn-g" onclick="copyText('${esc(url)}')">${icon("copy")} Copiar enlace</button></div></div>`,
  `<button class="btn btn-p" onclick="closeModal()">Listo</button>`)}
-
 function vSessions(){const rs=myRooms(),ids=rs.map(r=>r.id);
  let ses=S.sessions.filter(s=>ids.includes(s.roomId));
  if(ui.sesF==="hoy")ses=ses.filter(s=>s.fecha===today());
@@ -708,6 +736,7 @@ function vSessions(){const rs=myRooms(),ids=rs.map(r=>r.id);
  <td style="white-space:nowrap">${se.estado==="programada"?`<button class="btn btn-b btn-sm" onclick="openSession('${se.id}')">${icon("book")} Abrir</button> ${isStaff()?`<button class="btn btn-g btn-sm" onclick="markC('${se.id}')">${icon("flag")} C</button><button class="btn btn-g btn-sm" onclick="reprog('${se.id}')">${icon("cal")}</button>`:""}`:
  se.estado==="no_dictada"&&isStaff()?`<button class="btn btn-g btn-sm" onclick="undoC('${se.id}')">${icon("undo")} Revertir</button>`:
  `<button class="btn btn-g btn-sm" onclick="route('#/session/${se.id}')">${icon("eye")} Ver</button>`}</td></tr>`}).join("")||`<tr><td colspan="7"><div class="empty">Sin sesiones.</div></td></tr>`}</tbody></table></div>`}
+
 function openSession(id){const se=S.sessions.find(s=>s.id===id);if(!se)return;if(se.estado==="programada"){se.estado="en_curso";audit("Apertura de sesión",id);save()}route("#/session/"+id)}
 function markC(id){openModal("Sesión cubierta (C)",`<label>Motivo<select class="fi" id="c-mot"><option>Feriado nacional</option><option>Evento institucional</option><option>Clima / emergencia</option><option>Docente no disponible</option></select></label>
  <div class="note" style="margin-top:12px">Todos los alumnos pasan a <b>C</b> sin nota. No genera faltas, FUT ni alertas.</div>`,
@@ -724,6 +753,7 @@ function applyReprog(id){const se=S.sessions.find(s=>s.id===id),old=se.fecha,nf=
  enrollsOf(r.id).forEach(e=>{const st=student(e.studentId);if(!st)return;queueMsg("reprog",st.id,"1",`Hola ${st.nombres}. La sesión ${se.n} de ${r.nombre} se reprogramó del ${fdate(old)} al ${fdate(nf)} a las ${ftime(se.hi)}.`);
   if(st.tutor)queueMsg("reprog",st.id,"2",`Reprogramación: ${st.nombres} tiene clase el ${fdate(nf)} ${ftime(se.hi)} (${r.nombre}).`)});
  audit("Reprogramación",id);save();closeModal();toast("Reprogramada y avisos generados ✓");vSessions()}
+
 function vSessionDetail(id){const se=S.sessions.find(s=>s.id===id);if(!se){route("#/sessions");return}
  const r=room(se.roomId);if(!r){route("#/sessions");return}
  if(currentUser.role==="docente"&&r.docenteId!==currentUser.docenteId){toast("No tienes acceso a esta sesión","err");route("#/sessions");return}
@@ -732,22 +762,25 @@ function vSessionDetail(id){const se=S.sessions.find(s=>s.id===id);if(!se){route
  `<button class="btn btn-g" onclick="route('#/room/${r.id}')">${icon("undo")} Volver al salón</button>`)+
  `<div class="note">${icon("shield")} Registra asistencia y nota (0–20). Al cerrar, las <b>F</b> reciben nota 0 y se generan avisos al alumno y su tutor. Puedes corregir hasta las 23:59 del día siguiente; después se requiere FUT conforme.</div>
  <div class="tw" style="margin-bottom:14px"><table><thead><tr><th>Estudiante</th><th>Check-in</th><th>Asistencia</th><th>Nota 0–20</th><th>Historial</th></tr></thead><tbody>${en.map(e=>{const st=student(e.studentId);if(!st)return"";const a=att(id,st.id);
- return `<tr><td><div style="display:flex;gap:10px;align-items:center">${avatar(sName(st))}<div><b>${esc(sName(st))}</b><div style="font-size:11px;color:var(--muted)">${esc(st.codigo)}${calcEdad(st.fechaNac)<18?" · menor":""}</div></div></div></td>
+ return `<tr><td><div style="display:flex;gap:10px;align-items:center">${avatar(sName(st))}<div><b>${esc(sName(st))}</b><div style="font-size:11px;color:var(--muted)">${esc(st.codigo)} · ${esc((career(st.carrera)||{}).nombre||(track(st.track)||{}).nombre||"")} · ${esc((cycle(st.ciclo)||{}).numero||"")}</div></div></div></td>
  <td>${a&&a.checkin?`<span class="badge b-teal">${a.checkin.metodo.toUpperCase()}</span>`:`<button class="btn btn-g btn-sm" onclick="checkin('${id}','${st.id}')" ${open?"":"disabled"}>Check-in</button>`}</td>
  <td><select class="ctl att-sel" data-st="${st.id}" ${open?"":"disabled"}>${["P","T","F","J","C"].map(x=>`<option ${a&&a.estado===x?"selected":""}>${x}</option>`).join("")}</select></td>
  <td><input class="ctl nota-in" type="number" min="0" max="20" step="1" data-st="${st.id}" value="${a&&a.nota!=null?a.nota:""}" style="width:82px" ${open?"":"disabled"}></td>
  <td style="font-size:11px;color:var(--muted)">${a&&a.history&&a.history.length?a.history.length+" cambios":"—"}</td></tr>`}).join("")||`<tr><td colspan="5"><div class="empty">Sin alumnos matriculados.</div></td></tr>`}</tbody></table></div>
  <div class="ha">${se.estado!=="cerrada"?`<button class="btn btn-g" onclick="saveDraft('${id}')">${icon("down")} Guardar borrador</button><button class="btn btn-p" onclick="doCloseSession('${id}')">${icon("check")} Cerrar sesión y notificar</button>`:
  open?`<button class="btn btn-b" onclick="saveCorrections('${id}')">${icon("edit")} Guardar correcciones</button>`:`<button class="btn btn-g" onclick="futChange('${id}')">${icon("fut")} Cambio con FUT conforme</button>`}</div>`}
+
 function readRoster(seid){$$(".att-sel").forEach(sel=>{const sid=sel.dataset.st;let a=att(seid,sid);
  if(!a){a={id:uid("at"),sessionId:seid,studentId:sid,estado:"P",nota:null,notaOrigen:"",checkin:null,history:[]};S.attendance.push(a)}
  const prev=a.estado;a.estado=sel.value;if(prev!==a.estado)a.history.push({ts:Date.now(),from:prev,to:a.estado,by:currentUser.name})});
  $$(".nota-in").forEach(inp=>{const a=att(seid,inp.dataset.st);if(!a)return;const v=inp.value===""?null:Math.max(0,Math.min(20,+inp.value));
  if(a.nota!==v){a.history.push({ts:Date.now(),from:a.nota,to:v,by:currentUser.name});a.nota=v;a.notaOrigen=v==null?"":"clase"}})}
+
 function checkin(seid,sid){let a=att(seid,sid);const se=S.sessions.find(s=>s.id===seid),diff=nowMin()-toMin(se.hi),est=diff<=15?"P":diff<=30?"T":"F";
  if(!a){S.attendance.push({id:uid("at"),sessionId:seid,studentId:sid,estado:est,nota:null,notaOrigen:"",checkin:{ts:Date.now(),metodo:room(se.roomId).sede==="Virtual"?"link":"qr"},history:[]})}
  else a.checkin={ts:Date.now(),metodo:room(se.roomId).sede==="Virtual"?"link":"qr"};
  save();toast("Check-in: "+(est==="P"?"PRESENTE":est==="T"?"TARDANZA":"FUERA DE VENTANA"));vSessionDetail(seid)}
+
 function saveDraft(id){readRoster(id);audit("Borrador de sesión",id);save();toast("Borrador guardado (sin notificaciones)");vSessionDetail(id)}
 function doCloseSession(id){readRoster(id);closeSession(id);toast("Sesión cerrada · avisos generados ✓");route("#/sessions")}
 function saveCorrections(id){const se=S.sessions.find(s=>s.id===id);if(!correctionOpen(se)){toast("Ventana cerrada. Usa FUT","err");return}
@@ -756,17 +789,51 @@ function saveCorrections(id){const se=S.sessions.find(s=>s.id===id);if(!correcti
   queueMsg("erratas",st.id,"1",`Fe de erratas: tu registro del ${fdate(se.fecha)} en ${r.nombre} fue corregido a ${a.estado}${a.nota!=null?" con nota "+a.nota:""}.`);
   if(st.tutor)queueMsg("erratas",st.id,"2",`Fe de erratas: el registro de ${st.nombres} del ${fdate(se.fecha)} fue corregido a ${a.estado}.`)});
  audit("Corrección de sesión",id);save();toast("Correcciones guardadas con fe de erratas ✓");vSessionDetail(id)}
+
 function futChange(seid){const se=S.sessions.find(s=>s.id===seid),r=room(se.roomId);
  openModal("Cambio con FUT conforme",`<div class="note">${icon("shield")} Un código FUT habilita un solo cambio y vence a los 7 días de estar conforme.</div>
  <label>Código FUT<input class="fi" id="fc-code" placeholder="GT-FUT-2026-000101"></label>
  <label style="margin-top:12px">Estudiante<select class="fi" id="fc-sid">${enrollsOf(r.id).map(e=>{const s=student(e.studentId);return s?`<option value="${s.id}">${esc(sName(s))}</option>`:""}).join("")}</select></label>
  <div class="fgrid" style="margin-top:12px"><label>Nueva asistencia<select class="fi" id="fc-est"><option>J</option><option>P</option><option>T</option></select></label><label>Nota<input class="fi" id="fc-nota" type="number" min="0" max="20" value="11"></label></div>`,
  `<button class="btn btn-g" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="applyFutChange('${seid}')">${icon("shield")} Validar y aplicar</button>`)}
+
 function applyFutChange(seid){const code=$("#fc-code").value,sid=$("#fc-sid").value,v=validateFut(code,sid,seid);
  if(!v.ok){toast(v.err,"err");return}
  let a=att(seid,sid);if(!a){a={id:uid("at"),sessionId:seid,studentId:sid,estado:"J",nota:null,notaOrigen:"",checkin:null,history:[]};S.attendance.push(a)}
  a.history.push({ts:Date.now(),fut:v.f.codigo,by:currentUser.name});a.estado=$("#fc-est").value;a.nota=Math.max(0,Math.min(20,+$("#fc-nota").value||0));a.notaOrigen="rezagado";
  v.f.estado="ejecutado";v.f.usadoEn=Date.now();audit("Cambio con FUT",v.f.codigo);save();closeModal();toast("FUT válido · cambio aplicado ✓");vSessionDetail(seid)}
+
+function closeSession(seid){const se=S.sessions.find(s=>s.id===seid),r=room(se.roomId);se.estado="cerrada";se.cerradaEn=Date.now();const rep=[];
+ enrollsOf(se.roomId).forEach(e=>{let a=att(seid,e.studentId);
+  if(!a){a={id:uid("at"),sessionId:seid,studentId:e.studentId,estado:"F",nota:0,notaOrigen:"ausencia",checkin:null,history:[]};S.attendance.push(a)}
+  if(a.estado==="F"){a.nota=0;a.notaOrigen="ausencia";const st=student(e.studentId);if(!st)return;
+   queueMsg("cierre",st.id,"1",`Hola ${st.nombres}. Registramos FALTA y nota 0 en ${r.nombre} el ${fdate(se.fecha)}. Puedes regularizar con un FUT en administración.`);
+   if(st.tutor)queueMsg("cierre",st.id,"2",`Estimado tutor de ${st.nombres}: se registró falta y nota 0 el ${fdate(se.fecha)} en ${r.nombre}. Trámite FUT disponible.`);
+   rep.push(st.nombres+" (F/0)")}});
+ if(rep.length)queueMsg("cierre-admin",null,"admin",`REPORTE DE FALTAS · ${r.nombre} · ${fdate(se.fecha)} → ${rep.join("; ")}.`);
+ audit("Cierre de sesión",r.nombre+" S"+se.n);save()}
+
+function validateFut(code,sid,seid){const f=S.futs.find(x=>x.codigo===String(code).trim().toUpperCase());
+ if(!f)return{ok:false,err:"Código FUT inexistente"};
+ if(f.studentId!==sid)return{ok:false,err:"El FUT pertenece a otro estudiante"};
+ if(seid&&f.sessionId&&f.sessionId!==seid)return{ok:false,err:"El FUT no corresponde a esta sesión"};
+ if(f.estado!=="conforme")return{ok:false,err:"FUT no CONFORME ("+f.estado+")"};
+ if(f.usadoEn)return{ok:false,err:"FUT ya ejecutado"};
+ if(f.conformeEn&&Date.now()-f.conformeEn>7*86400000)return{ok:false,err:"FUT vencido (7 días)"};
+ return{ok:true,f}}
+
+function queueMsg(ev,sid,canal,texto){S.messages.unshift({id:uid("ms"),evento:ev,studentId:sid,canal,texto,estado:"pendiente",generadoEn:Date.now(),enviadoEn:null,enviadoPor:null})}
+function waLink(m){const st=m.studentId?student(m.studentId):null;const num=m.canal==="admin"?S.config.notifyNumber:(m.canal==="2"&&st&&st.tutor?st.tutor.telefono:(st?st.canal1:S.config.notifyNumber));
+ return "https://wa.me/"+String(num).replace(/\D/g,"")+"?text="+encodeURIComponent(m.texto)}
+
+function doCutoff(){const t=today();let n=0;
+ S.sessions.filter(se=>se.fecha===addDays(t,1)&&se.estado==="programada").forEach(se=>{const r=room(se.roomId);if(!r)return;const pend=[];
+  enrollsOf(se.roomId).forEach(e=>{const st=student(e.studentId);if(!st)return;
+   queueMsg("corte",st.id,"1",`Hola ${st.nombres}. Mañana ${ftime(se.hi)} tienes clase de ${r.nombre}. Recuerda llegar puntual y traer tu material.`);
+   if(st.tutor)queueMsg("corte",st.id,"2",`Recordatorio: ${st.nombres} tiene clase mañana ${fdate(se.fecha)} a las ${ftime(se.hi)} (${r.nombre}).`);
+   pend.push(st.nombres);n++});
+  if(pend.length)queueMsg("corte-doc",null,"admin",`Pre-clase ${r.nombre} (${fdate(se.fecha)} ${ftime(se.hi)}): ${pend.length} alumnos → ${pend.join(", ")}.`)});
+ S.cutoffs[t]=true;audit("Corte de recordatorios",n+" mensajes");save();return n}
 
 function vPayments(){if(!isStaff()){route("#/home");return}
  let l=[...S.payments];if(ui.payF!=="todos")l=l.filter(p=>p.estado===ui.payF);
@@ -779,6 +846,7 @@ function vPayments(){if(!isStaff()){route("#/home");return}
  <div class="tw"><table><thead><tr><th>Estudiante</th><th>Concepto</th><th>Periodo</th><th>Monto</th><th>Vence</th><th>Estado</th><th>Voucher</th><th></th></tr></thead><tbody>${l.map(p=>{const st=student(p.studentId);
  return `<tr><td>${esc(sName(st))}<div style="font-size:11px;color:var(--muted)">${esc(st?st.codigo:"")}</div></td><td><span class="badge b-blue">${esc(p.concepto)}</span></td><td>${esc(p.periodo)}</td><td><b>${money(p.monto)}</b></td><td>${fdate(p.vencimiento)}</td><td>${payBadge(p.estado)}</td><td style="font-size:11px">${p.voucher?esc(p.voucher.nombre):"—"}</td>
  <td style="white-space:nowrap">${p.estado==="validacion"?`<button class="btn btn-ok btn-sm" onclick="validatePay('${p.id}')">${icon("check")} Validar</button>`:["pendiente","vencido"].includes(p.estado)?`<button class="btn btn-g btn-sm" onclick="uploadVoucher('${p.id}')">${icon("up")} Voucher</button> <button class="btn btn-g btn-sm" onclick="markPaid('${p.id}')">${icon("check")} Pagado</button>`:""}</td></tr>`}).join("")||`<tr><td colspan="8"><div class="empty">Sin recibos.</div></td></tr>`}</tbody></table></div>`}
+
 function genMonth(){const per=periodo(),active=S.enrollments.filter(e=>e.estado==="activa");
  const news=active.filter(e=>!S.payments.some(p=>p.studentId===e.studentId&&p.concepto==="mensualidad"&&p.refId===e.roomId&&p.periodo===per));
  const total=news.reduce((a,e)=>{const st=student(e.studentId),r=room(e.roomId);if(!st||!r)return a;return a+(st.beca?(st.beca.tipo==="total"?0:r.costo*(1-st.beca.pct/100)):r.costo)},0);
@@ -787,12 +855,14 @@ function genMonth(){const per=periodo(),active=S.enrollments.filter(e=>e.estado=
  <div class="card"><div class="kpi"><div><div class="num">${active.length-news.length}</div><div class="lbl">Ya existentes</div></div></div></div>
  <div class="card"><div class="kpi"><div><div class="num" style="font-size:20px">${money(total)}</div><div class="lbl">Total a generar</div></div></div></div></div>`,
  `<button class="btn btn-g" onclick="closeModal()">Cancelar</button><button class="btn btn-p" onclick="doGenMonth()" ${news.length?"":"disabled"}>${icon("check")} Crear ${news.length} recibos</button>`,"wide")}
+
 function doGenMonth(){const per=periodo();let n=0;
  S.enrollments.filter(e=>e.estado==="activa").forEach(e=>{if(S.payments.some(p=>p.studentId===e.studentId&&p.concepto==="mensualidad"&&p.refId===e.roomId&&p.periodo===per))return;
  const st=student(e.studentId),r=room(e.roomId);if(!st||!r)return;
  const monto=st.beca?(st.beca.tipo==="total"?0:r.costo*(1-st.beca.pct/100)):r.costo;
  S.payments.push({id:uid("py"),studentId:e.studentId,concepto:"mensualidad",refId:e.roomId,periodo:per,monto,vencimiento:addDays(today(),7),estado:st.beca?"beca":"pendiente",voucher:null,pagadoEn:null});n++});
  audit("Cuotas del mes",per+" · "+n);save();closeModal();toast(n+" recibos creados ✓");vPayments()}
+
 function uploadVoucher(id){const p=S.payments.find(x=>x.id===id);p.estado="validacion";p.voucher={nombre:"voucher-"+Date.now()+".jpg",ts:Date.now()};
  const st=student(p.studentId);if(st)queueMsg("pago",st.id,"2",`Recibimos el voucher de ${money(p.monto)} de ${st.nombres}. Administración lo validará en breve.`);
  audit("Voucher recibido",id);save();vPayments();toast("Voucher recibido · pendiente de validación")}
@@ -808,16 +878,29 @@ function vCerts(){if(!isStaff()){route("#/home");return}
  return `<div class="card"><div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">${avatar(sName(st))}<div style="flex:1"><b>${esc(sName(st))}</b><div style="font-size:12px;color:var(--muted)">${esc(r.nombre)}</div></div>${r2.habilitado&&certPaid?'<span class="badge b-green">Listo para certificar</span>':r2.habilitado?'<span class="badge b-amber">Falta pago certificado</span>':'<span class="badge b-red">No habilitado</span>'}</div>
  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><span class="badge ${r2.okF?"b-green":"b-red"}">Faltas ${r2.faltas}/${r2.max}</span><span class="badge ${r2.okN?"b-green":"b-red"}">Prom ${r2.prom??"—"}</span><span class="badge ${r2.okD?"b-green":"b-red"}">${r2.deuda?"Con deuda":"Deuda 0"}</span></div>
  ${done?`<button class="btn btn-g btn-sm" onclick="viewCert('${done.id}')">${icon("cert")} ${esc(done.codigo)}</button>`:r2.habilitado&&!certPaid?`<button class="btn btn-w btn-sm" onclick="generateCertFee('${st.id}','${r.id}')">${icon("cash")} Generar cobro certificado</button>`:r2.habilitado&&certPaid?`<button class="btn btn-p btn-sm" onclick="emitCert('${e.id}')">${icon("cert")} Emitir certificado</button>`:`<button class="btn btn-g btn-sm" disabled>${icon("lock")} Bloqueado</button>`}</div>`}).join("")||`<div class="empty">Sin matrículas activas.</div>`}</div>`}
+
+function record(sid,rid){const r=room(rid);if(!r)return{faltas:0,pct:100,prom:null,deuda:false,habilitado:false,max:1,cerradas:0,asist:0,okF:true,okN:true,okD:true};
+ const ses=S.sessions.filter(s=>s.roomId===rid).sort((a,b)=>a.n-b.n),rows=ses.map(se=>({se,a:att(se.id,sid)})).filter(r=>r.a&&r.se.estado!=="programada");
+ const faltas=rows.filter(r=>r.a.estado==="F").length,asist=rows.filter(r=>["P","T","J","C"].includes(r.a.estado)).length;
+ const pct=rows.length?Math.round(asist/rows.length*100):100;
+ const notas=rows.filter(r=>r.a.nota!=null).map(r=>r.a.nota),prom=notas.length?Math.round(notas.reduce((a,b)=>a+b,0)/notas.length*10)/10:null;
+ const deuda=S.payments.some(p=>p.studentId===sid&&["pendiente","vencido","validacion"].includes(p.estado));
+ const okF=faltas<=maxF(r),okN=prom==null||prom>=11,okD=!deuda;
+ return{faltas,asist,pct,prom,deuda,okF,okN,okD,habilitado:okF&&okN&&okD,max:maxF(r),cerradas:rows.length}}
+function maxF=g=>Math.max(1,Math.floor((g.numSesiones||12)*0.25));
+
 function generateCertFee(sid,rid){const st=student(sid),r=room(rid);if(!st||!r)return;
  const fee=S.config.certFee||30;
  S.payments.push({id:uid("py"),studentId:sid,concepto:"certificado",refId:rid,periodo:periodo(),monto:fee,vencimiento:addDays(today(),15),estado:"pendiente",voucher:null,pagadoEn:null});
  audit("Cargo certificado generado",st.codigo+" · "+money(fee));save();vCerts();toast("Cargo por certificado generado: "+money(fee))}
+
 function emitCert(eid){const e=S.enrollments.find(x=>x.id===eid),r2=record(e.studentId,e.roomId);
  if(!r2.habilitado){toast("No habilitado: revisa faltas, promedio o deuda","err");return}
  const certPaid=S.payments.some(p=>p.studentId===e.studentId&&p.concepto==="certificado"&&p.estado==="pagado");
  if(!certPaid){toast("Debe pagar el derecho de certificación primero","err");return}
  const c={id:uid("ce"),codigo:"GT-CERT-2026-"+uid(),studentId:e.studentId,roomId:e.roomId,emitidoEn:Date.now(),snapshot:{prom:r2.prom,pct:r2.pct,faltas:r2.faltas}};
  S.certificates.push(c);audit("Certificado emitido",c.codigo);save();vCerts();viewCert(c.id);toast("Certificado emitido ✓")}
+
 function viewCert(id){const c=S.certificates.find(x=>x.id===id);if(!c)return;const st=student(c.studentId),r=room(c.roomId);
  openModal("Certificado",`<div class="cert"><div style="font-size:11px;letter-spacing:.2em;color:var(--muted)">GRUPO TALENTH · EMAGES GROUP</div><h2 style="margin:10px 0">CERTIFICADO</h2>
  <p style="font-size:16px;margin:8px 0"><b>${esc(sName(st))}</b></p><p style="font-size:13px;color:var(--muted)">${esc((program(r.programa)||{}).nombre||"")} · ${esc((track(r.track)||{}).nombre||"")} · ${esc((level(r.nivel)||{}).nombre||"")}</p>
@@ -825,6 +908,7 @@ function viewCert(id){const c=S.certificates.find(x=>x.id===id);if(!c)return;con
  <div class="code">${esc(c.codigo)}</div><div class="qr" style="margin-top:14px">${qrSVG(verifyURL(c.codigo))}</div>
  <div style="font-size:11px;color:var(--muted);margin-top:10px">Emitido el ${ffull(dstr(new Date(c.emitidoEn)))}</div></div>`,
  `<button class="btn btn-g" onclick="copyText('${esc(verifyURL(c.codigo))}')">${icon("copy")} Copiar enlace</button><button class="btn btn-g" onclick="window.print()">${icon("print")} Imprimir</button><button class="btn btn-p" onclick="closeModal()">Listo</button>`)}
+
 function qrSVG(text){try{if(window.qrcode){const q=qrcode(0,"M");q.addData(text);q.make();const n=q.getModuleCount();let c="";for(let r=0;r<n;r++)for(let col=0;col<n;col++)if(q.isDark(r,col))c+=`<rect x="${col}" y="${r}" width="1" height="1"/>`;return `<svg viewBox="0 0 ${n} ${n}" shape-rendering="crispEdges"><rect width="${n}" height="${n}" fill="#fff"/><g fill="#071a2c">${c}</g></svg>`}}catch(e){}return `<div style="width:140px;height:140px;display:grid;place-items:center;background:#f3f8fc;font-size:11px;color:var(--muted)">QR no disponible</div>`}
 
 function vStats(){const act=S.students.filter(s=>s.estado==="activo");
@@ -841,11 +925,10 @@ function vStats(){const act=S.students.filter(s=>s.estado==="activo");
  <div class="card"><h3 style="margin-bottom:12px">${icon("cake")} Cumpleaños de ${MESES[mes-1]}</h3>${cump.map(s=>`<div style="display:flex;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid #edf3f8">${avatar(sName(s),"width:28px;height:28px;font-size:10px")}<span style="flex:1;font-size:13px">${esc(sName(s))}</span><b>${+s.fechaNac.split("-")[2]}</b></div>`).join("")||'<div class="empty">Sin cumpleaños este mes.</div>'}</div></div>`}
 
 function vCatalogs(){if(!guardSuper())return;
- $("#view").innerHTML=head("Catálogos","Solo el ADM principal edita canales, justificantes y tarifario","")+
- `<div class="grid g2"><div class="card"><div class="stripe" style="background:var(--grad-cool)"></div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3>Canales de captación</h3><button class="btn btn-p btn-sm" onclick="editCap()">${icon("plus")} Canal</button></div>
+ $("#view").innerHTML=head("Catálogos","Solo el ADM principal edita canales, asignaturas y tarifario","")+
+ `<div class="grid g2"><div class="card"><div class="stripe" style="background:var(--grad-cool)"></div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3>Canales de captación</h3></div>
  ${CAPS.map(c=>`<div style="display:flex;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid #edf3f8"><span style="flex:1;font-size:13px"><b>${esc(c)}</b> <span style="color:var(--muted)">· ${S.students.filter(s=>s.captacion===c).length} alumnos</span></span></div>`).join("")}</div>
  <div class="card"><div class="stripe" style="background:var(--grad-hot)"></div><h3 style="margin-bottom:12px">Asignaturas</h3>${S.subjects.map(s=>`<div style="display:flex;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid #edf3f8"><span style="flex:1;font-size:13px"><b>${esc(s.nombre)}</b><div style="font-size:11px;color:var(--muted)">${s.tipo==="comun"?"Común":esc((career(s.carrera)||{}).nombre||"")}</div></span></div>`).join("")}</div></div>`}
-function editCap(){toast("Catálogo de canales: usa el array CAPS en el código","warn")}
 
 function vTrash(){
  if(!isStaff()){route("#/home");return}
@@ -861,17 +944,20 @@ function vTrash(){
  <span class="badge ${days>7?"b-green":"b-amber"}">${days} días restantes</span>
  <button class="btn btn-ok btn-sm" onclick="restoreTrash('${t.id}')">${icon("restore")} Restaurar</button>
  ${isSuper()?`<button class="btn btn-d btn-sm" onclick="requestPurge('${t.id}')">${icon("lock")} Borrar definitivo</button>`:""}</div>`}).join("")||`<div class="card"><div class="empty">${icon("trash")}<br>La papelera está vacía. Nada eliminado pendiente de recuperación.</div></div>`}`}
+
 function restoreTrash(id,silent){const t=S.trash.find(x=>x.id===id);if(!t)return;
  if(t.type==="room"){S.rooms.push(t.payload);["sessions","attendance","enrollments","payments"].forEach(k=>{if(t.related[k])S[k].push(...t.related[k])})}
  else{S.students.push(t.payload);["enrollments","attendance","payments"].forEach(k=>{if(t.related[k])S[k].push(...t.related[k])})}
  S.trash=S.trash.filter(x=>x.id!==id);audit("Restaurado de papelera",t.label);save();renderSidebar();
  if(!silent){vTrash();toast("Restaurado completo ✓")}else{route(location.hash||"#/home");toast("Restaurado ✓")}}
+
 function requestPurge(id){if(!guardSuper())return;const t=S.trash.find(x=>x.id===id);if(!t)return;
  const cfg={title:"Borrar definitivamente",keyword:"BORRAR",action:"Borrar para siempre",
  intro:"Esta es la única acción irreversible del sistema. Solo el ADM principal puede ejecutarla.",
  detail:`Se destruirá <b>${esc(t.label)}</b> y todo su historial. Exporta un respaldo antes si tienes duda.`,
  run:reason=>{S.trash=S.trash.filter(x=>x.id!==id);audit("Purga definitiva",t.label+" · "+reason);save();renderSidebar();vTrash();toast("Borrado definitivamente","err")}};
  askConfirm(cfg)}
+
 function requestEmptyTrash(){if(!guardSuper())return;if(!S.trash.length){toast("La papelera ya está vacía");return}
  const cfg={title:"Vaciar papelera",keyword:"VACIAR",action:"Vaciar todo",
  intro:"Se destruirán todos los elementos en papelera. Irreversible.",
@@ -879,7 +965,9 @@ function requestEmptyTrash(){if(!guardSuper())return;if(!S.trash.length){toast("
  detail:"Exporta un respaldo JSON antes de continuar si quieres conservar copia.",
  run:reason=>{const n=S.trash.length;S.trash=[];audit("Papelera vaciada",n+" · "+reason);save();renderSidebar();vTrash();toast(n+" elementos borrados definitivamente","err")}};
  askConfirm(cfg)}
+
 function askConfirm(cfg){
+ window._pendingDanger=cfg;
  openModal(cfg.title,`<div class="note danger">${icon("lock")} <b>Acción protegida.</b> ${esc(cfg.intro)}</div>
  ${cfg.impact?`<div class="impact">${cfg.impact.map(i=>`<div><div class="n">${i.n}</div><div class="l">${esc(i.l)}</div></div>`).join("")}</div>`:""}
  <p style="font-size:13px;margin-bottom:10px">${cfg.detail||""}</p>
@@ -898,7 +986,63 @@ function vBackup(){
  <div class="card"><h3 style="margin-bottom:10px">Respaldo institucional</h3><p style="font-size:13px;color:var(--muted);margin-bottom:12px">Excel con una hoja por tabla para archivo y auditoría. JSON para restauración exacta (incluye papelera). El código F-XXX vincula cada ficha con tu archivo físico.</p>
  <div class="ha"><button class="btn btn-b" onclick="exportXLSX()">${icon("down")} Excel completo</button><button class="btn btn-g" onclick="exportJSON()">${icon("down")} JSON</button><button class="btn btn-g" onclick="exportCSV()">${icon("down")} CSV activos</button><label class="btn btn-g" style="cursor:pointer">${icon("up")} Importar JSON<input type="file" accept=".json" style="display:none" onchange="importJSON(this)"></label></div></div>
  <div class="card" style="grid-column:1/-1"><h3 style="margin-bottom:10px">Protección de datos</h3><p style="font-size:13px;color:var(--muted)">Eliminar nunca destruye: mueve a <b>Papelera</b> con alumnos, sesiones, notas y recibos, recuperable ${TRASH_DAYS} días. Cada borrado exige escribir una palabra de confirmación y un motivo que queda en auditoría. Solo el ADM principal puede purgar definitivamente. Por defecto solo se procesan <b>activos</b>; archivados e inactivos se consultan al filtrarlos.</p></div></div>`;updateNet()}
+
+function vConfig(){if(!guardSuper())return;
+ $("#view").innerHTML=head("Configuración","Parámetros institucionales, accesos y auditoría","")+
+ `<div class="grid g2"><div class="card"><h3 style="margin-bottom:12px">Notificaciones y aulas</h3>
+ <label>Número WhatsApp institucional<input class="fi" id="cfg-num" value="${esc(S.config.notifyNumber)}"></label>
+ <label style="margin-top:12px">Hora de corte<input class="fi" id="cfg-cut" type="number" min="0" max="23" value="${S.config.cutoffHour}"></label>
+ <label style="margin-top:12px">Correo institucional<input class="fi" id="cfg-mail" value="${esc(S.config.email)}"></label>
+ <label style="margin-top:12px">Cupo por defecto (20–35)<input class="fi" id="cfg-cupo" type="number" min="20" max="35" value="${S.config.cupoDefault||35}"></label>
+ <label style="margin-top:12px">Derecho de certificación S/<input class="fi" id="cfg-certfee" type="number" min="0" value="${S.config.certFee||30}"></label>
+ <button class="btn btn-b" style="margin-top:14px" onclick="saveConfig()">${icon("check")} Guardar</button></div>
+ <div class="card"><h3 style="margin-bottom:12px">Accesos del sistema</h3>${USERS.map(u=>`<div style="display:flex;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid #edf3f8">${avatar(u.name,"width:28px;height:28px;font-size:10px")}<span style="flex:1;font-size:13px"><b>${esc(u.name)}</b><div style="font-size:11px;color:var(--muted)">${esc(u.phone)} · ${u.role}</div></span>${u.role==="super"?'<span class="badge b-violet">Puede purgar</span>':'<span class="badge b-gray">Solo papelera</span>'}</div>`).join("")}
+ <div class="note" style="margin-top:12px">${icon("lock")} Los accesos se definen en el código por seguridad. El borrado definitivo solo lo ejecuta el ADM principal.</div></div>
+ <div class="card" style="grid-column:1/-1"><h3 style="margin-bottom:12px">Auditoría reciente</h3><div class="tw"><table><thead><tr><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Detalle</th></tr></thead><tbody>${S.audit.slice(0,50).map(a=>`<tr><td>${new Date(a.ts).toLocaleString("es-PE")}</td><td>${esc(a.user)}</td><td><b>${esc(a.accion)}</b></td><td style="font-size:12px;color:var(--muted)">${esc(a.detalle)}</td></tr>`).join("")||`<tr><td colspan="4"><div class="empty">Sin registros.</div></td></tr>`}</tbody></table></div></div></div>`}
+
+function saveConfig(){S.config.notifyNumber=$("#cfg-num").value.replace(/\D/g,"");S.config.cutoffHour=+$("#cfg-cut").value||15;S.config.email=$("#cfg-mail").value.trim();
+ S.config.cupoDefault=Math.max(20,Math.min(35,+$("#cfg-cupo").value||35));
+ S.config.certFee=Math.max(0,+$("#cfg-certfee").value||0);
+ audit("Configuración","parámetros actualizados");save();renderSidebar();markNav("#/config");toast("Configuración guardada ✓")}
+
 function download(name,content,type){const b=new Blob([content],{type}),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download=name;a.click();URL.revokeObjectURL(u)}
 function exportJSON(){download("campus-talenth-"+today()+".json",JSON.stringify(S,null,2),"application/json");toast("JSON descargado ✓")}
 function exportCSV(){const rows=[["Codigo","DNI","Nombres","Apellidos","Edad","Genero","Canal1","Canal2","Distrito","Programa","Track","Nivel","Ciclo","Carrera","Modalidad","Sede","Turno","Captacion","SubCanal","Beca","FormaPago","Estado","Alergias","Tutor","FormatoFisico"]];
- S.students.filter(s=>s.estado==="activo").forEach(s=>rows.push([s.codigo,s.dni,s.nombres,s.apellidos,calcEdad(s.fechaNac),s.genero,s.canal1,s.canal2,s.distrito,(program(s.programa)||{}).nombre||"",
+ S.students.filter(s=>s.estado==="activo").forEach(s=>rows.push([s.codigo,s.dni,s.nombres,s.apellidos,calcEdad(s.fechaNac),s.genero,s.canal1,s.canal2,s.distrito,(program(s.programa)||{}).nombre||"",(track(s.track)||{}).nombre||"",(level(s.nivel)||{}).nombre||"",(cycle(s.ciclo)||{}).numero||"",(career(s.carrera)||{}).nombre||"",s.modalidad,s.sede,s.turno,s.captacion,s.subCanal,s.beca?s.beca.pct+"%":"",s.formaPago,s.estado,s.alergias,s.tutor?s.tutor.nombre:"",s.formFisico]));
+ download("estudiantes-activos-"+today()+".csv","\uFEFF"+rows.map(r=>r.map(c=>`"${String(c??"").replace(/"/g,'""')}"`).join(",")).join("\n"),"text/csv;charset=utf-8");toast("CSV descargado ✓")}
+
+function exportXLSX(){
+ const sheets={
+ Estudiantes:S.students.map(s=>({Codigo:s.codigo,DNI:s.dni,Nombres:s.nombres,Apellidos:s.apellidos,Edad:calcEdad(s.fechaNac),Nacimiento:s.fechaNac,Genero:s.genero,Canal1:s.canal1,Canal2:s.canal2,Distrito:s.distrito,Direccion:s.direccion,Colegio:s.colegio,Ocupacion:s.ocupacion,Programa:(program(s.programa)||{}).nombre||"",Track:(track(s.track)||{}).nombre||"",Nivel:(level(s.nivel)||{}).nombre||"",Ciclo:(cycle(s.ciclo)||{}).numero||"",Carrera:(career(s.carrera)||{}).nombre||"",Modalidad:s.modalidad,Sede:s.sede,Turno:s.turno,Matricula:s.fechaMatricula,Captacion:s.captacion,SubCanal:s.subCanal,Asesor:s.asesor,Beca:s.beca?s.beca.pct+"%":"",FormaPago:s.formaPago,Alergias:s.alergias,Tutor:s.tutor?s.tutor.nombre:"",TutorDNI:s.tutor?s.tutor.dni:"",Estado:s.estado,FormatoFisico:s.formFisico})),
+ Salones:S.rooms.map(r=>{const rg={ini:r.fechaInicio,fin:addDays(r.fechaInicio,r.numSesiones*7)};return{ID:r.id,Nombre:r.nombre,Programa:(program(r.programa)||{}).nombre||"",Track:(track(r.track)||{}).nombre||"",Nivel:(level(r.nivel)||{}).nombre||"",Ciclo:(cycle(r.ciclo)||{}).numero||"",Carrera:(career(r.carrera)||{}).nombre||"",Dias:(r.dias||[]).map(d=>DIAS[d]).join("+"),Inicio:r.hi,Fin:r.hf,FechaInicio:rg.ini,FechaFin:rg.fin,Sesiones:r.numSesiones,MaxFaltas:maxF(r),Sede:r.sede,Aula:r.aula,Cupo:r.cupo||35,Matriculados:enrollsOf(r.id).length,Docente:(teacher(r.docenteId)||{}).name||"",Estado:r.estado||"activo"}}),
+ Matriculas:S.enrollments.map(e=>({Estudiante:(student(e.studentId)||{}).codigo,Salon:(room(e.roomId)||{}).nombre,Estado:e.estado})),
+ Leads:S.leads.map(l=>({Nombres:l.nombres,Apellidos:l.apellidos,Celular:l.celular,Email:l.email||"",Programa:(program(l.programa)||{}).nombre||"",Carrera:(career(l.carrera)||{}).nombre||"",Distrito:l.distrito||"",Captacion:l.captacion||"",Estado:LEAD_STATES.find(s=>s.id===l.estado)?.nombre||"",Observaciones:l.observaciones||""})),
+ Eventos:S.events.map(e=>({Nombre:e.nombre,Fecha:e.fecha,Hora:e.hora,Capacidad:e.capacidad,Programa:(program(e.programa)||{}).nombre||"",Asistentes:(e.asistentes||[]).length,QR:e.qrCode})),
+ Asignaturas:S.subjects.map(s=>({Nombre:s.nombre,Tipo:s.tipo,Carrera:(career(s.carrera)||{}).nombre||"",ModuloMax:s.moduloMax||"",ModuloMin:s.moduloMin||""})),
+ Asistencia:S.attendance.map(a=>{const se=S.sessions.find(s=>s.id===a.sessionId);return{Sesion:se?se.fecha:"",Salon:se?(room(se.roomId)||{}).nombre:"",Estudiante:(student(a.studentId)||{}).codigo,Estado:a.estado,Nota:a.nota??"",Origen:a.notaOrigen,Cambios:(a.history||[]).length}}),
+ Pagos:S.payments.map(p=>({Estudiante:(student(p.studentId)||{}).codigo,Concepto:p.concepto,Periodo:p.periodo,Monto:p.monto,Vence:p.vencimiento,Estado:p.estado})),
+ Certificados:S.certificates.map(c=>({Codigo:c.codigo,Estudiante:(student(c.studentId)||{}).codigo,Salon:(room(c.roomId)||{}).nombre,Promedio:c.snapshot.prom,Asistencia:c.snapshot.pct,Faltas:c.snapshot.faltas})),
+ Papelera:S.trash.map(t=>({Tipo:t.type,Elemento:t.label,Detalle:t.sub,EliminadoPor:t.deletedBy,Fecha:new Date(t.deletedAt).toLocaleString("es-PE"),Motivo:t.reason})),
+ Auditoria:S.audit};
+ if(window.XLSX){const wb=XLSX.utils.book_new();Object.entries(sheets).forEach(([n,d])=>XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(d.length?d:[{Info:"Sin registros"}]),n.slice(0,31)));
+ XLSX.writeFile(wb,"respaldo-grupo-talenth-"+today()+".xlsx");toast("Excel completo descargado ✓")}
+ else{exportJSON();toast("Excel no disponible: se descargó JSON","warn")}}
+
+function importJSON(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();
+ r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.students)throw 0;S=migrate(d);audit("Importación JSON",f.name);save();toast("Respaldo importado ✓");route("#/home")}catch(e){toast("JSON inválido","err")}};r.readAsText(f)}
+
+// ============ BOOT ============
+$("#btn-login").addEventListener("click",doLogin);
+$("#login-pin").addEventListener("keypress",e=>{if(e.key==="Enter")doLogin()});
+$("#login-phone").addEventListener("keypress",e=>{if(e.key==="Enter")$("#login-pin").focus()});
+$("#btn-logout").addEventListener("click",logout);
+$("#btn-msgs").addEventListener("click",()=>route("#/msgs"));
+$("#scrim").addEventListener("click",e=>{if(e.target.id==="scrim")closeModal()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeModal();closeDrawer()}});
+window.addEventListener("hashchange",()=>{if(currentUser)route(location.hash)});
+window.addEventListener("online",()=>pullCloud());
+window.addEventListener("offline",()=>{netMode="local";sbStatus="sin internet · contingencia activa";updateNet()});
+
+try{loadLocal()}catch(e){S=seed()}
+try{checkSession()}catch(e){$("#login-screen").style.display="flex";$("#app").style.display="none"}
+pullCloud();
