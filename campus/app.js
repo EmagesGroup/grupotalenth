@@ -230,7 +230,7 @@ if(hash.indexOf("#/session/")===0){vSessionDetail(hash.split("/")[2]);markNav("#
 if(hash.indexOf("#/room/")===0){vRoomDetail(hash.split("/")[2]);markNav("#/rooms");return}
 const map={"#/home":vHome,"#/users":vUsers,"#/rooms":vRooms,"#/sessions":vSessions,"#/pipeline":vPipeline,"#/events":vEvents,"#/payments":vPayments,"#/certs":vCerts,"#/stats":vStats,"#/catalogs":vCatalogs,"#/trash":vTrash,"#/backup":vBackup,"#/config":vConfig,"#/msgs":vMsgs};
 (map[hash]||vHome)();markNav(hash==="#/"||!hash?"#/home":hash);updateNet();updateMsgDot();
-}catch(e){$("#view").innerHTML=`<div class="card"><div class="empty">${icon("alert")}<br><b>No se pudo mostrar esta sección.</b><br><span style="font-size:12px">${esc(e.message)}</span><br><br><button class="btn btn-g btn-sm" onclick="route('#/home')">Volver al inicio</button></div></div>`}}
+}catch(e){$("#view").innerHTML=`<div class="card"><div class="empty">${icon("alert")}<br><b>No se pudo mostrar esta sección.</b><br><span style="font-size:12px">${esc(e.message)}</span><br><br><button class="btn btn-g btn-sm" onclick="route('#/home')">Volver al inicio</button></div></div>`}
 function markNav(h){$$(".side-link").forEach(a=>a.classList.toggle("on",a.getAttribute("href")===h))}
 const head=(t,s,a="")=>`<div class="vh"><div><h1>${t}</h1><div class="sub">${s}</div></div><div class="ha">${a}</div></div>`;
 const estadoBadge=e=>({activo:'<span class="badge b-green">Activo</span>',inactivo:'<span class="badge b-gray">Inactivo</span>',egresado:'<span class="badge b-blue">Egresado</span>',retirado:'<span class="badge b-red">Retirado</span>'}[e]||'<span class="badge b-gray">—</span>');
