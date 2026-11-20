@@ -1023,7 +1023,7 @@ function exportJSON(){download("campus-talenth-"+today()+".json",JSON.stringify(
 function exportCSV(){const rows=[["Codigo","DNI","Nombres","Apellidos","Edad","Genero","Canal1","Canal2","Distrito","Programa","Track","Nivel","Ciclo","Carrera","Modalidad","Sede","Turno","Captacion","SubCanal","Beca","FormaPago","Estado","Alergias","Tutor","FormatoFisico"]];
 S.students.filter(s=>s.estado==="activo").forEach(s=>rows.push([s.codigo,s.dni,s.nombres,s.apellidos,calcEdad(s.fechaNac),s.genero,s.canal1,s.canal2,s.distrito,(program(s.programa)||{}).nombre||"",(track(s.track)||{}).nombre||"",(level(s.nivel)||{}).nombre||"",(cycle(s.ciclo)||{}).numero||"",(career(s.carrera)||{}).nombre||"",s.modalidad,s.sede,s.turno,s.captacion,s.subCanal,s.beca?s.beca.pct+"%":"",s.formaPago,s.estado,s.alergias,s.tutor?s.tutor.nombre:"",s.formFisico]));
 const csvContent="\uFEFF"+rows.map(r=>r.map(c=>`"${String(c??"").replace(/"/g,'""')}"`).join(",")).join("\n");
-download("estudiantes-activos-"+today()+".csv",csvContent,"text/csv;charset=utf-8");toast("CSV descargado ✓")}
+download("estudiantes-activos-"+today()+".csv",csvContent,"text/csv;charset=utf-8");toast("CSV descargado ✓")} 
 
 function exportXLSX(){
 const sheets={
