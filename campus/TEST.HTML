@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Campus Grupo Talenth - TEST</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f0f4f8;margin:0;padding:20px}
+.dashboard{max-width:1200px;margin:0 auto;background:#fff;border-radius:12px;padding:30px;box-shadow:0 4px 20px rgba(0,0,0,0.1)}
+h1{color:#0e4d78;margin-bottom:10px}
+.subtitle{color:#5c7186;margin-bottom:30px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-bottom:30px}
+.kpi{background:linear-gradient(135deg,#0a84ff,#12b76a);color:#fff;padding:20px;border-radius:12px}
+.kpi .num{font-size:32px;font-weight:bold}
+.kpi .lbl{font-size:14px;opacity:0.9}
+.section{margin-bottom:30px}
+.section h2{color:#0e4d78;border-bottom:2px solid #d7e3ee;padding-bottom:10px}
+table{width:100%;border-collapse:collapse;margin-top:15px}
+th,td{padding:12px;text-align:left;border-bottom:1px solid #edf3f8}
+th{background:#f5f9fc;color:#5c7186;font-size:12px;text-transform:uppercase}
+.badge{display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:bold}
+.badge-green{background:rgba(23,178,106,0.14);color:#17b26a}
+.badge-blue{background:rgba(10,132,255,0.13);color:#0a84ff}
+.btn{background:#0a84ff;color:#fff;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:bold;margin-right:10px}
+.btn:hover{background:#0e4d78}
+.status{background:#e8f5e9;color:#2e7d32;padding:15px;border-radius:8px;margin-bottom:20px;font-weight:bold}
+</style>
+</head>
+<body>
+<div class="dashboard">
+  <div class="status">✅ SISTEMA FUNCIONANDO - Modo prueba (sin login)</div>
+  
+  <h1>🎓 Campus Grupo Talenth v3.0</h1>
+  <p class="subtitle">Panel de Administración - Usuario: Jhonnatan Giron (Super Admin)</p>
+  
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="num" id="kpi-students">8</div>
+      <div class="lbl">Estudiantes Activos</div>
+    </div>
+    <div class="kpi" style="background:linear-gradient(135deg,#ff3b5c,#ff8a3d)">
+      <div class="num" id="kpi-messages">0</div>
+      <div class="lbl">Mensajes Pendientes</div>
+    </div>
+    <div class="kpi" style="background:linear-gradient(135deg,#8b5cf6,#ff3b5c)">
+      <div class="num" id="kpi-payments">0</div>
+      <div class="lbl">Pagos Pendientes</div>
+    </div>
+    <div class="kpi" style="background:linear-gradient(135deg,#ffb020,#ff8a3d)">
+      <div class="num" id="kpi-rooms">3</div>
+      <div class="lbl">Salones Activos</div>
+    </div>
+  </div>
+  
+  <div class="section">
+    <h2>📚 Estudiantes Registrados</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Nombre</th>
+          <th>DNI</th>
+          <th>Programa</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody id="students-table"></tbody>
+    </table>
+  </div>
+  
+  <div class="section">
+    <h2>🏫 Salones</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Programa</th>
+          <th>Alumnos</th>
+          <th>Cupo</th>
+        </tr>
+      </thead>
+      <tbody id="rooms-table"></tbody>
+    </table>
+  </div>
+  
+  <div style="margin-top:30px;padding:20px;background:#f5f9fc;border-radius:8px">
+    <h3 style="color:#0e4d78;margin-top:0">✅ Sistema Verificado</h3>
+    <p>Si ves esta página, el código JavaScript está funcionando correctamente.</p>
+    <p>Ahora podemos agregar el sistema de login con confianza.</p>
+    <button class="btn" onclick="alert('¡Sistema funcionando!')">Probar Interactividad</button>
+  </div>
+</div>
+
+<script>
+// Datos de prueba
+const students = [
+  {codigo:"GT-2026-001",nombres:"Valeria",apellidos:"Rojas Carmen",dni:"76543210",programa:"Inglés",estado:"activo"},
+  {codigo:"GT-2026-002",nombres:"Diego",apellidos:"Ramos Silva",dni:"76543211",programa:"Inglés",estado:"activo"},
+  {codigo:"GT-2026-003",nombres:"Lucía",apellidos:"Fernández Prado",dni:"76543212",programa:"Inglés",estado:"activo"},
+  {codigo:"GT-2026-004",nombres:"Marco",apellidos:"Pérez Giron",dni:"76543213",programa:"Inglés",estado:"activo"},
+  {codigo:"GT-2026-005",nombres:"Ana",apellidos:"Torres Vega",dni:"76543214",programa:"Inglés",estado:"activo"},
+  {codigo:"GT-2026-006",nombres:"José",apellidos:"Chávez Rojas",dni:"76543215",programa:"Inglés",estado:"activo"},
+  {codigo:"GT-2026-007",nombres:"Carlos",apellidos:"Ruiz Mendoza",dni:"76543216",programa:"Cajero Bancario",estado:"activo"},
+  {codigo:"GT-2026-008",nombres:"Pedro",apellidos:"Sánchez López",dni:"76543217",programa:"Cajero Bancario",estado:"activo"}
+];
+
+const rooms = [
+  {nombre:"Técnicos · Sábados Mañana",programa:"Cajero Bancario",alumnos:2,cupo:35},
+  {nombre:"Kids Básico 01 · Sábados",programa:"Inglés",alumnos:3,cupo:35},
+  {nombre:"Adultos Intermedio · Lun-Mié Noche",programa:"Inglés",alumnos:2,cupo:35}
+];
+
+// Renderizar tabla de estudiantes
+const studentsTable = document.getElementById("students-table");
+students.forEach(s => {
+  const row = document.createElement("tr");
+  row.innerHTML = `
+    <td><strong>${s.codigo}</strong></td>
+    <td>${s.nombres} ${s.apellidos}</td>
+    <td>${s.dni}</td>
+    <td>${s.programa}</td>
+    <td><span class="badge badge-green">${s.estado}</span></td>
+  `;
+  studentsTable.appendChild(row);
+});
+
+// Renderizar tabla de salones
+const roomsTable = document.getElementById("rooms-table");
+rooms.forEach(r => {
+  const row = document.createElement("tr");
+  row.innerHTML = `
+    <td><strong>${r.nombre}</strong></td>
+    <td>${r.programa}</td>
+    <td>${r.alumnos}</td>
+    <td>${r.cupo}</td>
+  `;
+  roomsTable.appendChild(row);
+});
+
+console.log("✅ Sistema cargado correctamente");
+console.log("Estudiantes:", students.length);
+console.log("Salones:", rooms.length);
+</script>
+</body>
+</html>
